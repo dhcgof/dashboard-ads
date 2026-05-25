@@ -1,0 +1,108 @@
+# 🚀 SETUP DO DASHBOARD — PASSO A PASSO
+
+## Arquivos que você baixou
+
+```
+dashboard_ads_github/
+├── README.md                           (guia completo)
+├── index.html                          (painel visual)
+├── fetch_data.py                       (script Python)
+├── requirements.txt                    (dependências)
+├── SETUP_INSTRUCOES.txt               (este arquivo)
+├── env_RENOMEAR_PARA_.env             ← RENOMEAR
+├── gitignore_RENOMEAR_PARA_.gitignore ← RENOMEAR
+├── .env.example                        (template — ignore, use o acima)
+├── .gitignore                          (pode estar vazio — use o acima)
+├── .github/
+│   └── workflows/
+│       └── update-dashboard.yml        (automação)
+└── data/
+    └── (pasta vazia — será preenchida automaticamente)
+```
+
+## ⚡ QUICK START (10 minutos)
+
+### 1. RENOMEAR ARQUIVOS COM PONTO
+No seu PC (Windows, Mac ou Linux), você tem dois arquivos que começam com ponto:
+
+```
+env_RENOMEAR_PARA_.env              → renomear para: .env
+gitignore_RENOMEAR_PARA_.gitignore  → renomear para: .gitignore
+```
+
+**Windows:**
+- Clique com botão direito → "Renomear"
+- Apague o começo ("env_RENOMEAR_PARA_") e deixe só: `.env`
+- Repita pro outro: `.gitignore`
+
+**Mac/Linux (terminal):**
+```bash
+cd dashboard_ads_github
+mv env_RENOMEAR_PARA_.env .env
+mv gitignore_RENOMEAR_PARA_.gitignore .gitignore
+```
+
+### 2. PREENCHER O TOKEN
+Abra o arquivo `.env` (que você acabou de renomear):
+
+```
+META_ACCESS_TOKEN=seu_token_aqui
+```
+
+Substitua `seu_token_aqui` pelo seu System User Token (aquele que você já tem do projeto de automação).
+
+Salve o arquivo.
+
+### 3. CRIAR REPOSITÓRIO NO GITHUB
+- Acesse github.com
+- Clique em **"New"** (novo repositório)
+- Nome: `dashboard-ads`
+- Privado ou público (como preferir)
+- Crie o repositório
+
+### 4. FAZER UPLOAD DOS ARQUIVOS
+No seu repositório GitHub, clique em **"Add file"** → **"Upload files"**:
+- Selecione TODOS os arquivos da pasta `dashboard_ads_github/`
+- Inclua as pastas `.github/` e `data/`
+- Faça commit
+
+### 5. ADICIONAR TOKEN COMO SECRET
+No GitHub, vá em:
+- **Settings** → **Secrets and variables** → **Actions**
+- Clique em **"New repository secret"**
+- Nome: `META_ACCESS_TOKEN`
+- Value: Cole seu token (o mesmo que você colocou no `.env`)
+- Clique em "Add secret"
+
+### 6. ATIVAR GITHUB PAGES
+- **Settings** → **Pages**
+- Source: **Deploy from a branch**
+- Branch: **main** (ou master)
+- Folder: **/(root)**
+- Clique em "Save"
+
+### 7. TESTAR
+- Vá em **Actions**
+- Clique em **"Atualizar Dashboard"**
+- Clique em **"Run workflow"**
+- Aguarde ~30 segundos
+- Volte ao repositório e confirme que `data/campaigndata.json` foi criado
+- Abra: `https://seu-usuario.github.io/dashboard-ads/`
+
+**Pronto!** O painel vai carregar e atualizar sozinho a cada 6 horas.
+
+---
+
+## 📋 CHECKLIST FINAL
+
+- [ ] Renomeou `.env` e `.gitignore`?
+- [ ] Colocou seu token no `.env`?
+- [ ] Criou repositório no GitHub?
+- [ ] Fez upload de TODOS os arquivos?
+- [ ] Adicionou token como GitHub Secret?
+- [ ] Ativou GitHub Pages?
+- [ ] Rodou "Atualizar Dashboard" manualmente (Actions)?
+- [ ] Vê o arquivo `data/campaigndata.json` no repositório?
+- [ ] Consegue abrir a URL do dashboard?
+
+Se alguma coisa não funcionar, confira o README.md para troubleshooting.
