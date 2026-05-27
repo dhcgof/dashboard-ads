@@ -1,0 +1,99 @@
+════════════════════════════════════════════════════════════════════════════════
+🎀 DASHBOARD NOVO — Cantinho da Girafa
+════════════════════════════════════════════════════════════════════════════════
+
+✅ O QUE FOI ADICIONADO:
+
+1️⃣ ANÁLISE DE PERFORMANCE
+   ├─ Top 5 Posts com métricas completas
+   ├─ Video Pooh: 403.5k impressões (campeão)
+   ├─ Tirolesa/Jumperoo: Alto CTR (1,33% / 0,98%)
+   ├─ Cards resumidas com CPM, shares, reações
+   └─ Insights estratégicos recomendados
+
+2️⃣ 2 USUÁRIOS ADMINS
+   ├─ Diego Cordeiro (diego@girafa.com / diego123)
+   ├─ Gabriela (gabriela@girafa.com / gabriela123)
+   └─ Ambos com acesso a ADMIN + todos os dados
+
+3️⃣ REMOVIDO
+   ❌ Página de cadastro (sign-up)
+   ❌ Painel admin público (agora só admins veem)
+   ✅ Sistema de login simples
+
+4️⃣ PAINEL ADMINISTRATIVO
+   ├─ Gerenciar Usuários (Adicionar/Deletar)
+   ├─ Métricas do Sistema (Total Users, Admins, Campanhas)
+   ├─ Segurança (Limpar dados do sistema)
+   └─ Só acessível para ADMINS
+
+════════════════════════════════════════════════════════════════════════════════
+
+📋 ABAS DISPONÍVEIS:
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 📊 PERFORMANCE (Padrão)                                                      │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ • Top 5 Posts com rankings (🥇 🥈 🥉)                                        │
+│ • Impressões, CPM, CTR, Reações                                              │
+│ • Insights estratégicos                                                       │
+│ • Cards resumidas por produto                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ⚙️ ADMIN (Apenas Admins)                                                     │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ 👥 Gerenciar Usuários:                                                       │
+│    • Adicionar novo usuário (email + senha)                                  │
+│    • Deletar usuário                                                          │
+│    • Lista com email, nome, role (admin/viewer)                              │
+│                                                                               │
+│ 📊 Métricas do Sistema:                                                      │
+│    • Total de Usuários                                                        │
+│    • Admins Ativos                                                            │
+│    • Campanhas Ativas (4)                                                     │
+│    • Total Gasto (R$ 2.0K — últimos 30d)                                     │
+│                                                                               │
+│ 🔐 Segurança:                                                                │
+│    • Botão para limpar todos os dados                                        │
+│    • Dados em sessionStorage (local do navegador)                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+
+🔐 DADOS DE ACESSO:
+
+Admin 1:
+├─ Email: diego@girafa.com
+└─ Senha: diego123
+
+Admin 2:
+├─ Email: gabriela@girafa.com
+└─ Senha: gabriela123
+
+════════════════════════════════════════════════════════════════════════════════
+
+🎯 COMO USAR:
+
+1. Abrir: dashboard_completo.html
+2. Fazer login com Diego ou Gabriela
+3. VER: Aba "Performance" com análise dos posts
+4. GERENCIAR: Aba "Admin" para adicionar/deletar usuários
+5. SAIR: Botão "Sair" no topo direito
+
+════════════════════════════════════════════════════════════════════════════════
+
+✨ FEATURES:
+
+✅ Design moderno (azul #1565C0 + roxo #7C4DFF)
+✅ Dados da análise do Cantinho da Girafa (30 dias)
+✅ 2 Admins: Diego + Gabriela
+✅ Gerenciamento de usuários completo
+✅ Métricas em tempo real
+✅ Responsivo (mobile + desktop)
+✅ Sem dependências externas
+✅ Dados em sessionStorage (privado por navegador)
+
+════════════════════════════════════════════════════════════════════════════════
+
+📁 Arquivo: dashboard_completo.html

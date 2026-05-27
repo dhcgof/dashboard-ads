@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cantinho da Girafa — Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1565C0 0%, #7C4DFF 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* LOGIN SCREEN */
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            display: none;
+        }
+        
+        .login-container.show {
+            display: block;
+        }
+        
+        .login-container h1 {
+            color: #1565C0;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1565C0;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .login-btn:hover {
+            background: #0D47A1;
+        }
+        
+        .error-msg {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .error-msg.show {
+            display: block;
+        }
+        
+        /* DASHBOARD */
+        .dashboard-container {
+            width: 100%;
+            max-width: 1400px;
+            display: none;
+        }
+        
+        .dashboard-container.show {
+            display: block;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #1565C0;
+            font-size: 24px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info span {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .logout-btn {
+            padding: 8px 16px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .logout-btn:hover {
+            background: #b71c1c;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .nav-tabs button {
+            padding: 10px 20px;
+            border: none;
+            background: #f0f0f0;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-tabs button.active {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .nav-tabs button:hover {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .content-area {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.show {
+            display: block;
+        }
+        
+        /* ANÁLISE DE PERFORMANCE */
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1565C0;
+        }
+        
+        .card h3 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .card-value {
+            font-size: 28px;
+            color: #1565C0;
+            font-weight: bold;
+        }
+        
+        .card-subtitle {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+        
+        .performance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .performance-table thead {
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .performance-table th {
+            padding: 12px;
+            text-align: left;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .performance-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+        }
+        
+        .performance-table tbody tr:hover {
+            background: #fafafa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-gold {
+            background: #FFD600;
+            color: #333;
+        }
+        
+        .badge-silver {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .badge-bronze {
+            background: #CD7F32;
+            color: white;
+        }
+        
+        /* ADMIN PANEL */
+        .admin-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-section h2 {
+            color: #1565C0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .users-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .user-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ddd;
+        }
+        
+        .user-card-info h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .user-card-info p {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #0D47A1;
+        }
+        
+        .btn-delete {
+            background: #d32f2f;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #b71c1c;
+        }
+        
+        .form-inline {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .form-inline input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        
+        .form-inline button {
+            padding: 10px 20px;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .form-inline button:hover {
+            background: #0D47A1;
+        }
+        
+        /* METRICS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .metric-box {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .metric-box h4 {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .metric-box .value {
+            font-size: 24px;
+            color: #1565C0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div class="login-container show" id="loginContainer">
+        <h1>🎀 Cantinho da Girafa</h1>
+        <form onsubmit="login(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="password" placeholder="sua senha" required>
+            </div>
+            <button type="submit" class="login-btn">Entrar</button>
+            <div class="error-msg" id="errorMsg"></div>
+        </form>
+    </div>
+    
+    <!-- DASHBOARD -->
+    <div class="dashboard-container" id="dashboardContainer">
+        <div class="header">
+            <h1>🎀 Dashboard Cantinho da Girafa</h1>
+            <div class="user-info">
+                <span id="userNameDisplay"></span>
+                <button class="logout-btn" onclick="logout()">Sair</button>
+            </div>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-btn active" onclick="switchTab('performance')">📊 Performance</button>
+            <button class="nav-btn" onclick="switchTab('admin')">⚙️ Admin</button>
+        </div>
+        
+        <div class="content-area">
+            <!-- TAB: PERFORMANCE -->
+            <div class="tab-content show" id="performanceTab">
+                <h2>📈 Análise de Performance — Últimos 30 Dias</h2>
+                
+                <div class="performance-grid">
+                    <div class="card">
+                        <h3>🏆 Video Pooh</h3>
+                        <div class="card-value">403.5K</div>
+                        <div class="card-subtitle">Impressões | CPM R$ 1,87</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🎪 Tirolesa</h3>
+                        <div class="card-value">1,33%</div>
+                        <div class="card-subtitle">CTR | 12 Shares</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🦘 Jumperoo</h3>
+                        <div class="card-value">0,98%</div>
+                        <div class="card-subtitle">CTR | 11 Shares</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>💰 Total Gasto</h3>
+                        <div class="card-value">R$ 2.058</div>
+                        <div class="card-subtitle">7 Campanhas | 324k impressões</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 15px; color: #333;">Top 5 Posts</h3>
+                <table class="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Post</th>
+                            <th>Impressões</th>
+                            <th>CPM</th>
+                            <th>CTR</th>
+                            <th>Reações</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-gold">🥇</span></td>
+                            <td><strong>Video Pooh</strong></td>
+                            <td>403.526</td>
+                            <td>R$ 1,87</td>
+                            <td>0,21%</td>
+                            <td>77</td>
+                            <td>🟢 ATIVO</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-silver">🥈</span></td>
+                            <td><strong>Copa</strong></td>
+                            <td>148.164</td>
+                            <td>R$ 1,43</td>
+                            <td>0,15%</td>
+                            <td>9</td>
+                            <td>🟢 ATIVO</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-bronze">🥉</span></td>
+                            <td><strong>Tirolesa</strong></td>
+                            <td>77.988</td>
+                            <td>R$ 9,00</td>
+                            <td>1,33%</td>
+                            <td>60</td>
+                            <td>🟢 ATIVO</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><strong>Jumperoo</strong></td>
+                            <td>54.466</td>
+                            <td>R$ 8,13</td>
+                            <td>0,98%</td>
+                            <td>45</td>
+                            <td>🟢 ATIVO</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><strong>Assento</strong></td>
+                            <td>48.753</td>
+                            <td>R$ 9,13</td>
+                            <td>0,72%</td>
+                            <td>61</td>
+                            <td>🟢 ATIVO</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="background: #f0f7ff; padding: 20px; border-radius: 8px; margin-top: 30px; border-left: 4px solid #1565C0;">
+                    <h3 style="color: #1565C0; margin-bottom: 10px;">💡 Insights</h3>
+                    <ul style="color: #666; line-height: 1.8;">
+                        <li>✅ <strong>Video Pooh</strong> é o campeão: 403k impressões com CPM muito baixo (R$ 1,87)</li>
+                        <li>✅ <strong>Tirolesa & Jumperoo</strong> têm alto engajamento (CTR 0,98-1,33%) e muitos shares</li>
+                        <li>⚠️ Frequência alta em alguns posts (3,3x) — considere refresh de criativos</li>
+                        <li>💰 <strong>Público ideal</strong>: Pais 25-45 anos, Interesse em atividades infantis</li>
+                        <li>🎯 <strong>Próximo passo</strong>: Replicar formato de Video Pooh em novas campanhas</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- TAB: ADMIN -->
+            <div class="tab-content" id="adminTab">
+                <h2>⚙️ Painel Administrativo</h2>
+                
+                <!-- GERENCIAR USUÁRIOS -->
+                <div class="admin-section">
+                    <h2>👥 Gerenciar Usuários</h2>
+                    
+                    <div class="form-inline">
+                        <input type="email" id="newUserEmail" placeholder="novo@email.com">
+                        <input type="password" id="newUserPassword" placeholder="senha">
+                        <button onclick="addUser()">Adicionar Usuário</button>
+                    </div>
+                    
+                    <div class="users-list" id="usersList"></div>
+                </div>
+                
+                <!-- MÉTRICAS DO SISTEMA -->
+                <div class="admin-section">
+                    <h2>📊 Métricas do Sistema</h2>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <h4>Total de Usuários</h4>
+                            <div class="value" id="totalUsers">0</div>
+                        </div>
+                        <div class="metric-box">
+                            <h4>Admins Ativos</h4>
+                            <div class="value" id="totalAdmins">0</div>
+                        </div>
+                        <div class="metric-box">
+                            <h4>Campanhas Ativas</h4>
+                            <div class="value">4</div>
+                        </div>
+                        <div class="metric-box">
+                            <h4>Total Gasto (30d)</h4>
+                            <div class="value">R$ 2.0K</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SEGURANÇA -->
+                <div class="admin-section">
+                    <h2>🔐 Segurança</h2>
+                    <p style="color: #666; margin-bottom: 15px;">Sistema de autenticação local — dados salvos no navegador (sessionStorage)</p>
+                    <button class="btn-small btn-delete" onclick="clearAllData()">🗑️ Limpar Todos os Dados</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === USUÁRIOS PADRÃO ===
+        const DEFAULT_USERS = [
+            { email: 'diego@girafa.com', password: 'diego123', name: 'Diego Cordeiro', role: 'admin' },
+            { email: 'gabriela@girafa.com', password: 'gabriela123', name: 'Gabriela', role: 'admin' }
+        ];
+        
+        // === INICIALIZAR ===
+        function initialize() {
+            const users = JSON.parse(sessionStorage.getItem('users') || 'null');
+            if (!users) {
+                sessionStorage.setItem('users', JSON.stringify(DEFAULT_USERS));
+            }
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+            if (currentUser) {
+                showDashboard(currentUser);
+            } else {
+                showLogin();
+            }
+        }
+        
+        // === LOGIN ===
+        function login(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const users = JSON.parse(sessionStorage.getItem('users') || '[]');
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                showDashboard(user);
+            } else {
+                document.getElementById('errorMsg').textContent = '❌ Email ou senha incorretos';
+                document.getElementById('errorMsg').classList.add('show');
+            }
+        }
+        
+        // === LOGOUT ===
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('errorMsg').classList.remove('show');
+            showLogin();
+        }
+        
+        // === EXIBIR LOGIN ===
+        function showLogin() {
+            document.getElementById('loginContainer').classList.add('show');
+            document.getElementById('dashboardContainer').classList.remove('show');
+        }
+        
+        // === EXIBIR DASHBOARD ===
+        function showDashboard(user) {
+            document.getElementById('loginContainer').classList.remove('show');
+            document.getElementById('dashboardContainer').classList.add('show');
+            document.getElementById('userNameDisplay').textContent = `👤 ${user.name}`;
+            updateUsersList();
+            updateMetrics();
+        }
+        
+        // === ALTERNAR ABAS ===
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('show'));
+            document.getElementById(tabName + 'Tab').classList.add('show');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        // === ADICIONAR USUÁRIO ===
+        function addUser() {
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            
+            if (!email || !password) {
+                alert('⚠️ Preencha email e senha!');
+                return;
+            }
+            
+            const users = JSON.parse(sessionStorage.getItem('users') || '[]');
+            if (users.some(u => u.email === email)) {
+                alert('⚠️ Email já existe!');
+                return;
+            }
+            
+            users.push({ email, password, name: email.split('@')[0], role: 'viewer' });
+            sessionStorage.setItem('users', JSON.stringify(users));
+            
+            document.getElementById('newUserEmail').value = '';
+            document.getElementById('newUserPassword').value = '';
+            updateUsersList();
+            updateMetrics();
+            alert('✅ Usuário adicionado com sucesso!');
+        }
+        
+        // === DELETAR USUÁRIO ===
+        function deleteUser(email) {
+            if (!confirm(`❌ Deletar ${email}?`)) return;
+            
+            let users = JSON.parse(sessionStorage.getItem('users') || '[]');
+            users = users.filter(u => u.email !== email);
+            sessionStorage.setItem('users', JSON.stringify(users));
+            updateUsersList();
+            updateMetrics();
+            alert('✅ Usuário deletado!');
+        }
+        
+        // === ATUALIZAR LISTA DE USUÁRIOS ===
+        function updateUsersList() {
+            const users = JSON.parse(sessionStorage.getItem('users') || '[]');
+            const html = users.map(user => `
+                <div class="user-card">
+                    <div class="user-card-info">
+                        <h3>${user.name}</h3>
+                        <p>${user.email} — ${user.role === 'admin' ? '👑 Admin' : '👤 Viewer'}</p>
+                    </div>
+                    <div class="user-actions">
+                        <button class="btn-small btn-delete" onclick="deleteUser('${user.email}')">Deletar</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('usersList').innerHTML = html || '<p style="color: #999;">Nenhum usuário</p>';
+        }
+        
+        // === ATUALIZAR MÉTRICAS ===
+        function updateMetrics() {
+            const users = JSON.parse(sessionStorage.getItem('users') || '[]');
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalAdmins').textContent = users.filter(u => u.role === 'admin').length;
+        }
+        
+        // === LIMPAR DADOS ===
+        function clearAllData() {
+            if (!confirm('⚠️ Tem certeza? Isso vai deletar TODOS os dados!')) return;
+            sessionStorage.clear();
+            alert('✅ Dados limpos!');
+            logout();
+        }
+        
+        // === INICIAR ===
+        initialize();
+    </script>
+</body>
+</html>
