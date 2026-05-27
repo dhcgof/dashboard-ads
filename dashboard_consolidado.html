@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Consolidado — MDL + Cantinho da Girafa</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .timestamp {
+            text-align: center;
+            color: #888;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h2 .emoji {
+            font-size: 1.3em;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .metric {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #4ecdc4;
+        }
+        .metric.warning {
+            border-left-color: #ff6b6b;
+        }
+        .metric.success {
+            border-left-color: #95e1d3;
+        }
+        .metric-label {
+            font-size: 0.85em;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+        .status.active {
+            background: rgba(76, 205, 196, 0.2);
+            color: #4ecdc4;
+            border: 1px solid #4ecdc4;
+        }
+        .status.paused {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .campaigns-list {
+            margin-top: 20px;
+        }
+        .campaign-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #4ecdc4;
+            font-size: 0.95em;
+        }
+        .campaign-item.warning {
+            border-left-color: #ff6b6b;
+        }
+        .campaign-item.success {
+            border-left-color: #95e1d3;
+        }
+        .campaign-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .campaign-metrics {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+            color: #aaa;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        th {
+            background: rgba(0, 0, 0, 0.3);
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .alert.info {
+            background: rgba(78, 205, 196, 0.1);
+            border-left: 3px solid #4ecdc4;
+            color: #4ecdc4;
+        }
+        .alert.warning {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Dashboard Consolidado — Meta Ads</h1>
+        <div class="timestamp" id="timestamp"></div>
+
+        <div class="grid">
+            <!-- MDL -->
+            <div class="card">
+                <h2><span class="emoji">🛋️</span> Lojas MDL</h2>
+                <div class="status active">MCP ATIVO</div>
+                
+                <div class="metrics" style="margin-top: 20px;">
+                    <div class="metric">
+                        <div class="metric-label">Campanhas Ativas</div>
+                        <div class="metric-value">1</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Orçamento Diário</div>
+                        <div class="metric-value">R$ 200</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Status</div>
+                        <div class="metric-value" style="font-size: 1em;">🟢 ATIVO</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Objetivo</div>
+                        <div class="metric-value" style="font-size: 1em;">Alcance</div>
+                    </div>
+                </div>
+
+                <div class="campaigns-list">
+                    <h3 style="font-size: 1.1em; margin-top: 20px; margin-bottom: 10px;">3 Dias de Loucura</h3>
+                    <div class="campaign-item success">
+                        <div class="campaign-name">Ad Set 1: Teaser</div>
+                        <div class="campaign-metrics">
+                            <span>🟢 ACTIVE</span>
+                            <span>Imagens: 2</span>
+                        </div>
+                    </div>
+                    <div class="campaign-item warning">
+                        <div class="campaign-name">Ad Set 2: Produtos</div>
+                        <div class="campaign-metrics">
+                            <span>⏸️ PAUSED</span>
+                            <span>Ativa em: 28/05 04:00 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert info">
+                    ℹ️ Teaser rodando desde 26 de maio. Produtos vão ao ar dia 28 às 04:00 AM.
+                </div>
+            </div>
+
+            <!-- CANTINHO DA GIRAFA -->
+            <div class="card">
+                <h2><span class="emoji">🎉</span> Cantinho da Girafa</h2>
+                <div class="status active">Windsor CONECTADO</div>
+                
+                <div class="metrics" style="margin-top: 20px;">
+                    <div class="metric">
+                        <div class="metric-label">Campanhas Ativas</div>
+                        <div class="metric-value">5</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Gasto (7d)</div>
+                        <div class="metric-value">R$ 754,91</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">CPM Médio</div>
+                        <div class="metric-value">R$ 6,08</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">CTR Médio</div>
+                        <div class="metric-value">0,69%</div>
+                    </div>
+                </div>
+
+                <div class="metrics" style="margin-top: 15px;">
+                    <div class="metric">
+                        <div class="metric-label">Impressões</div>
+                        <div class="metric-value">255k</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Alcance</div>
+                        <div class="metric-value">164k</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Cliques</div>
+                        <div class="metric-value">851</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Freq. Média</div>
+                        <div class="metric-value">1,73x</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAMPANHAS GIRAFA DETALHADO -->
+        <div class="card full-width">
+            <h2><span class="emoji">📈</span> Desempenho por Campanha — Cantinho da Girafa (7 dias)</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campanha</th>
+                        <th>Gasto</th>
+                        <th>Impressões</th>
+                        <th>Alcance</th>
+                        <th>Freq.</th>
+                        <th>CPM</th>
+                        <th>Cliques</th>
+                        <th>CTR</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="girafa-campaigns">
+                    <!-- Preenchido por JavaScript -->
+                </tbody>
+            </table>
+
+            <div class="alert warning" style="margin-top: 20px;">
+                ⚠️ <strong>Recomendações:</strong><br>
+                • Aumentar orçamento em "Leads" (CTR 1,50% - melhor performer)<br>
+                • Revisar criativos de "Reconhecimento Festas" (CTR baixo: 0,18%)<br>
+                • Considerar pausar "Leads Locação" (frequência alta = risco de fadiga)
+            </div>
+        </div>
+
+        <!-- RESUMO CONSOLIDADO -->
+        <div class="card full-width">
+            <h2><span class="emoji">🎯</span> Resumo Consolidado</h2>
+            
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-label">Investimento Total (últimos 7d)</div>
+                    <div class="metric-value">R$ 754,91</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Alcance Total</div>
+                    <div class="metric-value">164.514</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Impressões Totais</div>
+                    <div class="metric-value">255.171</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Cliques Totais</div>
+                    <div class="metric-value">851</div>
+                </div>
+            </div>
+
+            <div class="alert info" style="margin-top: 20px;">
+                ✅ <strong>Status da Automação:</strong> Dashboard atualizado automaticamente a cada 6 horas via GitHub Actions + Meta MCP + Windsor.ai
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== VERIFICAÇÃO DE AUTENTICAÇÃO ====================
+        window.addEventListener('load', () => {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'dashboard_login.html';
+                return;
+            }
+
+            const user = JSON.parse(currentUser);
+            document.body.innerHTML = `
+                <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 10px 15px; border-radius: 6px; font-size: 0.85em; color: #4ecdc4; z-index: 9999;">
+                    👤 ${user.name} | <a href="#" onclick="logout()" style="color: #ff6b6b; text-decoration: none;">Sair</a>
+                </div>
+            ` + document.body.innerHTML;
+        });
+
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'dashboard_login.html';
+        }
+
+        // Atualizar timestamp
+        document.getElementById('timestamp').textContent = 'Atualizado: ' + new Date().toLocaleString('pt-BR');
+
+        // Dados das campanhas Girafa
+        const campaigns = [
+            {name: "Copa", spend: 168.24, impressions: 116267, reach: 83044, frequency: 1.4001, cpm: 1.447, clicks: 164, ctr: 0.0014},
+            {name: "Reconhecimento Festas", spend: 174.84, impressions: 93641, reach: 58294, frequency: 1.6064, cpm: 1.8671, clicks: 171, ctr: 0.0018},
+            {name: "Leads", spend: 204.6, impressions: 21668, reach: 9647, frequency: 2.2461, cpm: 9.4425, clicks: 324, ctr: 0.015},
+            {name: "Vendas/Aluguel", spend: 102.18, impressions: 12528, reach: 6786, frequency: 1.8462, cpm: 8.1561, clicks: 119, ctr: 0.0095},
+            {name: "Leads Locação", spend: 105.05, impressions: 11067, reach: 6743, frequency: 1.6413, cpm: 9.4922, clicks: 73, ctr: 0.0066}
+        ];
+
+        // Preencher tabela
+        const tbody = document.getElementById('girafa-campaigns');
+        campaigns.forEach(c => {
+            const row = tbody.insertRow();
+            const isGood = c.ctr >= 0.01;
+            const isBad = c.ctr < 0.008;
+            
+            row.innerHTML = `
+                <td><strong>${c.name}</strong></td>
+                <td>R$ ${c.spend.toFixed(2)}</td>
+                <td>${c.impressions.toLocaleString()}</td>
+                <td>${c.reach.toLocaleString()}</td>
+                <td>${c.frequency.toFixed(2)}x</td>
+                <td>R$ ${c.cpm.toFixed(2)}</td>
+                <td>${c.clicks}</td>
+                <td style="${isGood ? 'color: #95e1d3; font-weight: bold;' : isBad ? 'color: #ff6b6b;' : ''}">${(c.ctr * 100).toFixed(2)}%</td>
+                <td>${isGood ? '✅ Bom' : isBad ? '⚠️ Baixo' : '→ Médio'}</td>
+            `;
+        });
+    </script>
+</body>
+</html>

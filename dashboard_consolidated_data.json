@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-05-26T16:07:27.262587",
+  "mdl": {
+    "account_id": "1124246161345381",
+    "status": "ATIVO (MCP)",
+    "campaigns_active": 1,
+    "campaigns": [
+      {
+        "name": "3 Dias de Loucura",
+        "status": "ACTIVE",
+        "ad_sets": [
+          {
+            "name": "Teaser",
+            "status": "ACTIVE"
+          },
+          {
+            "name": "Produtos",
+            "status": "PAUSED"
+          }
+        ]
+      }
+    ]
+  },
+  "girafa": {
+    "account_id": "811077953131064",
+    "status": "ATIVO (Windsor)",
+    "campaigns_active": 5,
+    "campaigns": [
+      {
+        "campaign_id": "120231241929040591",
+        "campaign_name": "Reconhecimento Festas",
+        "spend": 174.84,
+        "impressions": 93641.0,
+        "reach": 58294.0,
+        "frequency": 1.6064,
+        "cpm": 1.8671,
+        "clicks": 171.0,
+        "ctr": 0.0018
+      },
+      {
+        "campaign_id": "120233386743180591",
+        "campaign_name": "Leads",
+        "spend": 204.6,
+        "impressions": 21668.0,
+        "reach": 9647.0,
+        "frequency": 2.2461,
+        "cpm": 9.4425,
+        "clicks": 324.0,
+        "ctr": 0.015
+      },
+      {
+        "campaign_id": "120233851398970591",
+        "campaign_name": "Vendas/Aluguel",
+        "spend": 102.18,
+        "impressions": 12528.0,
+        "reach": 6786.0,
+        "frequency": 1.8462,
+        "cpm": 8.1561,
+        "clicks": 119.0,
+        "ctr": 0.0095
+      },
+      {
+        "campaign_id": "120237384987380591",
+        "campaign_name": "Leads locaçao",
+        "spend": 105.05,
+        "impressions": 11067.0,
+        "reach": 6743.0,
+        "frequency": 1.6413,
+        "cpm": 9.4922,
+        "clicks": 73.0,
+        "ctr": 0.0066
+      },
+      {
+        "campaign_id": "120242864763010591",
+        "campaign_name": "Copa",
+        "spend": 168.24,
+        "impressions": 116267.0,
+        "reach": 83044.0,
+        "frequency": 1.4001,
+        "cpm": 1.447,
+        "clicks": 164.0,
+        "ctr": 0.0014
+      }
+    ],
+    "totals": {
+      "spend_7d": 754.91,
+      "impressions_7d": 255171.0,
+      "reach_7d": 164514.0,
+      "clicks_7d": 851.0,
+      "avg_cpm": 6.08098,
+      "avg_ctr": 0.00686,
+      "avg_frequency": 1.74802
+    }
+  }
+}
