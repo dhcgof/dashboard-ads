@@ -1,0 +1,43 @@
+name: Atualizar Dashboard
+
+on:
+  schedule:
+    # Roda a cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
+    # Ajuste conforme necessário (formato cron: minuto hora dia-mês dia-semana)
+    - cron: '0 0,6,12,18 * * *'
+  
+  # Permite rodar manualmente no GitHub (Actions > Atualizar Dashboard > Run workflow)
+  workflow_dispatch:
+
+jobs:
+  fetch-and-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout do repositório
+      uses: actions/checkout@v4
+    
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Instalar dependências
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+    
+    - name: Buscar dados das campanhas
+      env:
+        META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+      run: |
+        python fetch_data.py
+    
+    - name: Confirmar e fazer push das mudanças
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/campaigndata.json
+        git commit -m "Update dashboard data — $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "Sem mudanças para confirmar"
+        git push
+      continue-on-error: true
