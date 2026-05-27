@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Campanhas</title>
+    <title>Dashboard Campanhas — Login</title>
     <style>
         * {
             margin: 0;
@@ -21,6 +21,113 @@
             padding: 20px;
         }
         
+        /* ======= LOGIN SCREEN ======= */
+        .login-screen {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 420px;
+        }
+        
+        .login-screen.hidden {
+            display: none;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .login-header h1 {
+            color: #1565C0;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1565C0;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .login-btn:hover {
+            background: #0D47A1;
+        }
+        
+        .error-msg {
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .error-msg.show {
+            display: block;
+        }
+        
+        .login-info {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 25px;
+            border-left: 4px solid #1565C0;
+        }
+        
+        .login-info h4 {
+            color: #1565C0;
+            margin-bottom: 8px;
+        }
+        
+        .login-info p {
+            margin: 4px 0;
+            font-family: monospace;
+            background: white;
+            padding: 6px;
+            border-radius: 3px;
+        }
+        
+        /* ======= SELEÇÃO DE CONTA ======= */
         .account-selection {
             background: white;
             padding: 60px 40px;
@@ -107,6 +214,18 @@
             cursor: not-allowed;
         }
         
+        .btn-logout {
+            padding: 10px 20px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        /* ======= DASHBOARD ======= */
         .dashboard-screen {
             width: 100%;
             max-width: 1400px;
@@ -143,6 +262,37 @@
             font-weight: 600;
         }
         
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .nav-tabs button {
+            padding: 12px 24px;
+            border: none;
+            background: #f0f0f0;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-tabs button.active {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .nav-tabs button:hover {
+            background: #1565C0;
+            color: white;
+        }
+        
         .content {
             background: white;
             padding: 35px;
@@ -150,7 +300,15 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .content h2 {
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.show {
+            display: block;
+        }
+        
+        .tab-content h2 {
             color: #333;
             margin-bottom: 25px;
             font-size: 22px;
@@ -196,68 +354,192 @@
             color: #d84315;
         }
         
-        .campaign-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
+        /* ======= ADMIN PANEL ======= */
+        .admin-panel {
+            margin-bottom: 30px;
+        }
+        
+        .admin-section {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-section h3 {
+            color: #1565C0;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-bottom: 15px;
         }
         
-        .meta-item {
-            background: white;
+        .users-table thead {
+            background: #f0f0f0;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .users-table th {
             padding: 12px;
-            border-radius: 6px;
-            border-left: 3px solid #1565C0;
-        }
-        
-        .meta-label {
-            color: #999;
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-        
-        .meta-value {
+            text-align: left;
             color: #333;
-            font-size: 16px;
             font-weight: 600;
-        }
-        
-        .campaign-details {
-            background: white;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 15px;
             font-size: 13px;
-            color: #666;
         }
         
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
+        .users-table td {
+            padding: 12px;
             border-bottom: 1px solid #eee;
+            color: #666;
+            font-size: 13px;
         }
         
-        .detail-row:last-child {
-            border-bottom: none;
+        .users-table tbody tr:hover {
+            background: #fafafa;
         }
         
-        .detail-label {
-            color: #999;
-        }
-        
-        .detail-value {
-            color: #333;
+        .btn-edit {
+            padding: 6px 12px;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
             font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .btn-delete {
+            padding: 6px 12px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .btn-add-user {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .modal-content h3 {
+            color: #1565C0;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .btn-save {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #ccc;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <!-- SELEÇÃO DE CONTA - SEM LOGIN -->
-    <div class="account-selection show" id="accountSelection">
-        <div class="selection-header">
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-header">
             <h1>🎯 Dashboard Campanhas</h1>
-            <p>Selecione uma conta para gerenciar</p>
+            <p>Faça login para continuar</p>
+        </div>
+        
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="password" placeholder="sua senha" required>
+            </div>
+            <button type="submit" class="login-btn">Entrar</button>
+            <div class="error-msg" id="errorMsg"></div>
+        </form>
+        
+        <div class="login-info">
+            <h4>👤 Acesso Demo</h4>
+            <p>diego@girafa.com</p>
+            <p>diego123</p>
+            <p style="margin-top: 10px;">gabriela@girafa.com</p>
+            <p>gabriela123</p>
+        </div>
+    </div>
+    
+    <!-- SELEÇÃO DE CONTA -->
+    <div class="account-selection hidden" id="accountSelection">
+        <button class="btn-logout" onclick="handleLogout()">← Sair</button>
+        
+        <div class="selection-header">
+            <h1>🎯 Selecione uma Conta</h1>
+            <p>Qual negócio você quer gerenciar?</p>
         </div>
         
         <div class="accounts-grid" id="accountsGrid"></div>
@@ -271,12 +553,77 @@
     <div class="dashboard-screen" id="dashboardScreen">
         <div class="header">
             <h1 id="dashboardTitle">📊 Dashboard</h1>
-            <button class="logout-btn" onclick="goBack()">← Voltar</button>
+            <button class="logout-btn" onclick="handleLogout()">Sair</button>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="active" onclick="switchTab('campaigns')">📈 Campanhas</button>
+            <button onclick="switchTab('admin')">⚙️ Admin</button>
         </div>
         
         <div class="content">
-            <h2>📈 Campanhas Ativas</h2>
-            <div id="campaignsList"></div>
+            <!-- TAB: CAMPANHAS -->
+            <div class="tab-content show" id="campaignsTab">
+                <h2>📈 Campanhas Ativas</h2>
+                <div id="campaignsList"></div>
+            </div>
+            
+            <!-- TAB: ADMIN -->
+            <div class="tab-content" id="adminTab">
+                <h2>⚙️ Painel Administrativo</h2>
+                
+                <div class="admin-panel">
+                    <div class="admin-section">
+                        <h3>👥 Gerenciar Usuários</h3>
+                        
+                        <button class="btn-add-user" onclick="openAddUserModal()">+ Adicionar Novo Usuário</button>
+                        
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Nome</th>
+                                    <th>Função</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR USUÁRIO -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-content">
+            <h3>✏️ Editar Usuário</h3>
+            <input type="email" id="editEmail" placeholder="Email">
+            <input type="password" id="editPassword" placeholder="Senha (deixar em branco para não alterar)">
+            <input type="text" id="editName" placeholder="Nome">
+            <select id="editRole" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; margin-bottom: 15px;">
+                <option value="admin">Admin</option>
+                <option value="viewer">Viewer</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="btn-save" onclick="saveEditedUser()">Salvar</button>
+                <button class="btn-cancel" onclick="closeEditUserModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADICIONAR USUÁRIO -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-content">
+            <h3>➕ Adicionar Novo Usuário</h3>
+            <input type="email" id="newEmail" placeholder="Email" required>
+            <input type="password" id="newPassword" placeholder="Senha" required>
+            <input type="text" id="newName" placeholder="Nome" required>
+            <div class="modal-buttons">
+                <button class="btn-save" onclick="saveNewUser()">Adicionar</button>
+                <button class="btn-cancel" onclick="closeAddUserModal()">Cancelar</button>
+            </div>
         </div>
     </div>
 
@@ -354,9 +701,57 @@
             }
         };
         
+        let USERS = [
+            { email: 'diego@girafa.com', password: 'diego123', name: 'Diego Cordeiro', role: 'admin' },
+            { email: 'gabriela@girafa.com', password: 'gabriela123', name: 'Gabriela', role: 'admin' },
+            { email: 'diego@mdl.com', password: 'diego123', name: 'Diego MDL', role: 'admin' },
+            { email: 'vendas@mdl.com', password: 'mdl2025', name: 'Equipe Vendas', role: 'viewer' }
+        ];
+        
+        let currentUser = null;
         let selectedAccount = null;
+        let editingUserIndex = -1;
         
         function initialize() {
+            renderAccounts();
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const user = USERS.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                showAccountSelection();
+            } else {
+                const errorMsg = document.getElementById('errorMsg');
+                errorMsg.textContent = '❌ Email ou senha incorretos';
+                errorMsg.classList.add('show');
+            }
+        }
+        
+        function handleLogout() {
+            currentUser = null;
+            selectedAccount = null;
+            sessionStorage.removeItem('currentUser');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('accountSelection').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('show');
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('errorMsg').classList.remove('show');
+        }
+        
+        function showAccountSelection() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('accountSelection').classList.remove('hidden');
+            renderAccounts();
+        }
+        
+        function renderAccounts() {
             const grid = document.getElementById('accountsGrid');
             grid.innerHTML = Object.entries(ACCOUNTS).map(([key, account]) => `
                 <div class="account-card" onclick="selectAccount('${key}')" data-account="${key}">
@@ -382,8 +777,13 @@
             document.getElementById('dashboardScreen').classList.add('show');
             document.getElementById('dashboardTitle').textContent = `${account.icon} ${account.name}`;
             
+            renderCampaigns(account.campaigns);
+            renderUsersTable();
+        }
+        
+        function renderCampaigns(campaigns) {
             const list = document.getElementById('campaignsList');
-            list.innerHTML = account.campaigns.map(c => `
+            list.innerHTML = campaigns.map(c => `
                 <div class="campaign-card">
                     <div class="campaign-header">
                         <span class="campaign-name">${c.name}</span>
@@ -392,29 +792,150 @@
                         </span>
                     </div>
                     
-                    <div class="campaign-meta">
-                        <div class="meta-item"><div class="meta-label">Objetivo</div><div class="meta-value">${c.objective}</div></div>
-                        <div class="meta-item"><div class="meta-label">Orçamento</div><div class="meta-value">${c.budget}</div></div>
-                        <div class="meta-item"><div class="meta-label">Período</div><div class="meta-value">${c.period}</div></div>
-                    </div>
-                    
-                    <div class="campaign-details">
-                        <div class="detail-row"><span class="detail-label">📊 Impressões</span><span class="detail-value">${c.impressions}</span></div>
-                        <div class="detail-row"><span class="detail-label">🔗 Cliques</span><span class="detail-value">${c.clicks}</span></div>
-                        <div class="detail-row"><span class="detail-label">💰 Gasto Total</span><span class="detail-value">${c.spend}</span></div>
-                        <div class="detail-row"><span class="detail-label">📈 CTR</span><span class="detail-value">${c.ctr}</span></div>
-                        <div class="detail-row"><span class="detail-label">💵 CPC</span><span class="detail-value">${c.cpc}</span></div>
-                        <div class="detail-row"><span class="detail-label">🎯 Ad Sets</span><span class="detail-value">${c.adsets}</span></div>
-                        <div class="detail-row"><span class="detail-label">📢 Anúncios</span><span class="detail-value">${c.ads}</span></div>
+                    <div style="background: white; padding: 15px; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">Objetivo</span>
+                            <span style="color: #333; font-weight: 600;">${c.objective}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">Orçamento</span>
+                            <span style="color: #333; font-weight: 600;">${c.budget}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">Período</span>
+                            <span style="color: #333; font-weight: 600;">${c.period}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">📊 Impressões</span>
+                            <span style="color: #333; font-weight: 600;">${c.impressions}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">🔗 Cliques</span>
+                            <span style="color: #333; font-weight: 600;">${c.clicks}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">💰 Gasto Total</span>
+                            <span style="color: #333; font-weight: 600;">${c.spend}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">📈 CTR</span>
+                            <span style="color: #333; font-weight: 600;">${c.ctr}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">💵 CPC</span>
+                            <span style="color: #333; font-weight: 600;">${c.cpc}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span style="color: #999;">🎯 Ad Sets</span>
+                            <span style="color: #333; font-weight: 600;">${c.adsets}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                            <span style="color: #999;">📢 Anúncios</span>
+                            <span style="color: #333; font-weight: 600;">${c.ads}</span>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
         
-        function goBack() {
-            document.getElementById('dashboardScreen').classList.remove('show');
-            document.getElementById('accountSelection').classList.remove('hidden');
-            selectedAccount = null;
+        function renderUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = USERS.map((user, index) => `
+                <tr>
+                    <td>${user.email}</td>
+                    <td>${user.name}</td>
+                    <td>${user.role === 'admin' ? '👑 Admin' : '👤 Viewer'}</td>
+                    <td>
+                        <button class="btn-edit" onclick="openEditUserModal(${index})">Editar</button>
+                        <button class="btn-delete" onclick="deleteUser(${index})">Deletar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function openEditUserModal(index) {
+            editingUserIndex = index;
+            const user = USERS[index];
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editPassword').value = '';
+            document.getElementById('editName').value = user.name;
+            document.getElementById('editRole').value = user.role;
+            document.getElementById('editUserModal').classList.add('show');
+        }
+        
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.remove('show');
+            editingUserIndex = -1;
+        }
+        
+        function saveEditedUser() {
+            const email = document.getElementById('editEmail').value;
+            const password = document.getElementById('editPassword').value;
+            const name = document.getElementById('editName').value;
+            const role = document.getElementById('editRole').value;
+            
+            if (!email || !name) {
+                alert('Por favor, preencha todos os campos obrigatórios');
+                return;
+            }
+            
+            USERS[editingUserIndex].email = email;
+            if (password) {
+                USERS[editingUserIndex].password = password;
+            }
+            USERS[editingUserIndex].name = name;
+            USERS[editingUserIndex].role = role;
+            
+            closeEditUserModal();
+            renderUsersTable();
+            alert('✅ Usuário atualizado com sucesso!');
+        }
+        
+        function deleteUser(index) {
+            if (confirm(`Tem certeza que deseja deletar ${USERS[index].name}?`)) {
+                USERS.splice(index, 1);
+                renderUsersTable();
+                alert('✅ Usuário deletado com sucesso!');
+            }
+        }
+        
+        function openAddUserModal() {
+            document.getElementById('newEmail').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('newName').value = '';
+            document.getElementById('addUserModal').classList.add('show');
+        }
+        
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').classList.remove('show');
+        }
+        
+        function saveNewUser() {
+            const email = document.getElementById('newEmail').value;
+            const password = document.getElementById('newPassword').value;
+            const name = document.getElementById('newName').value;
+            
+            if (!email || !password || !name) {
+                alert('Por favor, preencha todos os campos');
+                return;
+            }
+            
+            if (USERS.find(u => u.email === email)) {
+                alert('Este email já existe!');
+                return;
+            }
+            
+            USERS.push({ email, password, name, role: 'viewer' });
+            closeAddUserModal();
+            renderUsersTable();
+            alert('✅ Usuário adicionado com sucesso!');
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('show');
+            event.target.classList.add('active');
         }
         
         initialize();
