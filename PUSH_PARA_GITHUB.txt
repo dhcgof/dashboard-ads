@@ -1,0 +1,75 @@
+════════════════════════════════════════════════════════════════════════════════
+🚀 COMO FAZER PUSH DO DASHBOARD PARA SEU GITHUB
+════════════════════════════════════════════════════════════════════════════════
+
+OPÇÃO 1: Via GitHub Web (RECOMENDADO - Mais Fácil)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Acesse: https://github.com/dhcgof/dashboard-ads
+2. Clique em "Add file" → "Upload files"
+3. Arraste ou selecione estes arquivos:
+   ✓ dashboard_login.html
+   ✓ dashboard_consolidado.html
+   ✓ dashboard_consolidated_data.json
+   ✓ app_backend.py
+   ✓ requirements.txt
+   ✓ README.md
+   ✓ AUTENTICACAO_GUIA.md
+   ✓ SISTEMA_LOGIN_RESUMO.md
+   ✓ START_HERE.md
+   ✓ GITHUB_PAGES_SETUP.md
+   ✓ .gitignore
+
+4. Clique em "Commit changes"
+5. Pronto! Seus arquivos estão no GitHub Pages
+
+════════════════════════════════════════════════════════════════════════════════
+
+OPÇÃO 2: Via SSH (GitHub Desktop / Terminal)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Configure SSH no GitHub:
+   https://docs.github.com/en/authentication/connecting-to-github-with-ssh
+
+2. Execute no terminal:
+   cd /home/claude/dashboard-repo
+   git remote set-url origin git@github.com:dhcgof/dashboard-ads.git
+   git push -u origin main
+
+════════════════════════════════════════════════════════════════════════════════
+
+OPÇÃO 3: Via Token (GitHub CLI)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Crie um token em: https://github.com/settings/tokens
+   - Marque: repo, write:repo_hook
+   - Copie o token
+
+2. Execute no terminal:
+   cd /home/claude/dashboard-repo
+   git config --global user.name "Diego Cordeiro"
+   git config --global user.email "seu@email.com"
+   git remote set-url origin https://TOKEN@github.com/dhcgof/dashboard-ads.git
+   git push -u origin main
+
+   (Substitua TOKEN pelo token que você copiou)
+
+════════════════════════════════════════════════════════════════════════════════
+
+✅ DEPOIS DE FAZER PUSH:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Vá para: https://github.com/dhcgof/dashboard-ads/settings/pages
+2. Escolha: Deploy from branch
+3. Branch: main / (root)
+4. Clique: Save
+
+5. Em ~2 minutos, seu dashboard estará em:
+   https://dhcgof.github.io/dashboard-ads/dashboard_login.html
+
+════════════════════════════════════════════════════════════════════════════════
+
+📚 Arquivos Prontos em:
+/home/claude/dashboard-repo/
+
+Quer ajuda com SSH ou Token? Comenta!

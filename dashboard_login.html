@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            font-size: 2em;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .logo p {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+        input::placeholder {
+            color: #777;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.3);
+        }
+        .btn-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-register {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .btn-register:hover {
+            background: rgba(255, 107, 107, 0.3);
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            color: #4ecdc4;
+            border-bottom-color: #4ecdc4;
+        }
+        .form-content {
+            display: none;
+        }
+        .form-content.active {
+            display: block;
+        }
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            display: none;
+        }
+        .message.show {
+            display: block;
+        }
+        .message.success {
+            background: rgba(149, 225, 211, 0.1);
+            border: 1px solid #95e1d3;
+            color: #95e1d3;
+        }
+        .message.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        .password-toggle {
+            position: relative;
+        }
+        .password-toggle input {
+            padding-right: 40px;
+        }
+        .toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #4ecdc4;
+            cursor: pointer;
+            font-size: 0.9em;
+            padding: 5px;
+        }
+        .demo-users {
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid #4ecdc4;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.85em;
+        }
+        .demo-users h4 {
+            color: #4ecdc4;
+            margin-bottom: 10px;
+        }
+        .demo-users p {
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .demo-users code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-family: monospace;
+        }
+        .admin-panel {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .admin-panel h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+        .users-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+        }
+        .user-item.admin {
+            border-left: 2px solid #ff6b6b;
+        }
+        .user-item.user {
+            border-left: 2px solid #4ecdc4;
+        }
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        .delete-btn:hover {
+            opacity: 0.8;
+        }
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 25px;
+            }
+            .logo h1 {
+                font-size: 1.5em;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>📊 Dashboard</h1>
+            <p>MDL + Cantinho da Girafa</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" onclick="switchTab('register')">Cadastro</button>
+            <button class="tab-btn" onclick="switchTab('admin')">Admin</button>
+        </div>
+
+        <!-- FORM LOGIN -->
+        <div id="login" class="form-content active">
+            <div id="loginMessage" class="message"></div>
+            
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Senha</label>
+                <div class="password-toggle">
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                    <button class="toggle-btn" onclick="togglePassword('loginPassword')">👁️</button>
+                </div>
+            </div>
+
+            <button class="btn-login" onclick="login()">Entrar</button>
+
+            <div class="demo-users">
+                <h4>🔓 Usuários de Demo:</h4>
+                <p><strong>Admin:</strong> <code>admin@example.com</code> / <code>admin123</code></p>
+                <p><strong>Usuário:</strong> <code>user@example.com</code> / <code>user123</code></p>
+            </div>
+        </div>
+
+        <!-- FORM REGISTRO -->
+        <div id="register" class="form-content">
+            <div id="registerMessage" class="message"></div>
+            
+            <div class="form-group">
+                <label for="registerName">Nome Completo</label>
+                <input type="text" id="registerName" placeholder="Seu Nome">
+            </div>
+
+            <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="registerPassword">Senha</label>
+                <div class="password-toggle">
+                    <input type="password" id="registerPassword" placeholder="••••••••">
+                    <button class="toggle-btn" onclick="togglePassword('registerPassword')">👁️</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="registerPasswordConfirm">Confirmar Senha</label>
+                <div class="password-toggle">
+                    <input type="password" id="registerPasswordConfirm" placeholder="••••••••">
+                    <button class="toggle-btn" onclick="togglePassword('registerPasswordConfirm')">👁️</button>
+                </div>
+            </div>
+
+            <button class="btn-login" onclick="register()">Criar Conta</button>
+        </div>
+
+        <!-- PAINEL ADMIN -->
+        <div id="admin" class="form-content">
+            <div id="adminMessage" class="message"></div>
+            
+            <div class="admin-panel">
+                <h3>👥 Gerenciar Usuários</h3>
+                
+                <div class="users-list" id="usersList">
+                    <!-- Preenchido por JavaScript -->
+                </div>
+
+                <button class="btn-login" onclick="refreshUsersList()">🔄 Atualizar Lista</button>
+                <button class="btn-register" onclick="resetAllUsers()">⚠️ Resetar para Demo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== INICIALIZAÇÃO ====================
+        window.addEventListener('load', () => {
+            initializeUsers();
+            refreshUsersList();
+        });
+
+        // ==================== FUNÇÕES DE AUTENTICAÇÃO ====================
+        function initializeUsers() {
+            if (!localStorage.getItem('users')) {
+                const defaultUsers = [
+                    {
+                        id: 1,
+                        name: 'Diego Cordeiro',
+                        email: 'admin@example.com',
+                        password: hashPassword('admin123'),
+                        role: 'admin',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        name: 'Usuário Demo',
+                        email: 'user@example.com',
+                        password: hashPassword('user123'),
+                        role: 'user',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('users', JSON.stringify(defaultUsers));
+            }
+        }
+
+        function hashPassword(password) {
+            // Hash simples SHA-256 (para uso real, usar bcrypt no backend!)
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash).toString(16);
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const messageEl = document.getElementById('loginMessage');
+
+            if (!email || !password) {
+                showMessage(messageEl, 'Por favor, preencha todos os campos', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === hashPassword(password));
+
+            if (!user) {
+                showMessage(messageEl, 'Email ou senha incorretos', 'error');
+                return;
+            }
+
+            // Salvar sessão
+            sessionStorage.setItem('currentUser', JSON.stringify({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }));
+
+            showMessage(messageEl, `Bem-vindo, ${user.name}! Redirecionando...`, 'success');
+            setTimeout(() => {
+                window.location.href = 'dashboard_consolidado.html';
+            }, 1500);
+        }
+
+        function register() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerPasswordConfirm').value;
+            const messageEl = document.getElementById('registerMessage');
+
+            // Validações
+            if (!name || !email || !password || !confirmPassword) {
+                showMessage(messageEl, 'Por favor, preencha todos os campos', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage(messageEl, 'Senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage(messageEl, 'As senhas não coincidem', 'error');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showMessage(messageEl, 'Email inválido', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.some(u => u.email === email)) {
+                showMessage(messageEl, 'Este email já está cadastrado', 'error');
+                return;
+            }
+
+            // Criar novo usuário
+            const newUser = {
+                id: Math.max(...users.map(u => u.id), 0) + 1,
+                name: name,
+                email: email,
+                password: hashPassword(password),
+                role: 'user',
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            showMessage(messageEl, 'Conta criada com sucesso! Faça login agora.', 'success');
+            
+            // Limpar formulário
+            document.getElementById('registerName').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerPasswordConfirm').value = '';
+
+            // Voltar para login
+            setTimeout(() => {
+                switchTab('login');
+                refreshUsersList();
+            }, 1500);
+        }
+
+        // ==================== PAINEL ADMIN ====================
+        function refreshUsersList() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const usersList = document.getElementById('usersList');
+            
+            if (users.length === 0) {
+                usersList.innerHTML = '<p style="text-align: center; color: #aaa;">Nenhum usuário cadastrado</p>';
+                return;
+            }
+
+            usersList.innerHTML = users.map(user => `
+                <div class="user-item ${user.role}">
+                    <div>
+                        <strong>${user.name}</strong> (${user.email})
+                        <br>
+                        <span style="color: #777; font-size: 0.8em;">Papel: <strong>${user.role === 'admin' ? '👑 Admin' : '👤 Usuário'}</strong></span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteUser(${user.id})">Deletar</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteUser(userId) {
+            if (!confirm('Tem certeza que deseja deletar este usuário?')) return;
+
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            users = users.filter(u => u.id !== userId);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            showMessage(document.getElementById('adminMessage'), 'Usuário deletado com sucesso', 'success');
+            refreshUsersList();
+        }
+
+        function resetAllUsers() {
+            if (!confirm('⚠️ Isso vai deletar TODOS os usuários e restaurar apenas os de demo. Continuar?')) return;
+
+            initializeUsers();
+            showMessage(document.getElementById('adminMessage'), 'Usuários resetados para demo', 'success');
+            refreshUsersList();
+        }
+
+        // ==================== UTILIDADES ====================
+        function switchTab(tabName) {
+            // Esconder todos
+            document.querySelectorAll('.form-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // Mostrar selecionado
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Limpar mensagens
+            document.querySelectorAll('.message').forEach(el => el.classList.remove('show'));
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `message show ${type}`;
+            setTimeout(() => {
+                element.classList.remove('show');
+            }, 5000);
+        }
+
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+    </script>
+</body>
+</html>
