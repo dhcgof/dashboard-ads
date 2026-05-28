@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Dominação Dupla (Google + Meta)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1565C0 0%, #7C4DFF 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* ======= LOGIN SCREEN ======= */
+        .login-screen {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 420px;
+        }
+        
+        .login-screen.hidden {
+            display: none;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .login-header h1 {
+            color: #1565C0;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1565C0;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .login-btn:hover {
+            background: #0D47A1;
+        }
+        
+        .error-msg {
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .error-msg.show {
+            display: block;
+        }
+        
+        /* ======= SELEÇÃO DE CONTA ======= */
+        .account-selection {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .account-selection.hidden {
+            display: none;
+        }
+        
+        .selection-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .selection-header h1 {
+            color: #1565C0;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        .account-card {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .account-card:hover {
+            border-color: #1565C0;
+            box-shadow: 0 8px 20px rgba(21, 101, 192, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        .account-card.selected {
+            border-color: #1565C0;
+            background: #f0f7ff;
+        }
+        
+        .account-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .account-card h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .account-card p {
+            color: #999;
+            font-size: 13px;
+        }
+        
+        .btn-continue {
+            background: #1565C0;
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 15px;
+        }
+        
+        .btn-continue:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-logout {
+            padding: 10px 20px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        /* ======= DASHBOARD ======= */
+        .dashboard-screen {
+            width: 100%;
+            max-width: 1400px;
+            display: none;
+        }
+        
+        .dashboard-screen.show {
+            display: block;
+        }
+        
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #1565C0;
+            font-size: 26px;
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        .nav-tabs button {
+            padding: 12px 24px;
+            border: none;
+            background: #f0f0f0;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .nav-tabs button.active {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .nav-tabs button:hover {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .content {
+            background: white;
+            padding: 35px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.show {
+            display: block;
+        }
+        
+        .tab-content h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+        
+        /* ======= CARD STYLES ======= */
+        .card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .card-title {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .platform-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge-google {
+            background: #FBE8E6;
+            color: #D33E27;
+        }
+        
+        .badge-meta {
+            background: #E8F0FE;
+            color: #1565C0;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .status-paused {
+            background: #ffccbc;
+            color: #d84315;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .metric {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .metric-label {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        /* ======= TABELAS ======= */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .data-table thead {
+            background: #f0f0f0;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .data-table th {
+            padding: 12px;
+            text-align: left;
+            color: #333;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .data-table tbody tr:hover {
+            background: #fafafa;
+        }
+        
+        /* ======= BUTTONS ======= */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0D47A1;
+        }
+        
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #45a049;
+        }
+        
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c62828;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        /* ======= KEYWORDS SECTION ======= */
+        .keywords-section {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .keywords-section h3 {
+            color: #1565C0;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .keyword-item {
+            background: white;
+            padding: 12px;
+            border-left: 4px solid #1565C0;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .keyword-text {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .keyword-type {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        /* ======= MODAIS ======= */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .modal-content h3 {
+            color: #1565C0;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .modal-buttons .btn-save {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .modal-buttons .btn-cancel {
+            background: #ccc;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-header">
+            <h1>🎯 Dominação Dupla</h1>
+            <p>Google Ads + Meta Ads — Faça login</p>
+        </div>
+        
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="password" placeholder="sua senha" required>
+            </div>
+            <button type="submit" class="login-btn">Entrar</button>
+            <div class="error-msg" id="errorMsg"></div>
+        </form>
+    </div>
+    
+    <!-- SELEÇÃO DE CONTA -->
+    <div class="account-selection hidden" id="accountSelection">
+        <button class="btn-logout" onclick="handleLogout()">← Sair</button>
+        
+        <div class="selection-header">
+            <h1>🎯 Selecione uma Conta</h1>
+            <p>Qual negócio você quer gerenciar?</p>
+        </div>
+        
+        <div class="accounts-grid" id="accountsGrid"></div>
+        
+        <div style="text-align: center; padding-top: 30px; border-top: 1px solid #eee;">
+            <button class="btn-continue" id="continueBtn" disabled>Acessar →</button>
+        </div>
+    </div>
+    
+    <!-- DASHBOARD -->
+    <div class="dashboard-screen" id="dashboardScreen">
+        <div class="header">
+            <h1 id="dashboardTitle">📊 Dashboard</h1>
+            <button class="logout-btn" onclick="handleLogout()">Sair</button>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="active" onclick="switchTab('campaigns')">📈 Campanhas</button>
+            <button onclick="switchTab('keywords')">🔑 Palavras-chave</button>
+            <button onclick="switchTab('ads')">📢 Anúncios</button>
+            <button onclick="switchTab('admin')">⚙️ Admin</button>
+        </div>
+        
+        <div class="content">
+            <!-- TAB: CAMPANHAS -->
+            <div class="tab-content show" id="campaignsTab">
+                <h2>📈 Campanhas Ativas</h2>
+                <div id="campaignsList"></div>
+            </div>
+            
+            <!-- TAB: PALAVRAS-CHAVE -->
+            <div class="tab-content" id="keywordsTab">
+                <h2>🔑 Palavras-chave (Dominação Dupla)</h2>
+                <div id="keywordsList"></div>
+            </div>
+            
+            <!-- TAB: ANÚNCIOS -->
+            <div class="tab-content" id="adsTab">
+                <h2>📢 Anúncios da Campanha</h2>
+                <button class="btn btn-primary" onclick="openAddAdModal()">+ Novo Anúncio</button>
+                <div id="adsList" style="margin-top: 20px;"></div>
+            </div>
+            
+            <!-- TAB: ADMIN -->
+            <div class="tab-content" id="adminTab">
+                <h2>⚙️ Painel Administrativo</h2>
+                
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1565C0; margin-bottom: 15px;">👥 Gerenciar Usuários</h3>
+                    <button class="btn btn-success" onclick="openAddUserModal()">+ Adicionar Usuário</button>
+                    
+                    <table class="data-table" style="margin-top: 15px;">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Nome</th>
+                                <th>Função</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR USUÁRIO -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-content">
+            <h3>✏️ Editar Usuário</h3>
+            <input type="email" id="editEmail" placeholder="Email">
+            <input type="password" id="editPassword" placeholder="Senha (deixar em branco para não alterar)">
+            <input type="text" id="editName" placeholder="Nome">
+            <select id="editRole">
+                <option value="admin">Admin</option>
+                <option value="viewer">Viewer</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="btn-save" onclick="saveEditedUser()">Salvar</button>
+                <button class="btn-cancel" onclick="closeEditUserModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADICIONAR USUÁRIO -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-content">
+            <h3>➕ Adicionar Novo Usuário</h3>
+            <input type="email" id="newEmail" placeholder="Email" required>
+            <input type="password" id="newPassword" placeholder="Senha" required>
+            <input type="text" id="newName" placeholder="Nome" required>
+            <div class="modal-buttons">
+                <button class="btn-save" onclick="saveNewUser()">Adicionar</button>
+                <button class="btn-cancel" onclick="closeAddUserModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ACCOUNTS = {
+            'girafa': {
+                name: 'Cantinho da Girafa',
+                icon: '🎀',
+                description: 'Brinquedoteca e Aluguel de Brinquedos',
+                location: 'Ponta Grossa, PR',
+                campaigns: [
+                    {
+                        name: '3 Dias de Loucura',
+                        platforms: ['Meta', 'Google'],
+                        status: 'active',
+                        spend: 'R$ 755',
+                        impressions: '403.5K',
+                        clicks: '847',
+                        conversions: '45'
+                    }
+                ],
+                keywords: [
+                    { text: 'brinquedoteca ponta grossa', match: 'exata', platform: 'google' },
+                    { text: 'aluguel brinquedos ponta grossa', match: 'frase', platform: 'google' },
+                    { text: 'festa infantil ponta grossa', match: 'frase', platform: 'google' },
+                    { text: 'brinquedoteca infantil', match: 'ampla', platform: 'meta' }
+                ]
+            },
+            'mdl': {
+                name: 'MDL Móveis do Lar',
+                icon: '🛋️',
+                description: 'Loja de Móveis e Eletrodomésticos',
+                location: 'Castro, PR',
+                campaigns: [
+                    {
+                        name: '3 Dias de Loucura',
+                        platforms: ['Meta', 'Google'],
+                        status: 'active',
+                        spend: 'R$ 425',
+                        impressions: '152K',
+                        clicks: '1.250',
+                        conversions: '87'
+                    }
+                ],
+                keywords: [
+                    { text: 'móveis castro pr', match: 'exata', platform: 'google' },
+                    { text: 'loja móveis castro', match: 'frase', platform: 'google' },
+                    { text: 'móveis eletrodomésticos', match: 'frase', platform: 'google' },
+                    { text: 'sofá castro paraná', match: 'exata', platform: 'google' }
+                ]
+            }
+        };
+        
+        let USERS = [
+            { email: 'diego@girafa.com', password: 'diego123', name: 'Diego Cordeiro', role: 'admin' },
+            { email: 'gabriela@girafa.com', password: 'gabriela123', name: 'Gabriela', role: 'admin' },
+            { email: 'diego@mdl.com', password: 'diego123', name: 'Diego MDL', role: 'admin' },
+            { email: 'vendas@mdl.com', password: 'mdl2025', name: 'Equipe Vendas', role: 'viewer' }
+        ];
+        
+        let currentUser = null;
+        let selectedAccount = null;
+        let editingUserIndex = -1;
+        
+        function initialize() {
+            renderAccounts();
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const user = USERS.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                showAccountSelection();
+            } else {
+                const errorMsg = document.getElementById('errorMsg');
+                errorMsg.textContent = '❌ Email ou senha incorretos';
+                errorMsg.classList.add('show');
+            }
+        }
+        
+        function handleLogout() {
+            currentUser = null;
+            selectedAccount = null;
+            sessionStorage.removeItem('currentUser');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('accountSelection').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('show');
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('errorMsg').classList.remove('show');
+        }
+        
+        function showAccountSelection() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('accountSelection').classList.remove('hidden');
+            renderAccounts();
+        }
+        
+        function renderAccounts() {
+            const grid = document.getElementById('accountsGrid');
+            grid.innerHTML = Object.entries(ACCOUNTS).map(([key, account]) => `
+                <div class="account-card" onclick="selectAccount('${key}')" data-account="${key}">
+                    <div class="account-icon">${account.icon}</div>
+                    <h3>${account.name}</h3>
+                    <p>${account.description}</p>
+                    <p style="color: #666; font-size: 12px; margin-top: 8px;">📍 ${account.location}</p>
+                    <div style="color: #4CAF50; font-size: 12px; margin-top: 10px; font-weight: 600;">✓ Ativo</div>
+                </div>
+            `).join('');
+        }
+        
+        function selectAccount(key) {
+            selectedAccount = key;
+            document.querySelectorAll('.account-card').forEach(el => el.classList.remove('selected'));
+            document.querySelector(`[data-account="${key}"]`).classList.add('selected');
+            document.getElementById('continueBtn').disabled = false;
+            document.getElementById('continueBtn').onclick = () => showDashboard(key);
+        }
+        
+        function showDashboard(key) {
+            const account = ACCOUNTS[key];
+            document.getElementById('accountSelection').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.add('show');
+            document.getElementById('dashboardTitle').textContent = `${account.icon} ${account.name}`;
+            
+            renderCampaigns(account.campaigns);
+            renderKeywords(account.keywords);
+            renderUsersTable();
+        }
+        
+        function renderCampaigns(campaigns) {
+            const list = document.getElementById('campaignsList');
+            list.innerHTML = campaigns.map(c => `
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">${c.name}</span>
+                        <div>
+                            <span class="platform-badge badge-google">🔍 Google</span>
+                            <span class="platform-badge badge-meta" style="margin-left: 8px;">📱 Meta</span>
+                            <span class="status-badge ${c.status === 'active' ? 'status-active' : 'status-paused'}" style="margin-left: 8px;">
+                                ${c.status === 'active' ? '🟢 ATIVA' : '⏸️ PAUSADA'}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Gasto Total</div>
+                            <div class="metric-value">${c.spend}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Impressões</div>
+                            <div class="metric-value">${c.impressions}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Cliques</div>
+                            <div class="metric-value">${c.clicks}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Conversões</div>
+                            <div class="metric-value">${c.conversions}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderKeywords(keywords) {
+            const list = document.getElementById('keywordsList');
+            
+            const googleKeywords = keywords.filter(k => k.platform === 'google');
+            const metaKeywords = keywords.filter(k => k.platform === 'meta');
+            
+            let html = '';
+            
+            if (googleKeywords.length > 0) {
+                html += '<div class="keywords-section"><h3>🔍 Google Ads — Palavras-chave</h3>';
+                googleKeywords.forEach(k => {
+                    html += `
+                        <div class="keyword-item">
+                            <div>
+                                <div class="keyword-text">${k.text}</div>
+                                <div class="keyword-type">Correspondência: ${k.match}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            if (metaKeywords.length > 0) {
+                html += '<div class="keywords-section"><h3>📱 Meta Ads — Interesses</h3>';
+                metaKeywords.forEach(k => {
+                    html += `
+                        <div class="keyword-item">
+                            <div>
+                                <div class="keyword-text">${k.text}</div>
+                                <div class="keyword-type">Segmentação: interesse</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            list.innerHTML = html;
+        }
+        
+        function renderUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = USERS.map((user, index) => `
+                <tr>
+                    <td>${user.email}</td>
+                    <td>${user.name}</td>
+                    <td>${user.role === 'admin' ? '👑 Admin' : '👤 Viewer'}</td>
+                    <td>
+                        <button class="btn btn-primary btn-small" onclick="openEditUserModal(${index})">Editar</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteUser(${index})">Deletar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function openEditUserModal(index) {
+            editingUserIndex = index;
+            const user = USERS[index];
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editPassword').value = '';
+            document.getElementById('editName').value = user.name;
+            document.getElementById('editRole').value = user.role;
+            document.getElementById('editUserModal').classList.add('show');
+        }
+        
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.remove('show');
+            editingUserIndex = -1;
+        }
+        
+        function saveEditedUser() {
+            const email = document.getElementById('editEmail').value;
+            const password = document.getElementById('editPassword').value;
+            const name = document.getElementById('editName').value;
+            const role = document.getElementById('editRole').value;
+            
+            if (!email || !name) {
+                alert('Por favor, preencha todos os campos obrigatórios');
+                return;
+            }
+            
+            USERS[editingUserIndex].email = email;
+            if (password) USERS[editingUserIndex].password = password;
+            USERS[editingUserIndex].name = name;
+            USERS[editingUserIndex].role = role;
+            
+            closeEditUserModal();
+            renderUsersTable();
+            alert('✅ Usuário atualizado com sucesso!');
+        }
+        
+        function deleteUser(index) {
+            if (confirm(`Tem certeza que deseja deletar ${USERS[index].name}?`)) {
+                USERS.splice(index, 1);
+                renderUsersTable();
+                alert('✅ Usuário deletado com sucesso!');
+            }
+        }
+        
+        function openAddUserModal() {
+            document.getElementById('newEmail').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('newName').value = '';
+            document.getElementById('addUserModal').classList.add('show');
+        }
+        
+        function closeAddUserModal() {
+            document.getElementById('addUserModal').classList.remove('show');
+        }
+        
+        function saveNewUser() {
+            const email = document.getElementById('newEmail').value;
+            const password = document.getElementById('newPassword').value;
+            const name = document.getElementById('newName').value;
+            
+            if (!email || !password || !name) {
+                alert('Por favor, preencha todos os campos');
+                return;
+            }
+            
+            if (USERS.find(u => u.email === email)) {
+                alert('Este email já existe!');
+                return;
+            }
+            
+            USERS.push({ email, password, name, role: 'viewer' });
+            closeAddUserModal();
+            renderUsersTable();
+            alert('✅ Usuário adicionado com sucesso!');
+        }
+        
+        function openAddAdModal() {
+            alert('📢 Novo Anúncio\n\nUse o Criador de Anúncios em Carrossel para criar anúncios com 6 imagens dos produtos!');
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('show');
+            event.target.classList.add('active');
+        }
+        
+        initialize();
+    </script>
+</body>
+</html>
