@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Campanhas — Login</title>
+    <title>Dashboard — Dominação Dupla (Google + Meta)</title>
     <style>
         * {
             margin: 0;
@@ -102,29 +102,6 @@
         
         .error-msg.show {
             display: block;
-        }
-        
-        .login-info {
-            background: #f0f7ff;
-            padding: 15px;
-            border-radius: 6px;
-            font-size: 12px;
-            color: #666;
-            margin-top: 25px;
-            border-left: 4px solid #1565C0;
-        }
-        
-        .login-info h4 {
-            color: #1565C0;
-            margin-bottom: 8px;
-        }
-        
-        .login-info p {
-            margin: 4px 0;
-            font-family: monospace;
-            background: white;
-            padding: 6px;
-            border-radius: 3px;
         }
         
         /* ======= SELEÇÃO DE CONTA ======= */
@@ -270,6 +247,7 @@
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow-x: auto;
         }
         
         .nav-tabs button {
@@ -281,6 +259,7 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         
         .nav-tabs button.active {
@@ -314,29 +293,48 @@
             font-size: 22px;
         }
         
-        .campaign-card {
+        /* ======= CARD STYLES ======= */
+        .card {
             background: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 20px;
-            border-left: 4px solid #1565C0;
             margin-bottom: 20px;
         }
         
-        .campaign-header {
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            flex-wrap: wrap;
         }
         
-        .campaign-name {
+        .card-title {
             color: #333;
             font-size: 18px;
             font-weight: 600;
         }
         
-        .campaign-status {
+        .platform-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge-google {
+            background: #FBE8E6;
+            color: #D33E27;
+        }
+        
+        .badge-meta {
+            background: #E8F0FE;
+            color: #1565C0;
+        }
+        
+        .status-badge {
             display: inline-block;
             padding: 6px 12px;
             border-radius: 20px;
@@ -354,37 +352,45 @@
             color: #d84315;
         }
         
-        /* ======= ADMIN PANEL ======= */
-        .admin-panel {
-            margin-bottom: 30px;
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
         
-        .admin-section {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+        .metric {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
         }
         
-        .admin-section h3 {
-            color: #1565C0;
-            margin-bottom: 15px;
-            font-size: 16px;
+        .metric-label {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 5px;
         }
         
-        .users-table {
+        .metric-value {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        /* ======= TABELAS ======= */
+        .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-top: 15px;
         }
         
-        .users-table thead {
+        .data-table thead {
             background: #f0f0f0;
             border-bottom: 2px solid #ddd;
         }
         
-        .users-table th {
+        .data-table th {
             padding: 12px;
             text-align: left;
             color: #333;
@@ -392,51 +398,100 @@
             font-size: 13px;
         }
         
-        .users-table td {
+        .data-table td {
             padding: 12px;
             border-bottom: 1px solid #eee;
             color: #666;
             font-size: 13px;
         }
         
-        .users-table tbody tr:hover {
+        .data-table tbody tr:hover {
             background: #fafafa;
         }
         
-        .btn-edit {
-            padding: 6px 12px;
-            background: #1565C0;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 5px;
-        }
-        
-        .btn-delete {
-            padding: 6px 12px;
-            background: #d32f2f;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .btn-add-user {
+        /* ======= BUTTONS ======= */
+        .btn {
             padding: 10px 20px;
-            background: #4CAF50;
-            color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            margin-bottom: 15px;
+            font-size: 14px;
+            transition: all 0.3s;
         }
         
+        .btn-primary {
+            background: #1565C0;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0D47A1;
+        }
+        
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #45a049;
+        }
+        
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c62828;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        /* ======= KEYWORDS SECTION ======= */
+        .keywords-section {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .keywords-section h3 {
+            color: #1565C0;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .keyword-item {
+            background: white;
+            padding: 12px;
+            border-left: 4px solid #1565C0;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .keyword-text {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .keyword-type {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        /* ======= MODAIS ======= */
         .modal {
             display: none;
             position: fixed;
@@ -459,7 +514,7 @@
             padding: 30px;
             border-radius: 8px;
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
         
@@ -469,7 +524,7 @@
             font-size: 18px;
         }
         
-        .modal-content input {
+        .modal-content input, .modal-content select {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
@@ -492,12 +547,12 @@
             font-weight: 600;
         }
         
-        .btn-save {
+        .modal-buttons .btn-save {
             background: #4CAF50;
             color: white;
         }
         
-        .btn-cancel {
+        .modal-buttons .btn-cancel {
             background: #ccc;
             color: #333;
         }
@@ -507,8 +562,8 @@
     <!-- LOGIN SCREEN -->
     <div class="login-screen" id="loginScreen">
         <div class="login-header">
-            <h1>🎯 Dashboard Campanhas</h1>
-            <p>Faça login para continuar</p>
+            <h1>🎯 Dominação Dupla</h1>
+            <p>Google Ads + Meta Ads — Faça login</p>
         </div>
         
         <form onsubmit="handleLogin(event)">
@@ -523,14 +578,6 @@
             <button type="submit" class="login-btn">Entrar</button>
             <div class="error-msg" id="errorMsg"></div>
         </form>
-        
-        <div class="login-info">
-            <h4>👤 Acesso Demo</h4>
-            <p>diego@girafa.com</p>
-            <p>diego123</p>
-            <p style="margin-top: 10px;">gabriela@girafa.com</p>
-            <p>gabriela123</p>
-        </div>
     </div>
     
     <!-- SELEÇÃO DE CONTA -->
@@ -545,7 +592,7 @@
         <div class="accounts-grid" id="accountsGrid"></div>
         
         <div style="text-align: center; padding-top: 30px; border-top: 1px solid #eee;">
-            <button class="btn-continue" id="continueBtn" disabled>Acessar Conta →</button>
+            <button class="btn-continue" id="continueBtn" disabled>Acessar →</button>
         </div>
     </div>
     
@@ -558,6 +605,8 @@
         
         <div class="nav-tabs">
             <button class="active" onclick="switchTab('campaigns')">📈 Campanhas</button>
+            <button onclick="switchTab('keywords')">🔑 Palavras-chave</button>
+            <button onclick="switchTab('ads')">📢 Anúncios</button>
             <button onclick="switchTab('admin')">⚙️ Admin</button>
         </div>
         
@@ -568,28 +617,38 @@
                 <div id="campaignsList"></div>
             </div>
             
+            <!-- TAB: PALAVRAS-CHAVE -->
+            <div class="tab-content" id="keywordsTab">
+                <h2>🔑 Palavras-chave (Dominação Dupla)</h2>
+                <div id="keywordsList"></div>
+            </div>
+            
+            <!-- TAB: ANÚNCIOS -->
+            <div class="tab-content" id="adsTab">
+                <h2>📢 Anúncios da Campanha</h2>
+                <button class="btn btn-primary" onclick="openAddAdModal()">+ Novo Anúncio</button>
+                <div id="adsList" style="margin-top: 20px;"></div>
+            </div>
+            
             <!-- TAB: ADMIN -->
             <div class="tab-content" id="adminTab">
                 <h2>⚙️ Painel Administrativo</h2>
                 
-                <div class="admin-panel">
-                    <div class="admin-section">
-                        <h3>👥 Gerenciar Usuários</h3>
-                        
-                        <button class="btn-add-user" onclick="openAddUserModal()">+ Adicionar Novo Usuário</button>
-                        
-                        <table class="users-table">
-                            <thead>
-                                <tr>
-                                    <th>Email</th>
-                                    <th>Nome</th>
-                                    <th>Função</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody"></tbody>
-                        </table>
-                    </div>
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1565C0; margin-bottom: 15px;">👥 Gerenciar Usuários</h3>
+                    <button class="btn btn-success" onclick="openAddUserModal()">+ Adicionar Usuário</button>
+                    
+                    <table class="data-table" style="margin-top: 15px;">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Nome</th>
+                                <th>Função</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -602,7 +661,7 @@
             <input type="email" id="editEmail" placeholder="Email">
             <input type="password" id="editPassword" placeholder="Senha (deixar em branco para não alterar)">
             <input type="text" id="editName" placeholder="Nome">
-            <select id="editRole" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; margin-bottom: 15px;">
+            <select id="editRole">
                 <option value="admin">Admin</option>
                 <option value="viewer">Viewer</option>
             </select>
@@ -633,70 +692,46 @@
                 name: 'Cantinho da Girafa',
                 icon: '🎀',
                 description: 'Brinquedoteca e Aluguel de Brinquedos',
+                location: 'Ponta Grossa, PR',
                 campaigns: [
                     {
-                        name: '3 Dias de Loucura — Fechamento Maio',
+                        name: '3 Dias de Loucura',
+                        platforms: ['Meta', 'Google'],
                         status: 'active',
-                        objective: 'Awareness',
-                        budget: 'R$ 200/dia',
-                        period: '26-30 maio 2026',
+                        spend: 'R$ 755',
                         impressions: '403.5K',
                         clicks: '847',
-                        spend: 'R$ 755',
-                        ctr: '0,21%',
-                        cpc: 'R$ 0,89',
-                        adsets: 2,
-                        ads: 3
-                    },
-                    {
-                        name: 'Seguidores Ativos Pooh — Expansão',
-                        status: 'paused',
-                        objective: 'Awareness',
-                        budget: 'R$ 1.000/total',
-                        period: '27/05 — 30/06/2026',
-                        impressions: '77.9K',
-                        clicks: '1.036',
-                        spend: 'R$ 701',
-                        ctr: '1,33%',
-                        cpc: 'R$ 0,68',
-                        adsets: 2,
-                        ads: 4
+                        conversions: '45'
                     }
+                ],
+                keywords: [
+                    { text: 'brinquedoteca ponta grossa', match: 'exata', platform: 'google' },
+                    { text: 'aluguel brinquedos ponta grossa', match: 'frase', platform: 'google' },
+                    { text: 'festa infantil ponta grossa', match: 'frase', platform: 'google' },
+                    { text: 'brinquedoteca infantil', match: 'ampla', platform: 'meta' }
                 ]
             },
             'mdl': {
                 name: 'MDL Móveis do Lar',
                 icon: '🛋️',
                 description: 'Loja de Móveis e Eletrodomésticos',
+                location: 'Castro, PR',
                 campaigns: [
                     {
-                        name: '3 Dias de Loucura — Fechamento Maio',
+                        name: '3 Dias de Loucura',
+                        platforms: ['Meta', 'Google'],
                         status: 'active',
-                        objective: 'Awareness',
-                        budget: 'R$ 200/dia',
-                        period: '26-30 maio 2026',
+                        spend: 'R$ 425',
                         impressions: '152K',
                         clicks: '1.250',
-                        spend: 'R$ 425',
-                        ctr: '0,82%',
-                        cpc: 'R$ 0,34',
-                        adsets: 1,
-                        ads: 2
-                    },
-                    {
-                        name: 'Feirão de Móveis',
-                        status: 'paused',
-                        objective: 'Traffic',
-                        budget: 'R$ 150/dia',
-                        period: '20-25 maio 2026',
-                        impressions: '89.3K',
-                        clicks: '620',
-                        spend: 'R$ 300',
-                        ctr: '0,69%',
-                        cpc: 'R$ 0,48',
-                        adsets: 2,
-                        ads: 3
+                        conversions: '87'
                     }
+                ],
+                keywords: [
+                    { text: 'móveis castro pr', match: 'exata', platform: 'google' },
+                    { text: 'loja móveis castro', match: 'frase', platform: 'google' },
+                    { text: 'móveis eletrodomésticos', match: 'frase', platform: 'google' },
+                    { text: 'sofá castro paraná', match: 'exata', platform: 'google' }
                 ]
             }
         };
@@ -758,6 +793,7 @@
                     <div class="account-icon">${account.icon}</div>
                     <h3>${account.name}</h3>
                     <p>${account.description}</p>
+                    <p style="color: #666; font-size: 12px; margin-top: 8px;">📍 ${account.location}</p>
                     <div style="color: #4CAF50; font-size: 12px; margin-top: 10px; font-weight: 600;">✓ Ativo</div>
                 </div>
             `).join('');
@@ -778,64 +814,86 @@
             document.getElementById('dashboardTitle').textContent = `${account.icon} ${account.name}`;
             
             renderCampaigns(account.campaigns);
+            renderKeywords(account.keywords);
             renderUsersTable();
         }
         
         function renderCampaigns(campaigns) {
             const list = document.getElementById('campaignsList');
             list.innerHTML = campaigns.map(c => `
-                <div class="campaign-card">
-                    <div class="campaign-header">
-                        <span class="campaign-name">${c.name}</span>
-                        <span class="campaign-status ${c.status === 'active' ? 'status-active' : 'status-paused'}">
-                            ${c.status === 'active' ? '🟢 ATIVA' : '⏸️ PAUSADA'}
-                        </span>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">${c.name}</span>
+                        <div>
+                            <span class="platform-badge badge-google">🔍 Google</span>
+                            <span class="platform-badge badge-meta" style="margin-left: 8px;">📱 Meta</span>
+                            <span class="status-badge ${c.status === 'active' ? 'status-active' : 'status-paused'}" style="margin-left: 8px;">
+                                ${c.status === 'active' ? '🟢 ATIVA' : '⏸️ PAUSADA'}
+                            </span>
+                        </div>
                     </div>
                     
-                    <div style="background: white; padding: 15px; border-radius: 6px;">
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">Objetivo</span>
-                            <span style="color: #333; font-weight: 600;">${c.objective}</span>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Gasto Total</div>
+                            <div class="metric-value">${c.spend}</div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">Orçamento</span>
-                            <span style="color: #333; font-weight: 600;">${c.budget}</span>
+                        <div class="metric">
+                            <div class="metric-label">Impressões</div>
+                            <div class="metric-value">${c.impressions}</div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">Período</span>
-                            <span style="color: #333; font-weight: 600;">${c.period}</span>
+                        <div class="metric">
+                            <div class="metric-label">Cliques</div>
+                            <div class="metric-value">${c.clicks}</div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">📊 Impressões</span>
-                            <span style="color: #333; font-weight: 600;">${c.impressions}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">🔗 Cliques</span>
-                            <span style="color: #333; font-weight: 600;">${c.clicks}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">💰 Gasto Total</span>
-                            <span style="color: #333; font-weight: 600;">${c.spend}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">📈 CTR</span>
-                            <span style="color: #333; font-weight: 600;">${c.ctr}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">💵 CPC</span>
-                            <span style="color: #333; font-weight: 600;">${c.cpc}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">
-                            <span style="color: #999;">🎯 Ad Sets</span>
-                            <span style="color: #333; font-weight: 600;">${c.adsets}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                            <span style="color: #999;">📢 Anúncios</span>
-                            <span style="color: #333; font-weight: 600;">${c.ads}</span>
+                        <div class="metric">
+                            <div class="metric-label">Conversões</div>
+                            <div class="metric-value">${c.conversions}</div>
                         </div>
                     </div>
                 </div>
             `).join('');
+        }
+        
+        function renderKeywords(keywords) {
+            const list = document.getElementById('keywordsList');
+            
+            const googleKeywords = keywords.filter(k => k.platform === 'google');
+            const metaKeywords = keywords.filter(k => k.platform === 'meta');
+            
+            let html = '';
+            
+            if (googleKeywords.length > 0) {
+                html += '<div class="keywords-section"><h3>🔍 Google Ads — Palavras-chave</h3>';
+                googleKeywords.forEach(k => {
+                    html += `
+                        <div class="keyword-item">
+                            <div>
+                                <div class="keyword-text">${k.text}</div>
+                                <div class="keyword-type">Correspondência: ${k.match}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            if (metaKeywords.length > 0) {
+                html += '<div class="keywords-section"><h3>📱 Meta Ads — Interesses</h3>';
+                metaKeywords.forEach(k => {
+                    html += `
+                        <div class="keyword-item">
+                            <div>
+                                <div class="keyword-text">${k.text}</div>
+                                <div class="keyword-type">Segmentação: interesse</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            list.innerHTML = html;
         }
         
         function renderUsersTable() {
@@ -846,8 +904,8 @@
                     <td>${user.name}</td>
                     <td>${user.role === 'admin' ? '👑 Admin' : '👤 Viewer'}</td>
                     <td>
-                        <button class="btn-edit" onclick="openEditUserModal(${index})">Editar</button>
-                        <button class="btn-delete" onclick="deleteUser(${index})">Deletar</button>
+                        <button class="btn btn-primary btn-small" onclick="openEditUserModal(${index})">Editar</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteUser(${index})">Deletar</button>
                     </td>
                 </tr>
             `).join('');
@@ -880,9 +938,7 @@
             }
             
             USERS[editingUserIndex].email = email;
-            if (password) {
-                USERS[editingUserIndex].password = password;
-            }
+            if (password) USERS[editingUserIndex].password = password;
             USERS[editingUserIndex].name = name;
             USERS[editingUserIndex].role = role;
             
@@ -929,6 +985,10 @@
             closeAddUserModal();
             renderUsersTable();
             alert('✅ Usuário adicionado com sucesso!');
+        }
+        
+        function openAddAdModal() {
+            alert('📢 Novo Anúncio\n\nUse o Criador de Anúncios em Carrossel para criar anúncios com 6 imagens dos produtos!');
         }
         
         function switchTab(tabName) {
