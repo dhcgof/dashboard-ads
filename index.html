@@ -5,155 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Multi-Empresa — Meta Ads + IA</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh}
 
-/* LOGIN */
-#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.login-card{background:white;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.login-card h1{font-size:24px;color:#333;margin-bottom:6px;text-align:center}
-.login-card .sub{color:#888;font-size:13px;text-align:center;margin-bottom:28px}
-.login-card label{display:block;font-size:12px;color:#666;font-weight:600;margin:14px 0 6px}
-.login-card input{width:100%;padding:12px 14px;border:2px solid #e9ecef;border-radius:8px;font-size:14px}
-.login-card input:focus{outline:none;border-color:#667eea}
-.login-card button{width:100%;margin-top:24px;padding:13px;background:#667eea;color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
-.login-card button:hover{background:#5568d3}
-.login-msg{margin-top:14px;padding:10px;border-radius:6px;font-size:13px;text-align:center;display:none}
-.login-msg.error{background:#fee2e2;color:#991b1b;display:block}
-.login-hint{margin-top:20px;font-size:11px;color:#aaa;text-align:center;line-height:1.6}
+<!-- ============================================================
+     FIREBASE SDK
+     ============================================================ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* APP */
-#app{display:none;padding:20px}
-.container{max-width:1800px;margin:0 auto}
-.topbar{background:white;border-radius:12px;padding:18px 25px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px}
-.topbar h1{font-size:20px;color:#333}
-.topbar .right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.company-select{padding:10px 16px;border:2px solid #667eea;border-radius:8px;font-size:14px;font-weight:600;color:#333;cursor:pointer;background:white;min-width:220px}
-.logout-btn{padding:9px 16px;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;font-size:13px;color:#666;font-weight:600}
-.logout-btn:hover{background:#e5e7eb}
-.user-chip{font-size:12px;color:#888}
-
-.company-banner{border-radius:12px;padding:20px 25px;margin-bottom:20px;color:white;display:flex;align-items:center;gap:16px}
-.company-banner .emoji{font-size:38px}
-.company-banner .info h2{font-size:22px;margin-bottom:3px}
-.company-banner .info p{font-size:13px;opacity:.9}
-
-.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.tab-btn{padding:11px 20px;background:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;color:#666;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:.2s}
-.tab-btn.active{background:#667eea;color:white;box-shadow:0 5px 15px rgba(102,126,234,.4)}
-.tab-content{display:none}
-.tab-content.active{display:block}
-
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px;margin-bottom:22px}
-.stat-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.08);border-left:4px solid #667eea}
-.stat-label{color:#999;font-size:11px;font-weight:600;text-transform:uppercase;margin-bottom:8px}
-.stat-value{color:#333;font-size:22px;font-weight:700;margin-bottom:4px}
-.stat-change{font-size:11px;color:#22c55e}
-
-.score-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:26px;border-radius:12px;text-align:center;margin-bottom:22px}
-.score-banner .v{font-size:44px;font-weight:700;margin:8px 0}
-.score-banner .l{font-size:13px;opacity:.9}
-
-.charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:22px;margin-bottom:22px}
-.chart-container{background:white;padding:22px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
-.chart-title{font-size:15px;font-weight:700;color:#333;margin-bottom:18px}
-.chart-wrapper{position:relative;height:280px}
-
-.box{background:white;padding:22px;border-radius:12px;margin-bottom:18px;box-shadow:0 4px 15px rgba(0,0,0,.08);border-top:4px solid #22c55e}
-.box-title{font-size:15px;font-weight:700;color:#333;margin-bottom:14px}
-.item{margin-bottom:11px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;border-radius:6px;font-size:13px;color:#555;line-height:1.5}
-.rec{background:#f3f4f6;padding:14px;border-radius:8px;margin:9px 0;border-left:3px solid #3b82f6;font-size:13px;color:#555;line-height:1.5}
-.inv{background:white;padding:18px;border-radius:12px;margin:13px 0;border:2px solid #e5e7eb;font-size:13px;color:#555;line-height:1.6}
-.inv .t{font-weight:700;color:#333;margin-bottom:8px;font-size:14px}
-
-.table-container{background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.08);margin-bottom:18px}
-table{width:100%;border-collapse:collapse}
-th{background:#f8f9fa;padding:13px;text-align:left;font-weight:600;color:#333;border-bottom:2px solid #e9ecef;font-size:12px}
-td{padding:11px 13px;border-bottom:1px solid #e9ecef;color:#666;font-size:13px}
-tr:hover{background:#f8f9fa}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-.badge-active{background:#dcfce7;color:#166534}
-.badge-paused{background:#fee2e2;color:#991b1b}
-
-/* ADMIN */
-.admin-form{background:#f8f9fa;padding:20px;border-radius:10px;margin-bottom:18px}
-.admin-form label{display:block;font-size:12px;color:#666;font-weight:600;margin:10px 0 5px}
-.admin-form input{width:100%;padding:10px;border:2px solid #e9ecef;border-radius:6px;font-size:13px}
-.admin-form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.admin-form button{margin-top:16px;padding:11px 20px;background:#22c55e;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer}
-.empty{color:#aaa;font-size:13px;text-align:center;padding:20px}
-
-.footer{text-align:center;color:white;margin-top:25px;font-size:12px;opacity:.8}
-@media(max-width:768px){.stats-grid,.charts-grid{grid-template-columns:1fr}.admin-form .row{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-
-<!-- ============ LOGIN ============ -->
-<div id="loginScreen">
-  <div class="login-card">
-    <h1>📊 Dashboard Meta Ads</h1>
-    <div class="sub">Acesso à central de campanhas</div>
-    <label>Email</label>
-    <input type="email" id="email" placeholder="seu@email.com" autocomplete="username">
-    <label>Senha</label>
-    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-    <button onclick="doLogin()">Entrar</button>
-    <div class="login-msg" id="loginMsg"></div>
-    <div class="login-hint">Acesso de demonstração:<br>diego@cordeiro.com · diego123</div>
-  </div>
-</div>
-
-<!-- ============ APP ============ -->
-<div id="app">
-  <div class="container">
-    <div class="topbar">
-      <h1>📊 Central de Campanhas</h1>
-      <div class="right">
-        <select class="company-select" id="companySelect" onchange="selectCompany(this.value)"></select>
-        <span class="user-chip" id="userChip"></span>
-        <button class="logout-btn" onclick="doLogout()">Sair</button>
-      </div>
-    </div>
-
-    <div class="company-banner" id="companyBanner"></div>
-
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('overview',this)">📈 Visão Geral</button>
-      <button class="tab-btn" onclick="switchTab('graficos',this)">📊 Gráficos</button>
-      <button class="tab-btn" onclick="switchTab('campanhas',this)">🎯 Campanhas</button>
-      <button class="tab-btn" onclick="switchTab('analise',this)">🤖 Análise IA</button>
-      <button class="tab-btn" onclick="switchTab('recomendacoes',this)">💡 Recomendações</button>
-      <button class="tab-btn" onclick="switchTab('investimentos',this)">💰 Investimentos</button>
-      <button class="tab-btn" onclick="switchTab('admin',this)">⚙️ Admin</button>
-    </div>
-
-    <div id="overview" class="tab-content active"></div>
-    <div id="graficos" class="tab-content"></div>
-    <div id="campanhas" class="tab-content"></div>
-    <div id="analise" class="tab-content"></div>
-    <div id="recomendacoes" class="tab-content"></div>
-    <div id="investimentos" class="tab-content"></div>
-    <div id="admin" class="tab-content"></div>
-
-    <div class="footer">Powered by Meta Ads MCP + IA · © 2026 Diego Cordeiro</div>
-  </div>
-</div>
-
-<script>
 /* ============================================================
-   USUÁRIOS (login único — vê todas as empresas)
+   FIREBASE CONFIG — cole suas credenciais aqui (~linha 17)
+   Obtenha em: console.firebase.google.com → ⚙️ → Seu app
    ============================================================ */
-const USERS = [
-  {name:'Diego Cordeiro', email:'diego@cordeiro.com', password:'diego123'},
-  {name:'Gabriela',       email:'gabriela@cordeiro.com', password:'gabriela123'}
-];
+const firebaseConfig = {
+  apiKey:            "COLE_AQUI_SEU_API_KEY",
+  authDomain:        "COLE_AQUI.firebaseapp.com",
+  projectId:         "COLE_AQUI_SEU_PROJECT_ID",
+  storageBucket:     "COLE_AQUI.appspot.com",
+  messagingSenderId: "COLE_AQUI_SENDER_ID",
+  appId:             "COLE_AQUI_APP_ID"
+};
+
+/* ---- inicializa Firebase ---- */
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
 /* ============================================================
-   EMPRESAS — para adicionar nova empresa, basta inserir um
-   objeto aqui (ou cadastrar pelo painel Admin). Cada empresa
-   é totalmente independente: stats, campanhas, análise, etc.
+   EMPRESAS DEFAULT (usadas na 1ª vez ou se Firestore vazio)
    ============================================================ */
 const DEFAULT_COMPANIES = [
   {
@@ -166,8 +48,8 @@ const DEFAULT_COMPANIES = [
     score:7.8,
     stats:{gasto:'R$ 556,48', impressoes:'592.951', cliques:'606', cpl:'R$ 8,56', roas:'1,8x', conversoes:'65'},
     campanhas:[
-      {nome:'3 Dias de Loucura', status:'ATIVA', obj:'Consciência', gasto:'R$ 349,52', imp:'33.842', cliques:52, cpm:'R$ 10,33', ctr:'0,15%', conv:'—'},
-      {nome:'Reconhecimentos — Cópia', status:'ATIVA', obj:'Consciência', gasto:'R$ 515,33', imp:'350.795', cliques:554, cpm:'R$ 1,47', ctr:'0,16%', conv:'—'}
+      {nome:'3 Dias de Loucura',       status:'ATIVA', obj:'Consciência', gasto:'R$ 349,52', imp:'33.842',  cliques:52,  cpm:'R$ 10,33', ctr:'0,15%', conv:'—'},
+      {nome:'Reconhecimentos — Cópia', status:'ATIVA', obj:'Consciência', gasto:'R$ 515,33', imp:'350.795', cliques:554, cpm:'R$ 1,47',  ctr:'0,16%', conv:'—'}
     ],
     insights:[
       ['💎 Campanha de OURO','"Reconhecimentos — Cópia" tem CPM de R$ 1,47 — 7x mais barato que "3 Dias de Loucura" (R$ 10,33). Escalar essa campanha 2.5x pode render +R$ 2.200/mês.'],
@@ -196,8 +78,8 @@ const DEFAULT_COMPANIES = [
     score:8.6,
     stats:{gasto:'R$ 682,89', impressoes:'592.051', cliques:'1.880', cpl:'R$ 4,69', roas:'2,1x', conversoes:'409'},
     campanhas:[
-      {nome:'Vendas/Aluguel', status:'ATIVA', obj:'Vendas', gasto:'R$ 459,01', imp:'55.635', cliques:550, cpm:'R$ 8,25', ctr:'0,99%', conv:'65'},
-      {nome:'Leads', status:'ATIVA', obj:'Leads', gasto:'R$ 900,72', imp:'98.583', cliques:1330, cpm:'R$ 9,14', ctr:'1,35%', conv:'192'}
+      {nome:'Vendas/Aluguel', status:'ATIVA', obj:'Vendas', gasto:'R$ 459,01', imp:'55.635', cliques:550,  cpm:'R$ 8,25', ctr:'0,99%', conv:'65'},
+      {nome:'Leads',          status:'ATIVA', obj:'Leads',  gasto:'R$ 900,72', imp:'98.583', cliques:1330, cpm:'R$ 9,14', ctr:'1,35%', conv:'192'}
     ],
     insights:[
       ['🏆 "Leads" é top-tier','CPL de R$ 4,69 com 192 conversas — bem abaixo do benchmark de mercado (R$ 6-10). Pronta para escalar.'],
@@ -218,48 +100,105 @@ const DEFAULT_COMPANIES = [
   }
 ];
 
-/* ============ ESTADO ============ */
-let companies = [];
-let currentCompanyId = null;
+/* ============================================================
+   ESTADO GLOBAL
+   ============================================================ */
+window._companies       = [];
+window._currentCompany  = null;
+window._currentUser     = null;
 const charts = {};
 
-function loadCompanies(){
-  const saved = localStorage.getItem('companies_v1');
-  companies = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_COMPANIES));
+/* ============================================================
+   FIRESTORE — carregar / salvar empresas
+   (documento: companies/{uid}/data)
+   ============================================================ */
+async function loadCompanies(uid){
+  try {
+    const snap = await getDoc(doc(db,'companies',uid));
+    if(snap.exists() && snap.data().list){
+      window._companies = snap.data().list;
+    } else {
+      window._companies = JSON.parse(JSON.stringify(DEFAULT_COMPANIES));
+      await saveCompanies(uid);
+    }
+  } catch(e){
+    console.warn('Firestore offline — usando localStorage', e);
+    const saved = localStorage.getItem('companies_v1');
+    window._companies = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_COMPANIES));
+  }
 }
-function saveCompanies(){ localStorage.setItem('companies_v1', JSON.stringify(companies)); }
 
-/* ============ LOGIN ============ */
-function doLogin(){
-  const email = document.getElementById('email').value.trim().toLowerCase();
-  const pass = document.getElementById('password').value;
-  const msg = document.getElementById('loginMsg');
-  const user = USERS.find(u => u.email===email && u.password===pass);
-  if(!user){ msg.textContent='Email ou senha incorretos'; msg.className='login-msg error'; return; }
-  sessionStorage.setItem('session', JSON.stringify({name:user.name, email:user.email}));
-  startApp(user);
+async function saveCompanies(uid){
+  uid = uid || window._currentUser?.uid;
+  if(!uid) return;
+  try {
+    await setDoc(doc(db,'companies',uid), { list: window._companies });
+  } catch(e){
+    localStorage.setItem('companies_v1', JSON.stringify(window._companies));
+  }
 }
-function doLogout(){ sessionStorage.removeItem('session'); location.reload(); }
+
+/* ============================================================
+   AUTH — LOGIN / LOGOUT
+   ============================================================ */
+window.doLogin = async function(){
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const pass  = document.getElementById('password').value;
+  const msg   = document.getElementById('loginMsg');
+  const btn   = document.querySelector('.login-card button');
+  btn.disabled = true; btn.textContent = 'Entrando…';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    // onAuthStateChanged cuida do resto
+  } catch(e){
+    const erros = {
+      'auth/user-not-found':'Usuário não encontrado.',
+      'auth/wrong-password':'Senha incorreta.',
+      'auth/invalid-credential':'Email ou senha incorretos.',
+      'auth/too-many-requests':'Muitas tentativas. Aguarde alguns minutos.',
+      'auth/network-request-failed':'Sem conexão. Verifique a internet.'
+    };
+    msg.textContent = erros[e.code] || 'Erro: '+e.message;
+    msg.className = 'login-msg error';
+    btn.disabled = false; btn.textContent = 'Entrar';
+  }
+};
+
+window.doLogout = async function(){
+  await signOut(auth);
+};
+
+/* ============================================================
+   AUTH STATE — detecta login/logout automaticamente
+   ============================================================ */
+onAuthStateChanged(auth, async (user) => {
+  if(user){
+    window._currentUser = user;
+    await loadCompanies(user.uid);
+    startApp(user);
+  } else {
+    window._currentUser = null;
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    const btn = document.querySelector('.login-card button');
+    if(btn){ btn.disabled = false; btn.textContent = 'Entrar'; }
+  }
+});
 
 function startApp(user){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('app').style.display='block';
-  document.getElementById('userChip').textContent='👤 '+user.name;
-  loadCompanies();
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const name = user.displayName || user.email.split('@')[0];
+  document.getElementById('userChip').textContent = '👤 ' + name;
   renderCompanySelect();
-  selectCompany(companies[0].id);
+  selectCompany(window._companies[0].id);
 }
 
-/* ============ SELETOR DE EMPRESA ============ */
-function renderCompanySelect(){
-  const sel = document.getElementById('companySelect');
-  sel.innerHTML = companies.map(c=>`<option value="${c.id}">${c.emoji} ${c.nome}</option>`).join('');
-  if(currentCompanyId) sel.value = currentCompanyId;
-}
-function getCompany(){ return companies.find(c=>c.id===currentCompanyId); }
-
-function selectCompany(id){
-  currentCompanyId = id;
+/* ============================================================
+   SELETOR DE EMPRESA
+   ============================================================ */
+window.selectCompany = function(id){
+  window._currentCompany = id;
   document.getElementById('companySelect').value = id;
   const c = getCompany();
   const banner = document.getElementById('companyBanner');
@@ -268,12 +207,21 @@ function selectCompany(id){
     <div class="info"><h2>${c.nome}</h2>
     <p>${c.cidade} · Conta Meta: ${c.contaMeta} · Score IA: ${c.score}/10</p></div>`;
   renderAll();
+};
+
+function renderCompanySelect(){
+  const sel = document.getElementById('companySelect');
+  sel.innerHTML = window._companies.map(c=>`<option value="${c.id}">${c.emoji} ${c.nome}</option>`).join('');
+  if(window._currentCompany) sel.value = window._currentCompany;
 }
 
-/* ============ RENDER ABAS ============ */
+function getCompany(){ return window._companies.find(c=>c.id===window._currentCompany); }
+
+/* ============================================================
+   RENDER ABAS
+   ============================================================ */
 function renderAll(){
   const c = getCompany();
-  // Overview
   document.getElementById('overview').innerHTML = `
     <div class="score-banner"><div class="l">SCORE DE PERFORMANCE</div>
       <div class="v">${c.score}</div><div class="l">de 10</div></div>
@@ -288,7 +236,6 @@ function renderAll(){
     <div class="box"><div class="box-title">📌 Resumo</div>
       ${c.insights.map(i=>`<div class="item"><strong>${i[0]}</strong><br>${i[1]}</div>`).join('')}
     </div>`;
-  // Campanhas
   document.getElementById('campanhas').innerHTML = `
     <div class="table-container"><table>
       <thead><tr><th>Campanha</th><th>Status</th><th>Objetivo</th><th>Gasto</th><th>Impressões</th><th>Cliques</th><th>CPM</th><th>CTR</th><th>Conv.</th></tr></thead>
@@ -298,24 +245,19 @@ function renderAll(){
         <td>${k.obj}</td><td>${k.gasto}</td><td>${k.imp}</td><td>${k.cliques}</td><td>${k.cpm}</td><td>${k.ctr}</td><td>${k.conv}</td>
       </tr>`).join('')}</tbody>
     </table></div>`;
-  // Análise IA
   document.getElementById('analise').innerHTML = `
     <div class="box"><div class="box-title">🤖 Análise Inteligente — ${c.nome}</div>
       ${c.insights.map(i=>`<div class="item"><strong>${i[0]}</strong><br>${i[1]}</div>`).join('')}
     </div>`;
-  // Recomendações
   document.getElementById('recomendacoes').innerHTML = `
     <div class="box"><div class="box-title">💡 Recomendações Prioritárias</div>
       ${c.recomendacoes.map(r=>`<div class="rec"><strong>${r[0]}</strong><br>${r[1]}</div>`).join('')}
     </div>`;
-  // Investimentos
   document.getElementById('investimentos').innerHTML = `
     <div class="box"><div class="box-title">💰 Cenários de Investimento</div>
       ${c.investimentos.map(v=>`<div class="inv"><div class="t">${v[0]}</div>${v[1]}</div>`).join('')}
     </div>`;
-  // Gráficos
   renderGraficos();
-  // Admin
   renderAdmin();
 }
 
@@ -323,7 +265,9 @@ function statCard(label,val){
   return `<div class="stat-card"><div class="stat-label">${label}</div><div class="stat-value">${val}</div><div class="stat-change">Dados Meta Ads</div></div>`;
 }
 
-/* ============ GRÁFICOS (por empresa) ============ */
+/* ============================================================
+   GRÁFICOS
+   ============================================================ */
 function renderGraficos(){
   const c = getCompany();
   document.getElementById('graficos').innerHTML = `
@@ -333,7 +277,6 @@ function renderGraficos(){
       <div class="chart-container"><div class="chart-title">🔄 CTR por Campanha</div><div class="chart-wrapper"><canvas id="ch_ctr"></canvas></div></div>
       <div class="chart-container"><div class="chart-title">📊 Impressões vs Cliques</div><div class="chart-wrapper"><canvas id="ch_imp"></canvas></div></div>
     </div>`;
-  // destruir charts antigos
   Object.values(charts).forEach(ch=>{try{ch.destroy()}catch(e){}});
   const labels = c.campanhas.map(k=>k.nome);
   const num = s => parseFloat(String(s).replace(/[^\d,.-]/g,'').replace('.','').replace(',','.'))||0;
@@ -356,16 +299,18 @@ function renderGraficos(){
   },60);
 }
 
-/* ============ ADMIN — cadastrar nova empresa ============ */
+/* ============================================================
+   ADMIN — cadastrar / remover empresa
+   ============================================================ */
 function renderAdmin(){
   document.getElementById('admin').innerHTML = `
     <div class="box" style="border-top-color:#3b82f6">
       <div class="box-title">⚙️ Empresas cadastradas</div>
       <div class="table-container"><table>
         <thead><tr><th>Empresa</th><th>Cidade</th><th>Conta Meta</th><th>Score</th><th></th></tr></thead>
-        <tbody>${companies.map(c=>`<tr>
+        <tbody>${window._companies.map(c=>`<tr>
           <td>${c.emoji} <strong>${c.nome}</strong></td><td>${c.cidade}</td><td>${c.contaMeta}</td><td>${c.score}/10</td>
-          <td>${companies.length>1?`<button class="logout-btn" onclick="removeCompany('${c.id}')">Remover</button>`:''}</td>
+          <td>${window._companies.length>1?`<button class="logout-btn" onclick="removeCompany('${c.id}')">Remover</button>`:''}</td>
         </tr>`).join('')}</tbody>
       </table></div>
     </div>
@@ -387,42 +332,44 @@ function renderAdmin(){
     </div>`;
 }
 
-function addCompany(){
+window.addCompany = async function(){
   const nome=val('f_nome'), emoji=val('f_emoji')||'🏪', cidade=val('f_cidade')||'—',
         cor=val('f_cor')||'#1565C0', conta=val('f_conta')||'—';
   if(!nome){ alert('Informe o nome da empresa.'); return; }
   const id = nome.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12)+Date.now().toString().slice(-4);
-  companies.push({
+  window._companies.push({
     id, nome, emoji, cidade, cor, contaMeta:conta, score:0,
     stats:{gasto:'—',impressoes:'—',cliques:'—',cpl:'—',roas:'—',conversoes:'—'},
     campanhas:[], insights:[['📭 Sem dados ainda','Conecte e puxe os dados da conta Meta desta empresa para popular as métricas.']],
     recomendacoes:[['Puxar dados da conta Meta','Assim que os dados da conta forem importados, as recomendações de IA aparecem aqui.']],
     investimentos:[['Aguardando dados','Os cenários de investimento são gerados após a importação das campanhas.']]
   });
-  saveCompanies();
+  await saveCompanies();
   renderCompanySelect();
   selectCompany(id);
   alert('Empresa "'+nome+'" cadastrada!');
-}
+};
 
-function removeCompany(id){
-  if(companies.length<=1){ alert('Mantenha ao menos uma empresa.'); return; }
+window.removeCompany = async function(id){
+  if(window._companies.length<=1){ alert('Mantenha ao menos uma empresa.'); return; }
   if(!confirm('Remover esta empresa do dashboard?')) return;
-  companies = companies.filter(c=>c.id!==id);
-  saveCompanies();
+  window._companies = window._companies.filter(c=>c.id!==id);
+  await saveCompanies();
   renderCompanySelect();
-  selectCompany(companies[0].id);
-}
+  selectCompany(window._companies[0].id);
+};
 
-/* ============ HELPERS ============ */
+/* ============================================================
+   HELPERS
+   ============================================================ */
 function val(id){ return document.getElementById(id).value.trim(); }
-function switchTab(name,btn){
+window.switchTab = function(name,btn){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(name).classList.add('active');
   btn.classList.add('active');
   if(name==='graficos') renderGraficos();
-}
+};
 function shade(hex,p){
   const n=parseInt(hex.slice(1),16),r=Math.max(0,Math.min(255,(n>>16)+p)),
     g=Math.max(0,Math.min(255,((n>>8)&255)+p)),b=Math.max(0,Math.min(255,(n&255)+p));
@@ -430,12 +377,132 @@ function shade(hex,p){
 }
 function hex2rgba(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`;}
 
-/* ============ AUTO-LOGIN se sessão ativa ============ */
+/* ---- Enter no campo senha ---- */
 window.addEventListener('load',()=>{
-  const s = sessionStorage.getItem('session');
-  if(s){ const u=JSON.parse(s); startApp(u); }
-  document.getElementById('password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  document.getElementById('password').addEventListener('keydown',e=>{if(e.key==='Enter')window.doLogin();});
 });
 </script>
+
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px">
+  <div class="login-card">
+    <h1>📊 Dashboard Meta Ads</h1>
+    <div class="sub">Acesso à central de campanhas</div>
+    <label>Email</label>
+    <input type="email" id="email" placeholder="seu@email.com" autocomplete="username">
+    <label>Senha</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    <button onclick="doLogin()">Entrar</button>
+    <div class="login-msg" id="loginMsg"></div>
+    <div class="login-hint">Login via Firebase Authentication</div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" style="display:none;padding:20px">
+  <div class="container">
+    <div class="topbar">
+      <h1>📊 Central de Campanhas</h1>
+      <div class="right">
+        <select class="company-select" id="companySelect" onchange="selectCompany(this.value)"></select>
+        <span class="user-chip" id="userChip"></span>
+        <button class="logout-btn" onclick="doLogout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="company-banner" id="companyBanner"></div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('overview',this)">📈 Visão Geral</button>
+      <button class="tab-btn" onclick="switchTab('graficos',this)">📊 Gráficos</button>
+      <button class="tab-btn" onclick="switchTab('campanhas',this)">🎯 Campanhas</button>
+      <button class="tab-btn" onclick="switchTab('analise',this)">🤖 Análise IA</button>
+      <button class="tab-btn" onclick="switchTab('recomendacoes',this)">💡 Recomendações</button>
+      <button class="tab-btn" onclick="switchTab('investimentos',this)">💰 Investimentos</button>
+      <button class="tab-btn" onclick="switchTab('admin',this)">⚙️ Admin</button>
+    </div>
+
+    <div id="overview"      class="tab-content active"></div>
+    <div id="graficos"      class="tab-content"></div>
+    <div id="campanhas"     class="tab-content"></div>
+    <div id="analise"       class="tab-content"></div>
+    <div id="recomendacoes" class="tab-content"></div>
+    <div id="investimentos" class="tab-content"></div>
+    <div id="admin"         class="tab-content"></div>
+
+    <div class="footer">Powered by Firebase + Meta Ads · © 2026 Diego Cordeiro</div>
+  </div>
+</div>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh}
+.login-card{background:white;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-card h1{font-size:24px;color:#333;margin-bottom:6px;text-align:center}
+.login-card .sub{color:#888;font-size:13px;text-align:center;margin-bottom:28px}
+.login-card label{display:block;font-size:12px;color:#666;font-weight:600;margin:14px 0 6px}
+.login-card input{width:100%;padding:12px 14px;border:2px solid #e9ecef;border-radius:8px;font-size:14px}
+.login-card input:focus{outline:none;border-color:#667eea}
+.login-card button{width:100%;margin-top:24px;padding:13px;background:#667eea;color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
+.login-card button:hover{background:#5568d3}
+.login-card button:disabled{background:#aaa;cursor:not-allowed}
+.login-msg{margin-top:14px;padding:10px;border-radius:6px;font-size:13px;text-align:center;display:none}
+.login-msg.error{background:#fee2e2;color:#991b1b;display:block}
+.login-hint{margin-top:20px;font-size:11px;color:#aaa;text-align:center;line-height:1.6}
+.container{max-width:1800px;margin:0 auto}
+.topbar{background:white;border-radius:12px;padding:18px 25px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px}
+.topbar h1{font-size:20px;color:#333}
+.topbar .right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.company-select{padding:10px 16px;border:2px solid #667eea;border-radius:8px;font-size:14px;font-weight:600;color:#333;cursor:pointer;background:white;min-width:220px}
+.logout-btn{padding:9px 16px;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;font-size:13px;color:#666;font-weight:600}
+.logout-btn:hover{background:#e5e7eb}
+.user-chip{font-size:12px;color:#888}
+.company-banner{border-radius:12px;padding:20px 25px;margin-bottom:20px;color:white;display:flex;align-items:center;gap:16px}
+.company-banner .emoji{font-size:38px}
+.company-banner .info h2{font-size:22px;margin-bottom:3px}
+.company-banner .info p{font-size:13px;opacity:.9}
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab-btn{padding:11px 20px;background:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;color:#666;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:.2s}
+.tab-btn.active{background:#667eea;color:white;box-shadow:0 5px 15px rgba(102,126,234,.4)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px;margin-bottom:22px}
+.stat-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.08);border-left:4px solid #667eea}
+.stat-label{color:#999;font-size:11px;font-weight:600;text-transform:uppercase;margin-bottom:8px}
+.stat-value{color:#333;font-size:22px;font-weight:700;margin-bottom:4px}
+.stat-change{font-size:11px;color:#22c55e}
+.score-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:26px;border-radius:12px;text-align:center;margin-bottom:22px}
+.score-banner .v{font-size:44px;font-weight:700;margin:8px 0}
+.score-banner .l{font-size:13px;opacity:.9}
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:22px;margin-bottom:22px}
+.chart-container{background:white;padding:22px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
+.chart-title{font-size:15px;font-weight:700;color:#333;margin-bottom:18px}
+.chart-wrapper{position:relative;height:280px}
+.box{background:white;padding:22px;border-radius:12px;margin-bottom:18px;box-shadow:0 4px 15px rgba(0,0,0,.08);border-top:4px solid #22c55e}
+.box-title{font-size:15px;font-weight:700;color:#333;margin-bottom:14px}
+.item{margin-bottom:11px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;border-radius:6px;font-size:13px;color:#555;line-height:1.5}
+.rec{background:#f3f4f6;padding:14px;border-radius:8px;margin:9px 0;border-left:3px solid #3b82f6;font-size:13px;color:#555;line-height:1.5}
+.inv{background:white;padding:18px;border-radius:12px;margin:13px 0;border:2px solid #e5e7eb;font-size:13px;color:#555;line-height:1.6}
+.inv .t{font-weight:700;color:#333;margin-bottom:8px;font-size:14px}
+.table-container{background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.08);margin-bottom:18px}
+table{width:100%;border-collapse:collapse}
+th{background:#f8f9fa;padding:13px;text-align:left;font-weight:600;color:#333;border-bottom:2px solid #e9ecef;font-size:12px}
+td{padding:11px 13px;border-bottom:1px solid #e9ecef;color:#666;font-size:13px}
+tr:hover{background:#f8f9fa}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-active{background:#dcfce7;color:#166534}
+.badge-paused{background:#fee2e2;color:#991b1b}
+.admin-form{background:#f8f9fa;padding:20px;border-radius:10px;margin-bottom:18px}
+.admin-form label{display:block;font-size:12px;color:#666;font-weight:600;margin:10px 0 5px}
+.admin-form input{width:100%;padding:10px;border:2px solid #e9ecef;border-radius:6px;font-size:13px}
+.admin-form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-form button{margin-top:16px;padding:11px 20px;background:#22c55e;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer}
+.empty{color:#aaa;font-size:13px;text-align:center;padding:20px}
+.footer{text-align:center;color:white;margin-top:25px;font-size:12px;opacity:.8}
+@media(max-width:768px){.stats-grid,.charts-grid{grid-template-columns:1fr}.admin-form .row{grid-template-columns:1fr}}
+</style>
 </body>
 </html>
