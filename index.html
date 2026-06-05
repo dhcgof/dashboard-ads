@@ -122,6 +122,16 @@ tbody tr:hover{background:var(--surface2)}
 .load-txt{font-size:13px;font-weight:700;color:var(--accent);font-family:'Space Mono',monospace}
 
 @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.cal-grid{grid-template-columns:repeat(2,1fr)}.alert-right .am{display:none}}
+
+/* LEGENDA */
+.legend-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:24px}
+.legend-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 24px;margin-top:12px}
+.legend-item{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+.legend-abbr{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);min-width:52px;flex-shrink:0}
+.legend-desc{color:var(--muted);line-height:1.4}
+.legend-divider{grid-column:1/-1;height:1px;background:var(--border);margin:6px 0}
+.legend-group{grid-column:1/-1;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
+@media(max-width:900px){.legend-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -402,6 +412,77 @@ function scheduleAuto(){
 
 function init(){renderAll();scheduleAuto()}
 if(su)init()
+</script>
+<!-- LEGENDA FIXA NO RODAPÉ DE TODOS OS PAINÉIS -->
+<script>
+function renderLegend(){
+  const html=`
+  <div class="sec">📖 Legenda — Abreviações e Indicadores</div>
+  <div class="legend-wrap">
+    <div class="legend-grid">
+
+      <div class="legend-group">📊 Métricas de Entrega</div>
+
+      <div class="legend-item"><span class="legend-abbr">CPM</span><span class="legend-desc">Custo por Mil Impressões — quanto custa exibir o anúncio 1.000 vezes</span></div>
+      <div class="legend-item"><span class="legend-abbr">CPC</span><span class="legend-desc">Custo por Clique — valor médio pago por cada clique no anúncio</span></div>
+      <div class="legend-item"><span class="legend-abbr">CTR</span><span class="legend-desc">Taxa de Cliques (Click-Through Rate) — % de pessoas que clicaram após ver o anúncio</span></div>
+      <div class="legend-item"><span class="legend-abbr">Freq.</span><span class="legend-desc">Frequência — quantas vezes em média cada pessoa viu o anúncio</span></div>
+      <div class="legend-item"><span class="legend-abbr">Imp.</span><span class="legend-desc">Impressões — total de vezes que o anúncio foi exibido (inclui reexibições)</span></div>
+      <div class="legend-item"><span class="legend-abbr">Alcance</span><span class="legend-desc">Pessoas únicas que viram o anúncio pelo menos uma vez</span></div>
+      <div class="legend-item"><span class="legend-abbr">Conv.</span><span class="legend-desc">Conversões — ações desejadas realizadas (conversa WhatsApp, lead, compra)</span></div>
+      <div class="legend-item"><span class="legend-abbr">CPR</span><span class="legend-desc">Custo por Resultado — quanto custou cada conversão ou resultado obtido</span></div>
+
+      <div class="legend-divider"></div>
+      <div class="legend-group">🎯 Objetivos de Campanha</div>
+
+      <div class="legend-item"><span class="legend-abbr">Leads</span><span class="legend-desc">Captura de contatos interessados — otimizado para iniciar conversa no WhatsApp</span></div>
+      <div class="legend-item"><span class="legend-abbr">Vendas</span><span class="legend-desc">Objetivo de conversão — Meta busca pessoas com maior intenção de compra</span></div>
+      <div class="legend-item"><span class="legend-abbr">Engaj.</span><span class="legend-desc">Engajamento — maximiza curtidas, comentários, compartilhamentos e interações</span></div>
+      <div class="legend-item"><span class="legend-abbr">Reconh.</span><span class="legend-desc">Reconhecimento de marca — alcança o máximo de pessoas ao menor CPM possível</span></div>
+      <div class="legend-item"><span class="legend-abbr">Tráfego</span><span class="legend-desc">Cliques para site — leva visitantes para uma URL específica</span></div>
+      <div class="legend-item"><span class="legend-abbr">ABO</span><span class="legend-desc">Ad Set Budget Optimization — orçamento definido por conjunto de anúncios</span></div>
+      <div class="legend-item"><span class="legend-abbr">CBO</span><span class="legend-desc">Campaign Budget Optimization — orçamento centralizado na campanha, Meta distribui</span></div>
+      <div class="legend-item"><span class="legend-abbr">LF</span><span class="legend-desc">Lookalike + Frio — campanha para público novo semelhante aos clientes atuais</span></div>
+
+      <div class="legend-divider"></div>
+      <div class="legend-group">🔔 Status e Alertas</div>
+
+      <div class="legend-item"><span class="legend-abbr">🟢 Ativa</span><span class="legend-desc">Campanha rodando e entregando anúncios normalmente</span></div>
+      <div class="legend-item"><span class="legend-abbr">⏸ Pausada</span><span class="legend-desc">Campanha parada manualmente — pode ser reativada a qualquer momento</span></div>
+      <div class="legend-item"><span class="legend-abbr">✓ Concluída</span><span class="legend-desc">Campanha encerrada por data final ou orçamento esgotado</span></div>
+      <div class="legend-item"><span class="legend-abbr">🔴 Crítico</span><span class="legend-desc">Ação imediata necessária — frequência acima de 8x ou performance crítica</span></div>
+      <div class="legend-item"><span class="legend-abbr">🟡 Atenção</span><span class="legend-desc">Monitorar — frequência entre 5x e 8x ou custo/resultado acima do ideal</span></div>
+      <div class="legend-item"><span class="legend-abbr">🟢 Saudável</span><span class="legend-desc">Performance dentro dos parâmetros esperados — nenhuma ação necessária</span></div>
+      <div class="legend-item"><span class="legend-abbr">🔵 Aprend.</span><span class="legend-desc">Fase de aprendizado — Meta ainda está otimizando a entrega (primeiros 7 dias)</span></div>
+
+      <div class="legend-divider"></div>
+      <div class="legend-group">📏 Referências de Qualidade (Cantinho da Girafa / MDL)</div>
+
+      <div class="legend-item"><span class="legend-abbr">CTR ideal</span><span class="legend-desc">> 1,5% para campanhas de tráfego e leads · > 0,2% para reconhecimento</span></div>
+      <div class="legend-item"><span class="legend-abbr">CPM ideal</span><span class="legend-desc">< R$5 excelente · R$5–10 moderado · > R$10 alto (região PR interior)</span></div>
+      <div class="legend-item"><span class="legend-abbr">CPC ideal</span><span class="legend-desc">< R$0,80 excelente · R$0,80–1,50 aceitável · > R$1,50 alto</span></div>
+      <div class="legend-item"><span class="legend-abbr">Freq. ideal</span><span class="legend-desc">1–3x saudável · 3–5x atenção · > 5x saturação · > 8x crítico</span></div>
+      <div class="legend-item"><span class="legend-abbr">CPR ideal</span><span class="legend-desc">Leads/WhatsApp: < R$6 ótimo · R$6–10 aceitável · > R$10 revisar</span></div>
+      <div class="legend-item"><span class="legend-abbr">7d</span><span class="legend-desc">Últimos 7 dias — janela padrão de análise exibida neste dashboard</span></div>
+    </div>
+  </div>`
+
+  // Injeta em todos os painéis
+  ;['p-all','p-girafa','p-mdl'].forEach(id=>{
+    const panel=document.getElementById(id)
+    if(panel&&!panel.querySelector('.legend-wrap')){
+      panel.insertAdjacentHTML('beforeend',html)
+    }
+  })
+}
+// Chama após renderAll
+const _origInit=typeof init==='function'?init:null
+document.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('main').style.display==='block') renderLegend()
+})
+// Hook no init original
+const _ri=renderAll
+window.renderAll=function(){_ri();renderLegend()}
 </script>
 </body>
 </html>
