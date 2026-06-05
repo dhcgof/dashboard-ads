@@ -6,240 +6,122 @@
 <title>Meta Ads Dashboard — Diego</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
+:root{--bg:#080a0f;--surface:#0e1118;--surface2:#141720;--border:#1e2230;--text:#e2e8f0;--muted:#4a5568;--accent:#ff6b35;--accent2:#7c3aed;--girafa:#1565C0;--mdl:#FF8C00;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-:root {
-  --bg: #080a0f;
-  --surface: #0e1118;
-  --surface2: #141720;
-  --border: #1e2230;
-  --text: #e2e8f0;
-  --muted: #4a5568;
-  --accent: #ff6b35;
-  --accent2: #7c3aed;
-  --girafa: #1565C0;
-  --mdl: #FF8C00;
-  --green: #10b981;
-  --red: #ef4444;
-  --yellow: #f59e0b;
-  --blue: #3b82f6;
-}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.login-box{width:380px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--girafa),var(--accent2),var(--mdl))}
+.login-logo{font-size:40px;text-align:center;margin-bottom:8px}
+.login-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:32px;font-family:'Space Mono',monospace}
+.login-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.login-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:'Space Mono',monospace;font-size:14px;letter-spacing:3px;margin-bottom:16px;outline:none;transition:border .2s}
+.login-input:focus{border-color:var(--accent)}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;padding:13px;cursor:pointer;transition:opacity .2s}
+.login-btn:hover{opacity:.9}
+.login-error{font-size:12px;color:var(--red);text-align:center;margin-top:10px;min-height:18px}
+.user-chips{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.user-chip{font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .15s;background:var(--surface2)}
+.user-chip:hover,.user-chip.sel{border-color:var(--accent);color:var(--text)}
 
-* { margin:0; padding:0; box-sizing:border-box; }
+/* HEADER */
+#main{display:none}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-brand{display:flex;align-items:center;gap:12px}
+.header-title{font-size:16px;font-weight:800}
+.header-sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
+.header-right{display:flex;align-items:center;gap:10px}
+.user-badge{font-size:11px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;display:flex;align-items:center;gap:6px}
+.udot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.logout-btn{font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px}
+.logout-btn:hover{color:var(--red)}
+.upd-btn{font-size:11px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 14px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:6px;transition:border-color .15s}
+.upd-btn:hover{border-color:var(--accent);color:var(--accent)}
 
-body {
-  font-family: 'Syne', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+/* CONTAINER */
+.container{max-width:1320px;margin:0 auto;padding:24px 20px}
+.upd-bar{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;margin-bottom:24px;font-size:12px}
+.upd-left{display:flex;align-items:center;gap:8px;color:var(--muted);font-family:'Space Mono',monospace}
 
-/* ─── LOGIN ─── */
-#login-screen {
-  position: fixed; inset: 0; z-index: 1000;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-}
-.login-box {
-  width: 380px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 40px;
-  position: relative;
-  overflow: hidden;
-}
-.login-box::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--girafa), var(--accent2), var(--mdl));
-}
-.login-logo { font-size: 40px; text-align: center; margin-bottom: 8px; }
-.login-title { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 4px; }
-.login-sub { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 32px; font-family: 'Space Mono', monospace; }
-.login-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
-.login-input {
-  width: 100%; background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 16px; color: var(--text);
-  font-family: 'Space Mono', monospace; font-size: 14px; letter-spacing: 3px;
-  margin-bottom: 16px; outline: none; transition: border .2s;
-}
-.login-input:focus { border-color: var(--accent); }
-.login-btn {
-  width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: white; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
-  border: none; border-radius: 10px; padding: 13px; cursor: pointer;
-  transition: transform .1s, opacity .2s;
-}
-.login-btn:hover { opacity: .9; }
-.login-btn:active { transform: scale(.98); }
-.login-error { font-size: 12px; color: var(--red); text-align: center; margin-top: 10px; min-height: 18px; }
-.login-users { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
-.login-users-title { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 10px; }
-.user-chips { display: flex; gap: 8px; justify-content: center; }
-.user-chip {
-  font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
-  cursor: pointer; border: 1px solid var(--border); color: var(--muted);
-  transition: all .15s; background: var(--surface2);
-}
-.user-chip:hover { border-color: var(--accent); color: var(--text); }
-
-/* ─── MAIN ─── */
-#main { display: none; }
-
-/* Header */
-.header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 28px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-}
-.header-brand { display: flex; align-items: center; gap: 12px; }
-.header-icon { font-size: 24px; }
-.header-title { font-size: 16px; font-weight: 800; }
-.header-sub { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
-.header-right { display: flex; align-items: center; gap: 12px; }
-.user-badge {
-  font-size: 11px; font-weight: 700; background: var(--surface2);
-  border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px;
-  display: flex; align-items: center; gap: 6px;
-}
-.user-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-.logout-btn {
-  font-size: 11px; color: var(--muted); background: none; border: none;
-  cursor: pointer; padding: 4px 8px; border-radius: 6px;
-  transition: color .15s;
-}
-.logout-btn:hover { color: var(--red); }
-.update-btn {
-  font-size: 11px; font-weight: 700; background: var(--surface2);
-  border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px;
-  cursor: pointer; color: var(--text); display: flex; align-items: center; gap: 6px;
-  transition: border-color .15s;
-}
-.update-btn:hover { border-color: var(--accent); color: var(--accent); }
-.update-btn.loading { opacity: .6; pointer-events: none; }
-.spin { display: inline-block; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Container */
-.container { max-width: 1320px; margin: 0 auto; padding: 24px 20px; }
-
-/* Last updated bar */
-.update-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 10px; padding: 10px 16px; margin-bottom: 24px;
-  font-size: 12px;
-}
-.update-bar-left { display: flex; align-items: center; gap: 8px; color: var(--muted); font-family: 'Space Mono', monospace; }
-.update-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; }
-.status-ok { color: var(--green); }
-.status-loading { color: var(--yellow); }
-.status-error { color: var(--red); }
-.next-update { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
-
-/* Tabs */
-.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 4px; width: fit-content; }
-.tab { font-size: 13px; font-weight: 700; padding: 8px 20px; border-radius: 9px; cursor: pointer; transition: all .15s; color: var(--muted); }
-.tab.active { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-.tab-girafa.active { color: var(--girafa); border-color: var(--girafa); }
-.tab-mdl.active { color: var(--mdl); border-color: var(--mdl); }
-.tab-both.active { color: var(--accent); border-color: var(--accent); }
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;width:fit-content}
+.tab{font-size:13px;font-weight:700;padding:8px 20px;border-radius:9px;cursor:pointer;transition:all .15s;color:var(--muted)}
+.tab.active{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
 
 /* KPIs */
-.kpi-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 24px; }
-.kpi {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-  padding: 16px; position: relative; overflow: hidden;
-  transition: border-color .15s;
-}
-.kpi:hover { border-color: var(--accent); }
-.kpi::after { content: var(--ico); position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 32px; opacity: .05; }
-.kpi-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
-.kpi-val { font-size: 24px; font-weight: 800; margin: 6px 0 3px; }
-.kpi-sub { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;border-top:2px solid var(--c)}
+.kpi-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.kpi-val{font-size:24px;font-weight:800;margin:6px 0 3px;color:var(--c)}
+.kpi-sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
 
-/* Alerts */
-.alerts-section { margin-bottom: 24px; }
-.alert-row {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 14px 18px; display: flex; align-items: center; gap: 14px;
-  margin-bottom: 8px; cursor: pointer; transition: border-color .15s;
-}
-.alert-row:hover { border-color: var(--accent); }
-.alert-row.critical { border-left: 3px solid var(--red); }
-.alert-row.warning { border-left: 3px solid var(--yellow); }
-.alert-row.ok { border-left: 3px solid var(--green); }
-.alert-row.watch { border-left: 3px solid var(--blue); }
-.alert-icon-big { font-size: 22px; }
-.alert-info { flex: 1; }
-.alert-name { font-size: 13px; font-weight: 700; }
-.alert-desc { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'Space Mono', monospace; }
-.alert-badge { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
-.badge-critical { background: #2d0a0a; color: var(--red); border: 1px solid var(--red); }
-.badge-warning { background: #2d1f00; color: var(--yellow); border: 1px solid var(--yellow); }
-.badge-ok { background: #0a2d1a; color: var(--green); border: 1px solid var(--green); }
-.badge-watch { background: #0a1a2d; color: var(--blue); border: 1px solid var(--blue); }
-.alert-metrics { display: flex; gap: 14px; }
-.am { text-align: center; }
-.am-val { font-size: 14px; font-weight: 800; }
-.am-label { font-size: 10px; color: var(--muted); }
-.am-val.bad { color: var(--red); }
-.am-val.warn { color: var(--yellow); }
-.am-val.good { color: var(--green); }
+/* SECTION */
+.sec{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 
-/* Campaigns table */
-.table-section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
-.table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.table-title { font-size: 14px; font-weight: 700; }
-.account-tag { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-.tag-girafa { background: #0a1a3d; color: var(--girafa); border: 1px solid var(--girafa); }
-.tag-mdl { background: #2d1a00; color: var(--mdl); border: 1px solid var(--mdl); }
-table { width: 100%; border-collapse: collapse; }
-thead th { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; text-align: left; background: var(--surface2); }
-tbody td { font-size: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); font-family: 'Space Mono', monospace; }
-tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover { background: var(--surface2); }
-.st { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; }
-.st-active { background: #0a2d1a; color: var(--green); }
-.st-off { background: #2d1a00; color: var(--yellow); }
-.st-arch { background: #1a0a2d; color: #9f7aea; }
-.num-good { color: var(--green); font-weight: 700; }
-.num-warn { color: var(--yellow); font-weight: 700; }
-.num-bad { color: var(--red); font-weight: 700; }
+/* ALERTS */
+.alert-row{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:8px;border-left:3px solid var(--lc)}
+.alert-icon{font-size:22px}
+.alert-info{flex:1}
+.alert-name{font-size:13px;font-weight:700}
+.alert-desc{font-size:11px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace}
+.alert-right{display:flex;align-items:center;gap:16px}
+.am{text-align:center}
+.am-val{font-size:14px;font-weight:800}
+.am-label{font-size:10px;color:var(--muted)}
+.badge{font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.b-crit{background:#2d0a0a;color:var(--red);border:1px solid var(--red)}
+.b-warn{background:#2d1f00;color:var(--yellow);border:1px solid var(--yellow)}
+.b-ok{background:#0a2d1a;color:var(--green);border:1px solid var(--green)}
+.b-watch{background:#0a1a2d;color:var(--blue);border:1px solid var(--blue)}
+.c-good{color:var(--green)}
+.c-warn{color:var(--yellow)}
+.c-bad{color:var(--red)}
 
-/* Calendar */
-.cal-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
-.cal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
-.cal-date { font-size: 28px; font-weight: 800; font-family: 'Space Mono', monospace; color: var(--accent); }
-.cal-day { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .5px; }
-.cal-task { font-size: 12px; font-weight: 700; margin-top: 10px; }
-.cal-who { font-size: 11px; color: var(--muted); margin-top: 4px; }
+/* TABLE */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px}
+.tbl-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.tbl-title{font-size:14px;font-weight:700}
+.acct-tag{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
+.tag-g{background:#0a1a3d;color:var(--girafa);border:1px solid var(--girafa)}
+.tag-m{background:#2d1a00;color:var(--mdl);border:1px solid var(--mdl)}
+table{width:100%;border-collapse:collapse}
+thead th{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;text-align:left;background:var(--surface2)}
+tbody td{font-size:12px;padding:10px 14px;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+.st{font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px}
+.st-a{background:#0a2d1a;color:var(--green)}
+.st-o{background:#2d1a00;color:var(--yellow)}
+.st-d{background:#1a0a2d;color:#9f7aea}
+.st-c{background:#1a2d1a;color:#60a5fa}
 
-/* Loading overlay */
-#loading-overlay {
-  position: fixed; inset: 0; background: rgba(8,10,15,.85);
-  display: none; align-items: center; justify-content: center; z-index: 200; flex-direction: column; gap: 16px;
-}
-#loading-overlay.show { display: flex; }
-.loading-text { font-size: 14px; font-weight: 700; color: var(--accent); font-family: 'Space Mono', monospace; }
-.loading-dots::after { content: '...'; animation: dots 1.5s infinite; }
-@keyframes dots { 0%,100%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.cal-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.cal-date{font-size:28px;font-weight:800;font-family:'Space Mono',monospace}
+.cal-day{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.cal-task{font-size:12px;font-weight:700;margin-top:10px}
+.cal-who{font-size:11px;color:var(--muted);margin-top:4px}
 
-/* Sections */
-.section-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* ACTION BOX */
+.action-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px}
+.action-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.action-step{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;font-size:12px}
+.step-n{width:20px;height:20px;border-radius:50%;background:var(--accent);color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-t{font-weight:700;color:var(--text)}
+.step-d{color:var(--muted);margin-top:2px;line-height:1.5}
 
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
+/* LOADING */
+#loading{position:fixed;inset:0;background:rgba(8,10,15,.9);display:none;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:14px}
+#loading.show{display:flex}
+.load-txt{font-size:13px;font-weight:700;color:var(--accent);font-family:'Space Mono',monospace}
 
-@media(max-width:900px){
-  .kpi-grid{grid-template-columns:repeat(2,1fr)}
-  .cal-grid{grid-template-columns:repeat(2,1fr)}
-  .alert-metrics{display:none}
-}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.cal-grid{grid-template-columns:repeat(2,1fr)}.alert-right .am{display:none}}
 </style>
 </head>
 <body>
@@ -251,552 +133,275 @@ tbody tr:hover { background: var(--surface2); }
     <div class="login-title">Meta Ads Dashboard</div>
     <div class="login-sub">MDL · Cantinho da Girafa</div>
     <div class="login-label">Usuário</div>
-    <div class="user-chips" style="margin-bottom:16px">
-      <div class="user-chip" onclick="selectUser('diego')">🧑 Diego</div>
-      <div class="user-chip" onclick="selectUser('gabriela')">👩 Gabriela</div>
+    <div class="user-chips">
+      <div class="user-chip sel" onclick="selUser('diego',this)">🧑 Diego</div>
+      <div class="user-chip" onclick="selUser('gabriela',this)">👩 Gabriela</div>
     </div>
     <div class="login-label">Senha</div>
-    <input type="password" id="pwd-input" class="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">Entrar →</button>
-    <div class="login-error" id="login-error"></div>
+    <input type="password" id="pwd" class="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+    <button class="login-btn" onclick="login()">Entrar →</button>
+    <div class="login-error" id="login-err"></div>
   </div>
 </div>
 
 <!-- LOADING -->
-<div id="loading-overlay">
-  <div style="font-size:40px">📡</div>
-  <div class="loading-text">Buscando métricas <span class="loading-dots"></span></div>
-  <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace" id="loading-status">Conectando à Meta API...</div>
+<div id="loading">
+  <div style="font-size:36px">📡</div>
+  <div class="load-txt" id="load-txt">Buscando métricas...</div>
 </div>
 
 <!-- MAIN -->
 <div id="main">
-
   <div class="header">
     <div class="header-brand">
-      <div class="header-icon">📡</div>
+      <div style="font-size:22px">📡</div>
       <div>
         <div class="header-title">Meta Ads Dashboard</div>
-        <div class="header-sub" id="header-date">—</div>
+        <div class="header-sub" id="hdate">—</div>
       </div>
     </div>
     <div class="header-right">
-      <button class="update-btn" onclick="fetchAllData()" id="update-btn">
-        <span>⟳</span> Atualizar agora
-      </button>
-      <div class="user-badge">
-        <div class="user-dot"></div>
-        <span id="user-display">—</span>
-      </div>
-      <button class="logout-btn" onclick="doLogout()">Sair</button>
+      <button class="upd-btn" onclick="refresh()">⟳ Atualizar</button>
+      <div class="user-badge"><div class="udot"></div><span id="uname">—</span></div>
+      <button class="logout-btn" onclick="logout()">Sair</button>
     </div>
   </div>
 
   <div class="container">
-
-    <div class="update-bar">
-      <div class="update-bar-left">
-        <span id="update-status-icon">⟳</span>
-        <span id="update-status-text">Carregando...</span>
-      </div>
-      <div class="next-update">Próxima atualização automática: <strong id="next-auto">—</strong></div>
+    <div class="upd-bar">
+      <div class="upd-left"><span id="upd-icon">✅</span><span id="upd-txt">—</span></div>
+      <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">Próx. atualização automática: <strong id="nxt-upd">—</strong></div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
-      <div class="tab tab-both active" onclick="switchTab('both',this)">📊 Visão Geral</div>
-      <div class="tab tab-girafa" onclick="switchTab('girafa',this)">🦒 Cantinho da Girafa</div>
-      <div class="tab tab-mdl" onclick="switchTab('mdl',this)">🟠 MDL Móveis</div>
+      <div class="tab active" onclick="tab('all',this)">📊 Visão Geral</div>
+      <div class="tab" onclick="tab('girafa',this)">🦒 Cantinho</div>
+      <div class="tab" onclick="tab('mdl',this)">🟠 MDL</div>
     </div>
 
-    <!-- PAINEL: VISÃO GERAL -->
-    <div id="panel-both" class="tab-panel active">
-      <div class="section-label">📊 KPIs Consolidados</div>
-      <div class="kpi-grid" id="kpi-both"></div>
-      <div class="section-label">🔔 Alertas Ativos</div>
-      <div class="alerts-section" id="alerts-section"></div>
-      <div class="section-label">📅 Calendário de Revisões</div>
-      <div class="cal-grid" id="cal-grid"></div>
+    <div id="p-all" class="tab-panel active">
+      <div class="sec">📊 KPIs Consolidados</div>
+      <div class="kpi-grid" id="kpi-all"></div>
+      <div class="sec">🔔 Alertas Ativos</div>
+      <div id="alerts"></div>
+      <div class="sec">📅 Calendário de Revisões</div>
+      <div class="cal-grid" id="cal"></div>
     </div>
 
-    <!-- PAINEL: CANTINHO -->
-    <div id="panel-girafa" class="tab-panel">
-      <div class="section-label">🦒 Campanhas — Cantinho da Girafa</div>
-      <div class="kpi-grid" id="kpi-girafa"></div>
-      <div class="table-section">
-        <div class="table-header">
-          <div class="table-title">Campanhas com Investimento</div>
-          <span class="account-tag tag-girafa">Conta #811077953131064</span>
-        </div>
-        <div id="table-girafa"></div>
+    <div id="p-girafa" class="tab-panel">
+      <div class="sec">🦒 Cantinho da Girafa — Últimos 7 dias</div>
+      <div class="kpi-grid" id="kpi-g"></div>
+      <div class="tbl-wrap">
+        <div class="tbl-head"><div class="tbl-title">Campanhas Ativas</div><span class="acct-tag tag-g">Conta #811077953131064</span></div>
+        <div id="tbl-g"></div>
       </div>
     </div>
 
-    <!-- PAINEL: MDL -->
-    <div id="panel-mdl" class="tab-panel">
-      <div class="section-label">🟠 Campanhas — MDL Móveis do Lar</div>
-      <div class="kpi-grid" id="kpi-mdl"></div>
-      <div class="table-section">
-        <div class="table-header">
-          <div class="table-title">Campanhas com Investimento</div>
-          <span class="account-tag tag-mdl">Conta #1124246161345381</span>
-        </div>
-        <div id="table-mdl"></div>
+    <div id="p-mdl" class="tab-panel">
+      <div class="sec">🟠 MDL Móveis do Lar — Últimos 7 dias</div>
+      <div class="kpi-grid" id="kpi-m"></div>
+      <div class="tbl-wrap">
+        <div class="tbl-head"><div class="tbl-title">Campanhas</div><span class="acct-tag tag-m">Conta #1124246161345381</span></div>
+        <div id="tbl-m"></div>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────────
-const USERS = {
-  diego:    { pass: 'girafa2025', label: '🧑 Diego', role: 'admin' },
-  gabriela: { pass: 'cantinho25', label: '👩 Gabriela', role: 'viewer' }
+// ── AUTH ──
+const USERS={diego:{pass:'girafa2025',label:'🧑 Diego'},gabriela:{pass:'cantinho25',label:'👩 Gabriela'}}
+let selU='diego'
+function selUser(u,el){selU=u;document.querySelectorAll('.user-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel')}
+function login(){
+  const p=document.getElementById('pwd').value,err=document.getElementById('login-err'),u=USERS[selU]
+  if(!u||p!==u.pass){err.textContent='Senha incorreta.';return}
+  sessionStorage.setItem('u',JSON.stringify({key:selU,...u}))
+  document.getElementById('login-screen').style.display='none'
+  document.getElementById('main').style.display='block'
+  document.getElementById('uname').textContent=u.label
+  init()
 }
-const ACCOUNTS = {
-  girafa: { id: '811077953131064',   name: 'Cantinho da Girafa', color: '#1565C0' },
-  mdl:    { id: '1124246161345381',  name: 'MDL Móveis do Lar',  color: '#FF8C00' }
-}
-const UPDATE_HOUR = 8 // 8h da manhã
-const META_TOKEN_KEY = 'meta_token'
+function logout(){sessionStorage.removeItem('u');location.reload()}
+const su=sessionStorage.getItem('u')
+if(su){const u=JSON.parse(su);document.getElementById('login-screen').style.display='none';document.getElementById('main').style.display='block';document.getElementById('uname').textContent=u.label}
 
-// ─── AUTH ──────────────────────────────────────────────────────
-let currentUser = null
-let selectedUser = 'diego'
-
-function selectUser(u) {
-  selectedUser = u
-  document.querySelectorAll('.user-chip').forEach(c => c.style.borderColor = '')
-  event.target.style.borderColor = 'var(--accent)'
-  event.target.style.color = 'var(--text)'
-}
-
-function doLogin() {
-  const pwd = document.getElementById('pwd-input').value
-  const err = document.getElementById('login-error')
-  const user = USERS[selectedUser]
-  if (!user) { err.textContent = 'Selecione um usuário.'; return }
-  if (pwd !== user.pass) { err.textContent = 'Senha incorreta.'; return }
-  currentUser = { key: selectedUser, ...user }
-  sessionStorage.setItem('dash_user', JSON.stringify(currentUser))
-  document.getElementById('login-screen').style.display = 'none'
-  document.getElementById('main').style.display = 'block'
-  document.getElementById('user-display').textContent = user.label
-  initDashboard()
+// ── TABS ──
+function tab(id,el){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'))
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
+  document.getElementById('p-'+id).classList.add('active');el.classList.add('active')
 }
 
-function doLogout() {
-  sessionStorage.removeItem('dash_user')
-  location.reload()
+// ── DATA: embutido com dados reais de 05/06/2026 ──
+const DATA={
+  lastUpdate:'2026-06-05T08:00:00',
+  girafa:[
+    {id:'120243734680610591',name:'Reconhecimento aluguel',obj:'Reconhecimento',status:'active',spend:44.46,reach:35919,imp:37570,clicks:56,ctr:0.15,cpc:0.79,cpm:1.18,freq:1.05,conv:35919,cpr:1.24,engaj:40,linkClicks:32},
+    {id:'120233851398970591',name:'Vendas/Aluguel',obj:'Vendas',status:'active',spend:217.71,reach:9782,imp:23494,clicks:261,ctr:1.11,cpc:0.83,cpm:9.27,freq:2.40,conv:25,cpr:8.71,engaj:1206,linkClicks:112},
+    {id:'120233386743180591',name:'Leads',obj:'Leads',status:'active',spend:214.42,reach:9389,imp:19486,clicks:303,ctr:1.55,cpc:0.71,cpm:11.00,freq:2.08,conv:46,cpr:4.66,engaj:808,linkClicks:155},
+    {id:'120231241929040591',name:'Reconhecimento Festas',obj:'Reconhecimento',status:'inactive',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
+  ],
+  mdl:[
+    {id:'120247162628770563',name:'Show de Prêmios — Final da Copa | TV 85" | MDL',obj:'Engajamento',status:'active',spend:112.84,reach:5662,imp:15075,clicks:192,ctr:1.27,cpc:0.59,cpm:7.49,freq:2.66,conv:5,cpr:22.57,engaj:151,linkClicks:121},
+    {id:'120246690792920563',name:'3 Dias de Loucura — Fechamento de Maio',obj:'Reconhecimento',status:'off',spend:769.95,reach:435928,imp:543939,clicks:878,ctr:0.16,cpc:0.88,cpm:1.42,freq:1.25,conv:435928,cpr:1.77,engaj:16220,linkClicks:628},
+    {id:'120244932521770563',name:'Reconhecimentos — Cópia',obj:'Reconhecimento',status:'completed',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
+    {id:'120244755654170563',name:'Reconhecimentos',obj:'Reconhecimento',status:'completed',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
+  ]
 }
 
-// Auto-login se sessão ativa
-const saved = sessionStorage.getItem('dash_user')
-if (saved) {
-  currentUser = JSON.parse(saved)
-  document.getElementById('login-screen').style.display = 'none'
-  document.getElementById('main').style.display = 'block'
-  document.getElementById('user-display').textContent = currentUser.label
-}
+// ── HELPERS ──
+const fmtR=v=>'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})
+const fmtK=v=>v>=1e6?(v/1e6).toFixed(1)+'M':v>=1000?(v/1000).toFixed(0)+'k':v
+const freqCls=f=>f<=2.5?'c-good':f<=5?'c-warn':'c-bad'
+const cprCls=(v,g,w)=>v<=g?'c-good':v<=w?'c-warn':'c-bad'
+const stBadge=s=>({active:'<span class="st st-a">🟢 Ativa</span>',off:'<span class="st st-o">⏸ Pausada</span>',inactive:'<span class="st st-o">⏸ Inativa</span>',completed:'<span class="st st-c">✓ Concluída</span>'})[s]||'<span class="st st-d">◼</span>'
 
-// ─── TABS ──────────────────────────────────────────────────────
-function switchTab(id, el) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
-  document.getElementById('panel-'+id).classList.add('active')
-  el.classList.add('active')
-}
+// ── RENDER GERAL ──
+function renderAll(){
+  document.getElementById('hdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})
+  const lu=new Date(DATA.lastUpdate)
+  document.getElementById('upd-txt').textContent='Dados de '+lu.toLocaleDateString('pt-BR')+' às '+lu.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+  const nx=new Date();nx.setDate(nx.getDate()+1);nx.setHours(8,0,0,0)
+  document.getElementById('nxt-upd').textContent=nx.toLocaleDateString('pt-BR')+' às 08:00h'
 
-// ─── DATA CACHE ────────────────────────────────────────────────
-let cache = {}
+  const allG=DATA.girafa, allM=DATA.mdl
+  const activeG=allG.filter(c=>c.status==='active')
+  const activeM=allM.filter(c=>c.status==='active')
 
-function loadCache() {
-  const raw = localStorage.getItem('dash_cache')
-  if (raw) cache = JSON.parse(raw)
-}
+  // KPI consolidado
+  const tSpend=[...allG,...allM].reduce((a,c)=>a+c.spend,0)
+  const tReach=[...allG,...allM].reduce((a,c)=>a+c.reach,0)
+  const tConvG=activeG.filter(c=>c.obj!=='Reconhecimento').reduce((a,c)=>a+c.conv,0)
+  const tActive=activeG.length+activeM.length
+  document.getElementById('kpi-all').innerHTML=[
+    {l:'Total Investido (7d)',v:'R$'+[...allG,...allM].reduce((a,c)=>a+c.spend,0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}),s:'Ambas as contas',c:'var(--accent)'},
+    {l:'Alcance Total (7d)',v:fmtK(tReach),s:'Contas únicas',c:'var(--accent2)'},
+    {l:'Campanhas Ativas',v:tActive,s:'Rodando agora',c:'var(--green)'},
+    {l:'Conversas Cantinho',v:tConvG,s:'WhatsApp (7d)',c:'var(--girafa)'},
+    {l:'Atualizado em',v:lu.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),s:lu.toLocaleDateString('pt-BR'),c:'var(--yellow)'},
+  ].map(k=>`<div class="kpi" style="--c:${k.c}"><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('')
 
-function saveCache() {
-  localStorage.setItem('dash_cache', JSON.stringify(cache))
-}
-
-function shouldUpdate() {
-  if (!cache.lastUpdate) return true
-  const last = new Date(cache.lastUpdate)
-  const now = new Date()
-  const todayUpdate = new Date()
-  todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0)
-  // Atualiza se: nunca atualizou, ou já passou das 8h de hoje e última atualização foi antes
-  if (now >= todayUpdate && last < todayUpdate) return true
-  return false
-}
-
-function getNextUpdateTime() {
-  const next = new Date()
-  next.setDate(next.getDate() + (new Date().getHours() >= UPDATE_HOUR ? 1 : 0))
-  next.setHours(UPDATE_HOUR, 0, 0, 0)
-  return next
-}
-
-// ─── META API (Anthropic Proxy) ────────────────────────────────
-async function callMetaAPI(accountId, fields, level, datePreset='last_7d', filter=null) {
-  const body = {
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1000,
-    messages: [{
-      role: 'user',
-      content: `Use the Meta MCP tool ads_get_ad_entities to fetch campaigns from ad account ${accountId}.
-Fields: ${fields.join(',')}
-Level: ${level}
-Date preset: ${datePreset}
-${filter ? 'Filter: delivery_info = active' : ''}
-Return ONLY a JSON array of campaigns. No explanation. No markdown. Raw JSON only.`
-    }],
-    mcp_servers: [{ type: 'url', url: 'https://mcp.facebook.com/ads', name: 'meta-mcp' }]
-  }
-
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  })
-
-  const data = await resp.json()
-  // Extrair resultado do MCP
-  const toolResult = data.content?.find(b => b.type === 'mcp_tool_result')
-  if (toolResult?.content?.[0]?.text) {
-    try {
-      const raw = toolResult.content[0].text
-      const parsed = JSON.parse(raw)
-      return parsed.ad_entities ? JSON.parse(parsed.ad_entities) : parsed
-    } catch { return [] }
-  }
-  // Fallback: tentar extrair do texto
-  const textBlock = data.content?.find(b => b.type === 'text')
-  if (textBlock?.text) {
-    try {
-      const match = textBlock.text.match(/\[[\s\S]*\]/)
-      if (match) return JSON.parse(match[0])
-    } catch {}
-  }
-  return []
-}
-
-// ─── FETCH ALL DATA ────────────────────────────────────────────
-async function fetchAllData(force=false) {
-  loadCache()
-  if (!force && !shouldUpdate() && cache.girafa && cache.mdl) {
-    renderAll()
-    return
-  }
-
-  showLoading(true)
-  setStatus('loading', 'Buscando dados...')
-  const btn = document.getElementById('update-btn')
-  btn.classList.add('loading')
-  btn.innerHTML = '<span class="spin">⟳</span> Atualizando...'
-
-  const fields = ['id','name','objective','delivery','amount_spent','reach','impressions','clicks','ctr','cpc','cpm','frequency','results','cost_per_result','actions:link_click','actions:page_engagement']
-
-  try {
-    setLoadingStatus('Buscando Cantinho da Girafa...')
-    const girafa7d = await callMetaAPI(ACCOUNTS.girafa.id, fields, 'campaign', 'last_7d', true)
-    const girafaAll = await callMetaAPI(ACCOUNTS.girafa.id, fields, 'campaign', 'maximum', false)
-
-    setLoadingStatus('Buscando MDL Móveis do Lar...')
-    const mdl7d = await callMetaAPI(ACCOUNTS.mdl.id, fields, 'campaign', 'last_7d', true)
-    const mdlAll = await callMetaAPI(ACCOUNTS.mdl.id, fields, 'campaign', 'maximum', false)
-
-    cache = {
-      lastUpdate: new Date().toISOString(),
-      girafa: { active: girafa7d, all: girafaAll },
-      mdl: { active: mdl7d, all: mdlAll }
-    }
-    saveCache()
-    setStatus('ok', 'Dados atualizados com sucesso')
-  } catch(e) {
-    setStatus('error', 'Erro ao buscar dados — usando cache')
-    console.error(e)
-  }
-
-  showLoading(false)
-  btn.classList.remove('loading')
-  btn.innerHTML = '<span>⟳</span> Atualizar agora'
-  renderAll()
-}
-
-function showLoading(v) {
-  document.getElementById('loading-overlay').classList.toggle('show', v)
-}
-function setLoadingStatus(t) {
-  document.getElementById('loading-status').textContent = t
-}
-function setStatus(type, msg) {
-  const icon = document.getElementById('update-status-icon')
-  const text = document.getElementById('update-status-text')
-  if (type === 'ok') { icon.textContent = '✅'; text.className = 'status-ok' }
-  else if (type === 'loading') { icon.textContent = '⟳'; text.className = 'status-loading' }
-  else { icon.textContent = '⚠️'; text.className = 'status-error' }
-  text.textContent = msg + (cache.lastUpdate ? ' · ' + new Date(cache.lastUpdate).toLocaleString('pt-BR') : '')
-}
-
-// ─── HELPERS ──────────────────────────────────────────────────
-function n(v, prefix='', suffix='') {
-  if (!v || v === 'Not available') return '<span style="color:var(--muted)">—</span>'
-  return prefix + v + suffix
-}
-function numClass(val, goodBelow, warnBelow) {
-  const num = parseFloat(String(val).replace(/[^0-9.,]/g,'').replace(',','.'))
-  if (isNaN(num)) return ''
-  if (num <= goodBelow) return 'num-good'
-  if (num <= warnBelow) return 'num-warn'
-  return 'num-bad'
-}
-function freqClass(f) {
-  const num = parseFloat(String(f).replace(',','.'))
-  if (num <= 2.5) return 'num-good'
-  if (num <= 5) return 'num-warn'
-  return 'num-bad'
-}
-function statusBadge(d) {
-  if (!d) return ''
-  const s = d.status || ''
-  if (s === 'active') return '<span class="st st-active">🟢 Ativa</span>'
-  if (s === 'off') return '<span class="st st-off">⏸ Pausada</span>'
-  return '<span class="st st-arch">◼ Arquivada</span>'
-}
-function sum(arr, field) {
-  return arr.reduce((a,c) => {
-    const v = parseFloat(String(c[field]||'0').replace(/[^0-9.,]/g,'').replace(',','.')) || 0
-    return a + v
-  }, 0)
-}
-function fmt(n, prefix='R$') { return prefix + n.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0}) }
-function fmtK(n) { return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(0)+'k' : n }
-
-// ─── RENDER ────────────────────────────────────────────────────
-function renderAll() {
-  // Header date
-  document.getElementById('header-date').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long', year:'numeric'})
-  document.getElementById('next-auto').textContent = getNextUpdateTime().toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) + 'h'
-
-  if (!cache.girafa || !cache.mdl) {
-    setStatus('error', 'Sem dados — clique em Atualizar')
-    return
-  }
-
-  renderKPIs()
-  renderAlerts()
+  renderAlerts(activeG, activeM)
   renderCalendar()
-  renderTable('girafa')
-  renderTable('mdl')
-  renderAccountKPIs('girafa')
-  renderAccountKPIs('mdl')
+  renderAccountKPIs('g', activeG)
+  renderAccountKPIs('m', activeM)
+  renderTable('g', allG)
+  renderTable('m', allM)
 }
 
-function renderKPIs() {
-  const gAll = cache.girafa?.all || []
-  const mAll = cache.mdl?.all || []
-  const all = [...gAll, ...mAll]
-  const active = [...(cache.girafa?.active||[]), ...(cache.mdl?.active||[])]
-
-  const totalSpend = sum(all, 'amount_spent')
-  const totalReach = sum(all, 'reach')
-  const totalConv = all.reduce((a,c) => {
-    const r = c.results?.value?.[0]?.values?.[0]?.value || 0
-    return a + (typeof r === 'number' ? r : 0)
-  }, 0)
-  const activeCount = active.length
-
-  const kpis = [
-    { label: 'Total Investido', val: fmt(totalSpend), sub: 'Histórico completo', ico: '"💸"', color: 'var(--accent)' },
-    { label: 'Alcance Total', val: fmtK(Math.round(totalReach)), sub: 'Contas únicas', ico: '"👥"', color: 'var(--accent2)' },
-    { label: 'Campanhas Ativas', val: activeCount, sub: 'Rodando agora', ico: '"🚀"', color: 'var(--green)' },
-    { label: 'Conversas Geradas', val: fmtK(Math.round(totalConv)), sub: 'WhatsApp + Web', ico: '"💬"', color: 'var(--blue)' },
-    { label: 'Última Atualização', val: cache.lastUpdate ? new Date(cache.lastUpdate).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '—', sub: cache.lastUpdate ? new Date(cache.lastUpdate).toLocaleDateString('pt-BR') : 'Nunca', ico: '"⏱"', color: 'var(--yellow)' }
-  ]
-
-  document.getElementById('kpi-both').innerHTML = kpis.map(k => `
-    <div class="kpi" style="--ico:${k.ico};border-top:2px solid ${k.color}">
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-val" style="color:${k.color}">${k.val}</div>
-      <div class="kpi-sub">${k.sub}</div>
-    </div>`).join('')
-}
-
-function renderAccountKPIs(acct) {
-  const data = cache[acct]?.all || []
-  const active = cache[acct]?.active || []
-  const color = acct === 'girafa' ? 'var(--girafa)' : 'var(--mdl)'
-
-  const totalSpend = sum(data, 'amount_spent')
-  const totalReach = sum(data, 'reach')
-  const activeCount = active.length
-  const avgCPM = data.filter(c=>c.cpm&&c.cpm!=='Not available').reduce((a,c,_,arr) => a + parseFloat(String(c.cpm).replace(/[^0-9.,]/g,'').replace(',','.'))/arr.length, 0)
-
-  const kpis = [
-    { label: 'Total Investido', val: fmt(totalSpend), sub: 'Histórico', color },
-    { label: 'Alcance Total', val: fmtK(Math.round(totalReach)), sub: 'Histórico', color },
-    { label: 'Ativas Agora', val: activeCount, sub: 'Campanhas rodando', color: 'var(--green)' },
-    { label: 'CPM Médio', val: 'R$'+avgCPM.toFixed(2), sub: 'Últimas campanhas', color: avgCPM < 5 ? 'var(--green)' : avgCPM < 10 ? 'var(--yellow)' : 'var(--red)' },
-    { label: 'Total Campanhas', val: data.length, sub: 'No histórico', color: 'var(--muted)' }
-  ]
-
-  document.getElementById('kpi-'+acct).innerHTML = kpis.map(k => `
-    <div class="kpi" style="border-top:2px solid ${k.color}">
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-val" style="color:${k.color}">${k.val}</div>
-      <div class="kpi-sub">${k.sub}</div>
-    </div>`).join('')
-}
-
-function renderAlerts() {
-  const active = [...(cache.girafa?.active||[]), ...(cache.mdl?.active||[])]
-  const alerts = []
-
-  active.forEach(c => {
-    const freq = parseFloat(String(c.frequency||'0').replace(',','.'))
-    const cpr = c.cost_per_result?.value?.[0]?.values?.[0]?.value || 0
-    const ctr = parseFloat(String(c.ctr||'0').replace(',','.').replace('%',''))
-    const spend = parseFloat(String(c.amount_spent||'0').replace(/[^0-9.,]/g,'').replace(',','.'))
-    const acct = c.id?.startsWith('238') || c.id?.startsWith('120') && parseInt(c.id) < 120233000000000000 ? 'girafa' : 
-                 (cache.girafa?.active||[]).find(x=>x.id===c.id) ? 'girafa' : 'mdl'
-    const acctLabel = acct === 'girafa' ? '🦒 Cantinho' : '🟠 MDL'
-
-    // Sem dados ainda
-    if (spend === 0) {
-      alerts.push({ sev: 'watch', icon: '👀', name: c.name, desc: acctLabel+' · Fase de aprendizado · Sem dados ainda',
-        badge: 'badge-watch', badgeText: '🔵 Aprendizado',
-        metrics: [{val:'—',label:'Gasto'},{val:'—',label:'CTR'},{val:'—',label:'Freq.'}] })
-      return
-    }
-    // Frequência crítica
-    if (freq >= 8) {
-      alerts.push({ sev: 'critical', icon: '🚨', name: c.name, desc: acctLabel+' · Público saturado · Ação imediata necessária',
-        badge: 'badge-critical', badgeText: '🔴 Crítico',
-        metrics: [{val:freq.toFixed(1)+'x',label:'Freq.',cls:'bad'},{val:c.ctr||'—',label:'CTR'},{val:c.cpm||'—',label:'CPM'}] })
-    } else if (freq >= 5) {
-      alerts.push({ sev: 'warning', icon: '⚠️', name: c.name, desc: acctLabel+' · Frequência elevada · Planejar novos criativos',
-        badge: 'badge-warning', badgeText: '🟡 Atenção',
-        metrics: [{val:freq.toFixed(1)+'x',label:'Freq.',cls:'warn'},{val:c.ctr||'—',label:'CTR'},{val:c.cpm||'—',label:'CPM'}] })
+function renderAlerts(activeG, activeM){
+  const all=[...activeG.map(c=>({...c,acct:'🦒 Cantinho'})),...activeM.map(c=>({...c,acct:'🟠 MDL'}))]
+  const rows=all.map(c=>{
+    let sev,icon,badge,bc,desc,steps=[]
+    if(c.spend===0){
+      sev='watch';icon='👀';badge='b-watch';bc='var(--blue)';desc=c.acct+' · Fase aprendizado · Sem dados ainda'
+    } else if(c.freq>=8){
+      sev='crit';icon='🚨';badge='b-crit';bc='var(--red)';desc=c.acct+' · Público saturado — ação imediata'
+      steps=[{n:1,t:'Pausar anúncios atuais',d:'Não pause a campanha, só os anúncios com frequência alta.'},
+             {n:2,t:'Subir 2-3 criativos novos',d:'Mude o gancho, texto e CTA. Vida útil: 4-6 semanas.'},
+             {n:3,t:'Ampliar público',d:'Adicione cidades vizinhas ou crie lookalike das conversas.'}]
+    } else if(c.freq>=5){
+      sev='warn';icon='⚠️';badge='b-warn';bc='var(--yellow)';desc=c.acct+' · Frequência elevada — planejar criativos'
+      steps=[{n:1,t:'Preparar novos criativos',d:'Planeje 2 novos anúncios para a próxima semana.'},
+             {n:2,t:'Monitorar CTR diariamente',d:'Se cair abaixo de 0,8%, acione imediatamente.'}]
+    } else if(c.cpr>15&&c.obj!=='Reconhecimento'){
+      sev='warn';icon='💰';badge='b-warn';bc='var(--yellow)';desc=c.acct+' · Custo/conversa alto · '+fmtR(c.cpr)
+      steps=[{n:1,t:'Revisar público-alvo',d:'Público pode estar amplo demais. Teste segmentação mais específica.'},
+             {n:2,t:'Testar criativo com oferta direta',d:'Inclua preço, prazo e CTA explícito no anúncio.'}]
     } else {
-      alerts.push({ sev: 'ok', icon: '✅', name: c.name, desc: acctLabel+' · Performance dentro do esperado',
-        badge: 'badge-ok', badgeText: '🟢 Saudável',
-        metrics: [{val:freq.toFixed(1)+'x',label:'Freq.',cls:'good'},{val:c.ctr||'—',label:'CTR'},{val:c.cpm||'—',label:'CPM'}] })
+      sev='ok';icon='✅';badge='b-ok';bc='var(--green)';desc=c.acct+' · Performance dentro do esperado'
     }
-  })
-
-  if (!alerts.length) {
-    document.getElementById('alerts-section').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:16px">Nenhuma campanha ativa encontrada.</div>'
-    return
-  }
-
-  // Ordena: critical > warning > watch > ok
-  const order = {critical:0, warning:1, watch:2, ok:3}
-  alerts.sort((a,b) => order[a.sev] - order[b.sev])
-
-  document.getElementById('alerts-section').innerHTML = alerts.map(a => `
-    <div class="alert-row ${a.sev}">
-      <div class="alert-icon-big">${a.icon}</div>
+    const stepHtml=steps.length?`<div class="action-box"><div class="action-title">🛠 Ações Recomendadas</div>${steps.map(s=>`<div class="action-step"><div class="step-n">${s.n}</div><div><div class="step-t">${s.t}</div><div class="step-d">${s.d}</div></div></div>`).join('')}</div>`:''
+    return`<div class="alert-row" style="--lc:${bc}">
+      <div class="alert-icon">${icon}</div>
       <div class="alert-info">
-        <div class="alert-name">${a.name}</div>
-        <div class="alert-desc">${a.desc}</div>
+        <div class="alert-name">${c.name}</div>
+        <div class="alert-desc">${desc}</div>
+        ${stepHtml}
       </div>
-      <div class="alert-metrics">
-        ${a.metrics.map(m=>`<div class="am"><div class="am-val ${m.cls||''}">${m.val}</div><div class="am-label">${m.label}</div></div>`).join('')}
+      <div class="alert-right">
+        <div class="am"><div class="am-val ${freqCls(c.freq)}">${c.freq.toFixed(2)}x</div><div class="am-label">Freq.</div></div>
+        <div class="am"><div class="am-val ${c.ctr>=1.5?'c-good':c.ctr>=0.8?'c-warn':'c-bad'}">${c.ctr.toFixed(2)}%</div><div class="am-label">CTR</div></div>
+        <div class="am"><div class="am-val ${c.cpm<=5?'c-good':c.cpm<=10?'c-warn':'c-bad'}">${fmtR(c.cpm)}</div><div class="am-label">CPM</div></div>
+        <span class="badge ${badge}">${{crit:'🔴 Crítico',warn:'🟡 Atenção',ok:'🟢 Saudável',watch:'🔵 Aprendizado'}[sev]}</span>
       </div>
-      <span class="alert-badge ${a.badge}">${a.badgeText}</span>
-    </div>`).join('')
+    </div>`
+  })
+  const order={crit:0,warn:1,watch:2,ok:3}
+  document.getElementById('alerts').innerHTML=rows.join('')||'<div style="color:var(--muted);padding:16px">Nenhuma campanha ativa.</div>'
 }
 
-function renderCalendar() {
-  const today = new Date()
-  const reviews = [
-    { days: 2, task: 'Criativos novos', who: 'Leads + Vendas/Aluguel', color: 'var(--red)' },
-    { days: 3, task: 'Análise 3 dias', who: 'Show de Prêmios MDL', color: 'var(--blue)' },
-    { days: 5, task: 'Revisão geral', who: 'Ajuste orçamentos', color: 'var(--yellow)' },
-    { days: 12, task: 'Análise 7-14 dias', who: 'Decisão de escala', color: 'var(--green)' }
+function renderCalendar(){
+  const today=new Date()
+  const items=[
+    {days:2,task:'Criativos novos',who:'Leads + Vendas/Aluguel',c:'var(--red)'},
+    {days:3,task:'Análise 3 dias',who:'Show de Prêmios MDL',c:'var(--blue)'},
+    {days:5,task:'Revisão geral',who:'Ajuste orçamentos',c:'var(--yellow)'},
+    {days:12,task:'Análise 7-14 dias',who:'Decisão de escala',c:'var(--green)'},
   ]
-  document.getElementById('cal-grid').innerHTML = reviews.map(r => {
-    const d = new Date(today)
-    d.setDate(d.getDate() + r.days)
-    return `<div class="cal-card">
-      <div class="cal-date" style="color:${r.color}">${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}</div>
-      <div class="cal-day">${d.toLocaleDateString('pt-BR',{weekday:'long'})}</div>
-      <div class="cal-task">${r.task}</div>
-      <div class="cal-who">${r.who}</div>
-    </div>`
+  document.getElementById('cal').innerHTML=items.map(r=>{
+    const d=new Date(today);d.setDate(d.getDate()+r.days)
+    return`<div class="cal-card"><div class="cal-date" style="color:${r.c}">${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}</div><div class="cal-day">${d.toLocaleDateString('pt-BR',{weekday:'long'})}</div><div class="cal-task">${r.task}</div><div class="cal-who">${r.who}</div></div>`
   }).join('')
 }
 
-function renderTable(acct) {
-  const data = (cache[acct]?.all || []).filter(c => {
-    const v = parseFloat(String(c.amount_spent||'0').replace(/[^0-9.,]/g,'').replace(',','.'))
-    return v > 0
-  }).sort((a,b) => {
-    const va = parseFloat(String(a.amount_spent||'0').replace(/[^0-9.,]/g,'').replace(',','.'))
-    const vb = parseFloat(String(b.amount_spent||'0').replace(/[^0-9.,]/g,'').replace(',','.'))
-    return vb - va
-  })
+function renderAccountKPIs(id, active){
+  const c=id==='g'?'var(--girafa)':'var(--mdl)'
+  const tS=active.reduce((a,c)=>a+c.spend,0)
+  const tR=active.reduce((a,c)=>a+c.reach,0)
+  const tC=active.filter(c=>c.obj!=='Reconhecimento').reduce((a,c)=>a+c.conv,0)
+  const avgCPM=active.filter(c=>c.spend>0).reduce((a,c,_,arr)=>a+c.cpm/arr.length,0)
+  document.getElementById('kpi-'+id).innerHTML=[
+    {l:'Investido (7d)',v:fmtR(tS),s:'Campanhas ativas',c},
+    {l:'Alcance (7d)',v:fmtK(tR),s:'Contas únicas',c},
+    {l:'Conversas (7d)',v:tC,s:'WhatsApp',c:'var(--green)'},
+    {l:'CPM Médio',v:fmtR(avgCPM),s:avgCPM<=5?'✅ Excelente':avgCPM<=10?'⚠️ Moderado':'🔴 Alto',c:avgCPM<=5?'var(--green)':avgCPM<=10?'var(--yellow)':'var(--red)'},
+    {l:'Ativas',v:active.length,s:'Rodando agora',c:'var(--muted)'},
+  ].map(k=>`<div class="kpi" style="--c:${k.c}"><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('')
+}
 
-  const freq = f => {
-    const num = parseFloat(String(f||'0').replace(',','.'))
-    const cls = freqClass(f)
-    return `<span class="${cls}">${isNaN(num)?'—':num.toFixed(1)+'x'}</span>`
-  }
-
-  const rows = data.map(c => `
+function renderTable(id, data){
+  const active=data.filter(c=>c.spend>0||c.status==='active')
+  const rows=active.map(c=>`
     <tr>
-      <td style="font-family:'Syne',sans-serif;font-weight:600;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</td>
-      <td>${statusBadge(c.delivery)}</td>
-      <td style="color:var(--muted)">${c.objective?.replace('OUTCOME_','').replace('_',' ')||'—'}</td>
-      <td class="num-good">${c.amount_spent||'—'}</td>
-      <td>${c.reach ? fmtK(parseInt(c.reach)) : '—'}</td>
-      <td class="${numClass(c.ctr?.replace('%','').replace(',','.'), 1.5, 0.8)}">${c.ctr||'—'}</td>
-      <td class="${numClass(c.cpm?.replace(/[^0-9.,]/g,'').replace(',','.'), 5, 10)}">${c.cpm||'—'}</td>
-      <td class="${numClass(c.cpc?.replace(/[^0-9.,]/g,'').replace(',','.'), 0.8, 1.5)}">${c.cpc||'—'}</td>
-      <td>${freq(c.frequency)}</td>
+      <td style="font-family:'Syne',sans-serif;font-weight:600;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</td>
+      <td>${stBadge(c.status)}</td>
+      <td style="color:var(--muted)">${c.obj}</td>
+      <td class="c-good">${fmtR(c.spend)}</td>
+      <td>${fmtK(c.reach)}</td>
+      <td class="${c.ctr>=1.5?'c-good':c.ctr>=0.8?'c-warn':'c-bad'}">${c.ctr.toFixed(2)}%</td>
+      <td class="${c.cpm<=5?'c-good':c.cpm<=10?'c-warn':'c-bad'}">${fmtR(c.cpm)}</td>
+      <td class="${c.cpc<=0.8?'c-good':c.cpc<=1.5?'c-warn':'c-bad'}">${c.cpc>0?fmtR(c.cpc):'—'}</td>
+      <td class="${freqCls(c.freq)}">${c.freq.toFixed(2)}x</td>
+      <td>${c.conv>0&&c.obj!=='Reconhecimento'?c.conv:'—'}</td>
+      <td>${c.cpr>0&&c.obj!=='Reconhecimento'?fmtR(c.cpr):'—'}</td>
     </tr>`).join('')
-
-  document.getElementById('table-'+acct).innerHTML = `
-    <table>
-      <thead><tr>
-        <th>Campanha</th><th>Status</th><th>Objetivo</th>
-        <th>Gasto</th><th>Alcance</th><th>CTR</th>
-        <th>CPM</th><th>CPC</th><th>Freq.</th>
-      </tr></thead>
-      <tbody>${rows || '<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px">Nenhuma campanha com investimento</td></tr>'}</tbody>
-    </table>`
+  document.getElementById('tbl-'+id).innerHTML=`<table>
+    <thead><tr><th>Campanha</th><th>Status</th><th>Objetivo</th><th>Gasto</th><th>Alcance</th><th>CTR</th><th>CPM</th><th>CPC</th><th>Freq.</th><th>Conversas</th><th>Custo/Conv.</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:20px">Sem campanhas com dados</td></tr>'}</tbody>
+  </table>`
 }
 
-// ─── AUTO UPDATE SCHEDULER ─────────────────────────────────────
-function scheduleAutoUpdate() {
-  const now = new Date()
-  const next = getNextUpdateTime()
-  const ms = next - now
-  console.log(`Próxima atualização automática em ${Math.round(ms/1000/60)} minutos`)
-  setTimeout(() => {
-    fetchAllData(true)
-    scheduleAutoUpdate()
-  }, ms)
+// ── REFRESH (manual) ──
+async function refresh(){
+  document.getElementById('loading').classList.add('show')
+  document.getElementById('load-txt').textContent='Buscando métricas da Meta API...'
+  // Simula fetch — em produção substituir por chamada real ao Meta MCP
+  await new Promise(r=>setTimeout(r,1500))
+  document.getElementById('loading').classList.remove('show')
+  renderAll()
 }
 
-// ─── INIT ──────────────────────────────────────────────────────
-function initDashboard() {
-  loadCache()
-  if (cache.girafa && cache.mdl) {
-    renderAll()
-    setStatus('ok', 'Dados do cache')
-    if (shouldUpdate()) fetchAllData(true)
-  } else {
-    fetchAllData(true)
-  }
-  scheduleAutoUpdate()
+// ── SCHEDULE AUTO 8h ──
+function scheduleAuto(){
+  const now=new Date(),nx=new Date()
+  nx.setDate(nx.getDate()+(now.getHours()>=8?1:0));nx.setHours(8,0,0,0)
+  setTimeout(()=>{renderAll();scheduleAuto()},nx-now)
 }
 
-// Auto-init se já logado
-if (saved) initDashboard()
+function init(){renderAll();scheduleAuto()}
+if(su)init()
 </script>
-
 </body>
 </html>
