@@ -3,507 +3,800 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Multi-Empresa — Meta Ads + IA</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<title>Meta Ads Dashboard — Diego</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
 
-<!-- ============================================================
-     FIREBASE SDK
-     ============================================================ -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-/* ============================================================
-   FIREBASE CONFIG — cole suas credenciais aqui (~linha 17)
-   Obtenha em: console.firebase.google.com → ⚙️ → Seu app
-   ============================================================ */
-const firebaseConfig = {
-  apiKey: "AIzaSyBcGHjEbDVepjHJyJEffDgv3qi0-k0rAys",
-  authDomain: "metaads-3ea7c.firebaseapp.com",
-  projectId: "metaads-3ea7c",
-  storageBucket: "metaads-3ea7c.firebasestorage.app",
-  messagingSenderId: "624681926543",
-  appId: "1:624681926543:web:f4eaa47a2b7d2f9ffcd5fa",
-  measurementId: "G-8BCHQGM438"
-};
-
-/* ---- inicializa Firebase ---- */
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-/* ============================================================
-   EMPRESAS DEFAULT (usadas na 1ª vez ou se Firestore vazio)
-   ============================================================ */
-const DEFAULT_COMPANIES = [
-  {
-    id:'mdl',
-    nome:'MDL Móveis do Lar',
-    emoji:'🛋️',
-    cidade:'Castro/PR',
-    cor:'#FF8C00',
-    contaMeta:'1124246161345381',
-    score:7.8,
-    stats:{gasto:'R$ 556,48', impressoes:'592.951', cliques:'606', cpl:'R$ 8,56', roas:'1,8x', conversoes:'65'},
-    campanhas:[
-      {nome:'3 Dias de Loucura',       status:'ATIVA', obj:'Consciência', gasto:'R$ 349,52', imp:'33.842',  cliques:52,  cpm:'R$ 10,33', ctr:'0,15%', conv:'—'},
-      {nome:'Reconhecimentos — Cópia', status:'ATIVA', obj:'Consciência', gasto:'R$ 515,33', imp:'350.795', cliques:554, cpm:'R$ 1,47',  ctr:'0,16%', conv:'—'}
-    ],
-    insights:[
-      ['💎 Campanha de OURO','"Reconhecimentos — Cópia" tem CPM de R$ 1,47 — 7x mais barato que "3 Dias de Loucura" (R$ 10,33). Escalar essa campanha 2.5x pode render +R$ 2.200/mês.'],
-      ['⚠️ CTR abaixo do esperado','CTR geral de 0,15% indica que o criativo precisa de teste. Um criativo novo pode elevar o engajamento em até 40%.'],
-      ['🗂️ Campanhas pausadas','Várias campanhas pausadas resetam o aprendizado do Meta. Consolidar em poucas campanhas ativas com orçamento maior melhora a entrega.']
-    ],
-    recomendacoes:[
-      ['1. Escalar "Reconhecimentos" 2.5x','Atual R$ 350/mês → R$ 875/mês. Retorno estimado: +R$ 2.200/mês em vendas.'],
-      ['2. Renovar criativo de "3 Dias de Loucura"','CPM alto sugere fadiga criativa. Testar nova imagem + copy.'],
-      ['3. Configurar Dynamic Ads com catálogo','Setup único, ROI esperado +35% conversão para varejo de móveis.'],
-      ['4. Criar campanha de Retargeting','Público: visitantes do site. Orçamento R$ 200/mês, ROAS típico 3-5x.']
-    ],
-    investimentos:[
-      ['📊 Conservador (+R$ 150/mês)','Reforço em "Reconhecimentos". Retorno estimado +R$ 2.200/mês. ROI ~14:1.'],
-      ['🚀 Agressivo (+R$ 500/mês)','Scale + Dynamic Ads + Retargeting. Retorno estimado +R$ 18.000 em 30-45 dias.'],
-      ['🎯 Estratégico (+R$ 1.200/mês)','Transformação completa em 90 dias. +450 vendas estimadas, ROI ~20:1.']
-    ]
-  },
-  {
-    id:'girafa',
-    nome:'Cantinho da Girafa',
-    emoji:'🎀',
-    cidade:'Ponta Grossa/PR',
-    cor:'#7C4DFF',
-    contaMeta:'811077953131064',
-    score:8.6,
-    stats:{gasto:'R$ 682,89', impressoes:'592.051', cliques:'1.880', cpl:'R$ 4,69', roas:'2,1x', conversoes:'409'},
-    campanhas:[
-      {nome:'Vendas/Aluguel', status:'ATIVA', obj:'Vendas', gasto:'R$ 459,01', imp:'55.635', cliques:550,  cpm:'R$ 8,25', ctr:'0,99%', conv:'65'},
-      {nome:'Leads',          status:'ATIVA', obj:'Leads',  gasto:'R$ 900,72', imp:'98.583', cliques:1330, cpm:'R$ 9,14', ctr:'1,35%', conv:'192'}
-    ],
-    insights:[
-      ['🏆 "Leads" é top-tier','CPL de R$ 4,69 com 192 conversas — bem abaixo do benchmark de mercado (R$ 6-10). Pronta para escalar.'],
-      ['🔥 CTR excepcional','"Vendas/Aluguel" tem CTR de 0,99% — 6,6x acima da média. Criativo excelente, deve ser clonado em variações A/B.'],
-      ['📍 Tracking limitado','Hoje só medimos conversas iniciadas. Falta pixel de compra para medir ROI real das vendas.']
-    ],
-    recomendacoes:[
-      ['1. Escalar "Leads" para R$ 1.200/mês','CPL ótimo. Retorno estimado +R$ 900/mês em locações.'],
-      ['2. Clonar "Vendas/Aluguel" em 3 variações A/B','CTR de 0,99% é ouro. Testar variações por R$ 300/7 dias.'],
-      ['3. Instalar pixel de conversão de compra','+40% de precisão na otimização e visibilidade real de ROI.'],
-      ['4. Agendar anúncios nos horários de pico','Terça a quinta, 19h-22h. Concentrar 60% do orçamento. +20% CTR.']
-    ],
-    investimentos:[
-      ['📊 Conservador (+R$ 150/mês)','Reforço em "Leads". Retorno estimado +R$ 1.400/mês. ROI ~19:1.'],
-      ['🚀 Agressivo (+R$ 500/mês)','Scale "Leads" + variações A/B + Retargeting. +R$ 5.500 em 30-45 dias.'],
-      ['🎯 Estratégico (+R$ 1.300/mês)','Pixel + scale total + dominação local. +280 leads, ROI ~21:1.']
-    ]
-  }
-];
-
-/* ============================================================
-   ESTADO GLOBAL
-   ============================================================ */
-window._companies       = [];
-window._currentCompany  = null;
-window._currentUser     = null;
-const charts = {};
-
-/* ============================================================
-   FIRESTORE — carregar / salvar empresas
-   (documento: companies/{uid}/data)
-   ============================================================ */
-async function loadCompanies(uid){
-  try {
-    const snap = await getDoc(doc(db,'companies',uid));
-    if(snap.exists() && snap.data().list){
-      window._companies = snap.data().list;
-    } else {
-      window._companies = JSON.parse(JSON.stringify(DEFAULT_COMPANIES));
-      await saveCompanies(uid);
-    }
-  } catch(e){
-    console.warn('Firestore offline — usando localStorage', e);
-    const saved = localStorage.getItem('companies_v1');
-    window._companies = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_COMPANIES));
-  }
+:root {
+  --bg: #080a0f;
+  --surface: #0e1118;
+  --surface2: #141720;
+  --border: #1e2230;
+  --text: #e2e8f0;
+  --muted: #4a5568;
+  --accent: #ff6b35;
+  --accent2: #7c3aed;
+  --girafa: #1565C0;
+  --mdl: #FF8C00;
+  --green: #10b981;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --blue: #3b82f6;
 }
 
-async function saveCompanies(uid){
-  uid = uid || window._currentUser?.uid;
-  if(!uid) return;
-  try {
-    await setDoc(doc(db,'companies',uid), { list: window._companies });
-  } catch(e){
-    localStorage.setItem('companies_v1', JSON.stringify(window._companies));
-  }
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* ============================================================
-   AUTH — LOGIN / LOGOUT
-   ============================================================ */
-window.doLogin = async function(){
-  const email = document.getElementById('email').value.trim().toLowerCase();
-  const pass  = document.getElementById('password').value;
-  const msg   = document.getElementById('loginMsg');
-  const btn   = document.querySelector('.login-card button');
-  btn.disabled = true; btn.textContent = 'Entrando…';
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    // onAuthStateChanged cuida do resto
-  } catch(e){
-    const erros = {
-      'auth/user-not-found':'Usuário não encontrado.',
-      'auth/wrong-password':'Senha incorreta.',
-      'auth/invalid-credential':'Email ou senha incorretos.',
-      'auth/too-many-requests':'Muitas tentativas. Aguarde alguns minutos.',
-      'auth/network-request-failed':'Sem conexão. Verifique a internet.'
-    };
-    msg.textContent = erros[e.code] || 'Erro: '+e.message;
-    msg.className = 'login-msg error';
-    btn.disabled = false; btn.textContent = 'Entrar';
-  }
-};
-
-window.doLogout = async function(){
-  await signOut(auth);
-};
-
-/* ============================================================
-   AUTH STATE — detecta login/logout automaticamente
-   ============================================================ */
-onAuthStateChanged(auth, async (user) => {
-  if(user){
-    window._currentUser = user;
-    await loadCompanies(user.uid);
-    startApp(user);
-  } else {
-    window._currentUser = null;
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
-    const btn = document.querySelector('.login-card button');
-    if(btn){ btn.disabled = false; btn.textContent = 'Entrar'; }
-  }
-});
-
-function startApp(user){
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  const name = user.displayName || user.email.split('@')[0];
-  document.getElementById('userChip').textContent = '👤 ' + name;
-  renderCompanySelect();
-  selectCompany(window._companies[0].id);
+/* ─── LOGIN ─── */
+#login-screen {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
 }
-
-/* ============================================================
-   SELETOR DE EMPRESA
-   ============================================================ */
-window.selectCompany = function(id){
-  window._currentCompany = id;
-  document.getElementById('companySelect').value = id;
-  const c = getCompany();
-  const banner = document.getElementById('companyBanner');
-  banner.style.background = `linear-gradient(135deg, ${c.cor}, ${shade(c.cor,-30)})`;
-  banner.innerHTML = `<div class="emoji">${c.emoji}</div>
-    <div class="info"><h2>${c.nome}</h2>
-    <p>${c.cidade} · Conta Meta: ${c.contaMeta} · Score IA: ${c.score}/10</p></div>`;
-  renderAll();
-};
-
-function renderCompanySelect(){
-  const sel = document.getElementById('companySelect');
-  sel.innerHTML = window._companies.map(c=>`<option value="${c.id}">${c.emoji} ${c.nome}</option>`).join('');
-  if(window._currentCompany) sel.value = window._currentCompany;
+.login-box {
+  width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
 }
-
-function getCompany(){ return window._companies.find(c=>c.id===window._currentCompany); }
-
-/* ============================================================
-   RENDER ABAS
-   ============================================================ */
-function renderAll(){
-  const c = getCompany();
-  document.getElementById('overview').innerHTML = `
-    <div class="score-banner"><div class="l">SCORE DE PERFORMANCE</div>
-      <div class="v">${c.score}</div><div class="l">de 10</div></div>
-    <div class="stats-grid">
-      ${statCard('Gasto (30 dias)',c.stats.gasto)}
-      ${statCard('Impressões',c.stats.impressoes)}
-      ${statCard('Cliques',c.stats.cliques)}
-      ${statCard('CPL Médio',c.stats.cpl)}
-      ${statCard('ROAS',c.stats.roas)}
-      ${statCard('Conversões',c.stats.conversoes)}
-    </div>
-    <div class="box"><div class="box-title">📌 Resumo</div>
-      ${c.insights.map(i=>`<div class="item"><strong>${i[0]}</strong><br>${i[1]}</div>`).join('')}
-    </div>`;
-  document.getElementById('campanhas').innerHTML = `
-    <div class="table-container"><table>
-      <thead><tr><th>Campanha</th><th>Status</th><th>Objetivo</th><th>Gasto</th><th>Impressões</th><th>Cliques</th><th>CPM</th><th>CTR</th><th>Conv.</th></tr></thead>
-      <tbody>${c.campanhas.map(k=>`<tr>
-        <td><strong>${k.nome}</strong></td>
-        <td><span class="badge ${k.status==='ATIVA'?'badge-active':'badge-paused'}">${k.status}</span></td>
-        <td>${k.obj}</td><td>${k.gasto}</td><td>${k.imp}</td><td>${k.cliques}</td><td>${k.cpm}</td><td>${k.ctr}</td><td>${k.conv}</td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
-  document.getElementById('analise').innerHTML = `
-    <div class="box"><div class="box-title">🤖 Análise Inteligente — ${c.nome}</div>
-      ${c.insights.map(i=>`<div class="item"><strong>${i[0]}</strong><br>${i[1]}</div>`).join('')}
-    </div>`;
-  document.getElementById('recomendacoes').innerHTML = `
-    <div class="box"><div class="box-title">💡 Recomendações Prioritárias</div>
-      ${c.recomendacoes.map(r=>`<div class="rec"><strong>${r[0]}</strong><br>${r[1]}</div>`).join('')}
-    </div>`;
-  document.getElementById('investimentos').innerHTML = `
-    <div class="box"><div class="box-title">💰 Cenários de Investimento</div>
-      ${c.investimentos.map(v=>`<div class="inv"><div class="t">${v[0]}</div>${v[1]}</div>`).join('')}
-    </div>`;
-  renderGraficos();
-  renderAdmin();
+.login-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--girafa), var(--accent2), var(--mdl));
 }
-
-function statCard(label,val){
-  return `<div class="stat-card"><div class="stat-label">${label}</div><div class="stat-value">${val}</div><div class="stat-change">Dados Meta Ads</div></div>`;
+.login-logo { font-size: 40px; text-align: center; margin-bottom: 8px; }
+.login-title { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 4px; }
+.login-sub { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 32px; font-family: 'Space Mono', monospace; }
+.login-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+.login-input {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px; color: var(--text);
+  font-family: 'Space Mono', monospace; font-size: 14px; letter-spacing: 3px;
+  margin-bottom: 16px; outline: none; transition: border .2s;
 }
-
-/* ============================================================
-   GRÁFICOS
-   ============================================================ */
-function renderGraficos(){
-  const c = getCompany();
-  document.getElementById('graficos').innerHTML = `
-    <div class="charts-grid">
-      <div class="chart-container"><div class="chart-title">💰 Gasto por Campanha</div><div class="chart-wrapper"><canvas id="ch_gasto"></canvas></div></div>
-      <div class="chart-container"><div class="chart-title">🎯 CPM por Campanha</div><div class="chart-wrapper"><canvas id="ch_cpm"></canvas></div></div>
-      <div class="chart-container"><div class="chart-title">🔄 CTR por Campanha</div><div class="chart-wrapper"><canvas id="ch_ctr"></canvas></div></div>
-      <div class="chart-container"><div class="chart-title">📊 Impressões vs Cliques</div><div class="chart-wrapper"><canvas id="ch_imp"></canvas></div></div>
-    </div>`;
-  Object.values(charts).forEach(ch=>{try{ch.destroy()}catch(e){}});
-  const labels = c.campanhas.map(k=>k.nome);
-  const num = s => parseFloat(String(s).replace(/[^\d,.-]/g,'').replace('.','').replace(',','.'))||0;
-  const col = c.cor, col2 = shade(c.cor,-40);
-  setTimeout(()=>{
-    charts.gasto = new Chart(document.getElementById('ch_gasto'),{type:'doughnut',
-      data:{labels,datasets:[{data:c.campanhas.map(k=>num(k.gasto)),backgroundColor:[col,col2,'#22c55e','#f59e0b'],borderColor:'#fff',borderWidth:2}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
-    charts.cpm = new Chart(document.getElementById('ch_cpm'),{type:'bar',
-      data:{labels,datasets:[{label:'CPM (R$)',data:c.campanhas.map(k=>num(k.cpm)),backgroundColor:col}]},
-      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}}}});
-    charts.ctr = new Chart(document.getElementById('ch_ctr'),{type:'line',
-      data:{labels,datasets:[{label:'CTR (%)',data:c.campanhas.map(k=>num(k.ctr)),borderColor:col,backgroundColor:hex2rgba(col,.15),fill:true,tension:.4,pointRadius:6,pointBackgroundColor:col}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
-    charts.imp = new Chart(document.getElementById('ch_imp'),{type:'bar',
-      data:{labels,datasets:[
-        {label:'Impressões',data:c.campanhas.map(k=>num(k.imp)),backgroundColor:col},
-        {label:'Cliques',data:c.campanhas.map(k=>k.cliques),backgroundColor:col2}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
-  },60);
+.login-input:focus { border-color: var(--accent); }
+.login-btn {
+  width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+  border: none; border-radius: 10px; padding: 13px; cursor: pointer;
+  transition: transform .1s, opacity .2s;
 }
-
-/* ============================================================
-   ADMIN — cadastrar / remover empresa
-   ============================================================ */
-function renderAdmin(){
-  document.getElementById('admin').innerHTML = `
-    <div class="box" style="border-top-color:#3b82f6">
-      <div class="box-title">⚙️ Empresas cadastradas</div>
-      <div class="table-container"><table>
-        <thead><tr><th>Empresa</th><th>Cidade</th><th>Conta Meta</th><th>Score</th><th></th></tr></thead>
-        <tbody>${window._companies.map(c=>`<tr>
-          <td>${c.emoji} <strong>${c.nome}</strong></td><td>${c.cidade}</td><td>${c.contaMeta}</td><td>${c.score}/10</td>
-          <td>${window._companies.length>1?`<button class="logout-btn" onclick="removeCompany('${c.id}')">Remover</button>`:''}</td>
-        </tr>`).join('')}</tbody>
-      </table></div>
-    </div>
-    <div class="box" style="border-top-color:#22c55e">
-      <div class="box-title">➕ Adicionar nova empresa</div>
-      <div class="admin-form">
-        <div class="row">
-          <div><label>Nome da empresa</label><input id="f_nome" placeholder="Ex: Nova Loja Ltda"></div>
-          <div><label>Emoji</label><input id="f_emoji" placeholder="🏪" maxlength="4"></div>
-        </div>
-        <div class="row">
-          <div><label>Cidade/UF</label><input id="f_cidade" placeholder="Cidade/PR"></div>
-          <div><label>Cor (hex)</label><input id="f_cor" placeholder="#1565C0" value="#1565C0"></div>
-        </div>
-        <label>ID da Conta Meta Ads</label><input id="f_conta" placeholder="123456789012345">
-        <button onclick="addCompany()">Cadastrar empresa</button>
-        <p style="font-size:11px;color:#aaa;margin-top:10px">A empresa entra com estrutura vazia. As campanhas e métricas são preenchidas ao puxar os dados da conta Meta conectada.</p>
-      </div>
-    </div>`;
+.login-btn:hover { opacity: .9; }
+.login-btn:active { transform: scale(.98); }
+.login-error { font-size: 12px; color: var(--red); text-align: center; margin-top: 10px; min-height: 18px; }
+.login-users { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+.login-users-title { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 10px; }
+.user-chips { display: flex; gap: 8px; justify-content: center; }
+.user-chip {
+  font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+  cursor: pointer; border: 1px solid var(--border); color: var(--muted);
+  transition: all .15s; background: var(--surface2);
 }
+.user-chip:hover { border-color: var(--accent); color: var(--text); }
 
-window.addCompany = async function(){
-  const nome=val('f_nome'), emoji=val('f_emoji')||'🏪', cidade=val('f_cidade')||'—',
-        cor=val('f_cor')||'#1565C0', conta=val('f_conta')||'—';
-  if(!nome){ alert('Informe o nome da empresa.'); return; }
-  const id = nome.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12)+Date.now().toString().slice(-4);
-  window._companies.push({
-    id, nome, emoji, cidade, cor, contaMeta:conta, score:0,
-    stats:{gasto:'—',impressoes:'—',cliques:'—',cpl:'—',roas:'—',conversoes:'—'},
-    campanhas:[], insights:[['📭 Sem dados ainda','Conecte e puxe os dados da conta Meta desta empresa para popular as métricas.']],
-    recomendacoes:[['Puxar dados da conta Meta','Assim que os dados da conta forem importados, as recomendações de IA aparecem aqui.']],
-    investimentos:[['Aguardando dados','Os cenários de investimento são gerados após a importação das campanhas.']]
-  });
-  await saveCompanies();
-  renderCompanySelect();
-  selectCompany(id);
-  alert('Empresa "'+nome+'" cadastrada!');
-};
+/* ─── MAIN ─── */
+#main { display: none; }
 
-window.removeCompany = async function(id){
-  if(window._companies.length<=1){ alert('Mantenha ao menos uma empresa.'); return; }
-  if(!confirm('Remover esta empresa do dashboard?')) return;
-  window._companies = window._companies.filter(c=>c.id!==id);
-  await saveCompanies();
-  renderCompanySelect();
-  selectCompany(window._companies[0].id);
-};
-
-/* ============================================================
-   HELPERS
-   ============================================================ */
-function val(id){ return document.getElementById(id).value.trim(); }
-window.switchTab = function(name,btn){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-  btn.classList.add('active');
-  if(name==='graficos') renderGraficos();
-};
-function shade(hex,p){
-  const n=parseInt(hex.slice(1),16),r=Math.max(0,Math.min(255,(n>>16)+p)),
-    g=Math.max(0,Math.min(255,((n>>8)&255)+p)),b=Math.max(0,Math.min(255,(n&255)+p));
-  return '#'+(r<<16|g<<8|b).toString(16).padStart(6,'0');
+/* Header */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
 }
-function hex2rgba(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`;}
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.header-icon { font-size: 24px; }
+.header-title { font-size: 16px; font-weight: 800; }
+.header-sub { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.user-badge {
+  font-size: 11px; font-weight: 700; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.user-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.logout-btn {
+  font-size: 11px; color: var(--muted); background: none; border: none;
+  cursor: pointer; padding: 4px 8px; border-radius: 6px;
+  transition: color .15s;
+}
+.logout-btn:hover { color: var(--red); }
+.update-btn {
+  font-size: 11px; font-weight: 700; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px;
+  cursor: pointer; color: var(--text); display: flex; align-items: center; gap: 6px;
+  transition: border-color .15s;
+}
+.update-btn:hover { border-color: var(--accent); color: var(--accent); }
+.update-btn.loading { opacity: .6; pointer-events: none; }
+.spin { display: inline-block; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ---- Enter no campo senha ---- */
-window.addEventListener('load',()=>{
-  document.getElementById('password').addEventListener('keydown',e=>{if(e.key==='Enter')window.doLogin();});
-});
-</script>
+/* Container */
+.container { max-width: 1320px; margin: 0 auto; padding: 24px 20px; }
 
+/* Last updated bar */
+.update-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 16px; margin-bottom: 24px;
+  font-size: 12px;
+}
+.update-bar-left { display: flex; align-items: center; gap: 8px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.update-status { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; }
+.status-ok { color: var(--green); }
+.status-loading { color: var(--yellow); }
+.status-error { color: var(--red); }
+.next-update { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 4px; width: fit-content; }
+.tab { font-size: 13px; font-weight: 700; padding: 8px 20px; border-radius: 9px; cursor: pointer; transition: all .15s; color: var(--muted); }
+.tab.active { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.tab-girafa.active { color: var(--girafa); border-color: var(--girafa); }
+.tab-mdl.active { color: var(--mdl); border-color: var(--mdl); }
+.tab-both.active { color: var(--accent); border-color: var(--accent); }
+
+/* KPIs */
+.kpi-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 24px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px; position: relative; overflow: hidden;
+  transition: border-color .15s;
+}
+.kpi:hover { border-color: var(--accent); }
+.kpi::after { content: var(--ico); position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 32px; opacity: .05; }
+.kpi-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+.kpi-val { font-size: 24px; font-weight: 800; margin: 6px 0 3px; }
+.kpi-sub { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+/* Alerts */
+.alerts-section { margin-bottom: 24px; }
+.alert-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+  margin-bottom: 8px; cursor: pointer; transition: border-color .15s;
+}
+.alert-row:hover { border-color: var(--accent); }
+.alert-row.critical { border-left: 3px solid var(--red); }
+.alert-row.warning { border-left: 3px solid var(--yellow); }
+.alert-row.ok { border-left: 3px solid var(--green); }
+.alert-row.watch { border-left: 3px solid var(--blue); }
+.alert-icon-big { font-size: 22px; }
+.alert-info { flex: 1; }
+.alert-name { font-size: 13px; font-weight: 700; }
+.alert-desc { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'Space Mono', monospace; }
+.alert-badge { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
+.badge-critical { background: #2d0a0a; color: var(--red); border: 1px solid var(--red); }
+.badge-warning { background: #2d1f00; color: var(--yellow); border: 1px solid var(--yellow); }
+.badge-ok { background: #0a2d1a; color: var(--green); border: 1px solid var(--green); }
+.badge-watch { background: #0a1a2d; color: var(--blue); border: 1px solid var(--blue); }
+.alert-metrics { display: flex; gap: 14px; }
+.am { text-align: center; }
+.am-val { font-size: 14px; font-weight: 800; }
+.am-label { font-size: 10px; color: var(--muted); }
+.am-val.bad { color: var(--red); }
+.am-val.warn { color: var(--yellow); }
+.am-val.good { color: var(--green); }
+
+/* Campaigns table */
+.table-section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+.table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.table-title { font-size: 14px; font-weight: 700; }
+.account-tag { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.tag-girafa { background: #0a1a3d; color: var(--girafa); border: 1px solid var(--girafa); }
+.tag-mdl { background: #2d1a00; color: var(--mdl); border: 1px solid var(--mdl); }
+table { width: 100%; border-collapse: collapse; }
+thead th { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; text-align: left; background: var(--surface2); }
+tbody td { font-size: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); font-family: 'Space Mono', monospace; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--surface2); }
+.st { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; }
+.st-active { background: #0a2d1a; color: var(--green); }
+.st-off { background: #2d1a00; color: var(--yellow); }
+.st-arch { background: #1a0a2d; color: #9f7aea; }
+.num-good { color: var(--green); font-weight: 700; }
+.num-warn { color: var(--yellow); font-weight: 700; }
+.num-bad { color: var(--red); font-weight: 700; }
+
+/* Calendar */
+.cal-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+.cal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+.cal-date { font-size: 28px; font-weight: 800; font-family: 'Space Mono', monospace; color: var(--accent); }
+.cal-day { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .5px; }
+.cal-task { font-size: 12px; font-weight: 700; margin-top: 10px; }
+.cal-who { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* Loading overlay */
+#loading-overlay {
+  position: fixed; inset: 0; background: rgba(8,10,15,.85);
+  display: none; align-items: center; justify-content: center; z-index: 200; flex-direction: column; gap: 16px;
+}
+#loading-overlay.show { display: flex; }
+.loading-text { font-size: 14px; font-weight: 700; color: var(--accent); font-family: 'Space Mono', monospace; }
+.loading-dots::after { content: '...'; animation: dots 1.5s infinite; }
+@keyframes dots { 0%,100%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+
+/* Sections */
+.section-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .cal-grid{grid-template-columns:repeat(2,1fr)}
+  .alert-metrics{display:none}
+}
+</style>
 </head>
 <body>
 
-<!-- ============ LOGIN ============ -->
-<div id="loginScreen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px">
-  <div class="login-card">
-    <h1>📊 Dashboard Meta Ads</h1>
-    <div class="sub">Acesso à central de campanhas</div>
-    <label>Email</label>
-    <input type="email" id="email" placeholder="seu@email.com" autocomplete="username">
-    <label>Senha</label>
-    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-    <button onclick="doLogin()">Entrar</button>
-    <div class="login-msg" id="loginMsg"></div>
-    <div class="login-hint">Login via Firebase Authentication</div>
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">📡</div>
+    <div class="login-title">Meta Ads Dashboard</div>
+    <div class="login-sub">MDL · Cantinho da Girafa</div>
+    <div class="login-label">Usuário</div>
+    <div class="user-chips" style="margin-bottom:16px">
+      <div class="user-chip" onclick="selectUser('diego')">🧑 Diego</div>
+      <div class="user-chip" onclick="selectUser('gabriela')">👩 Gabriela</div>
+    </div>
+    <div class="login-label">Senha</div>
+    <input type="password" id="pwd-input" class="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Entrar →</button>
+    <div class="login-error" id="login-error"></div>
   </div>
 </div>
 
-<!-- ============ APP ============ -->
-<div id="app" style="display:none;padding:20px">
+<!-- LOADING -->
+<div id="loading-overlay">
+  <div style="font-size:40px">📡</div>
+  <div class="loading-text">Buscando métricas <span class="loading-dots"></span></div>
+  <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace" id="loading-status">Conectando à Meta API...</div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <div class="header">
+    <div class="header-brand">
+      <div class="header-icon">📡</div>
+      <div>
+        <div class="header-title">Meta Ads Dashboard</div>
+        <div class="header-sub" id="header-date">—</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="update-btn" onclick="fetchAllData()" id="update-btn">
+        <span>⟳</span> Atualizar agora
+      </button>
+      <div class="user-badge">
+        <div class="user-dot"></div>
+        <span id="user-display">—</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+
   <div class="container">
-    <div class="topbar">
-      <h1>📊 Central de Campanhas</h1>
-      <div class="right">
-        <select class="company-select" id="companySelect" onchange="selectCompany(this.value)"></select>
-        <span class="user-chip" id="userChip"></span>
-        <button class="logout-btn" onclick="doLogout()">Sair</button>
+
+    <div class="update-bar">
+      <div class="update-bar-left">
+        <span id="update-status-icon">⟳</span>
+        <span id="update-status-text">Carregando...</span>
+      </div>
+      <div class="next-update">Próxima atualização automática: <strong id="next-auto">—</strong></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab tab-both active" onclick="switchTab('both',this)">📊 Visão Geral</div>
+      <div class="tab tab-girafa" onclick="switchTab('girafa',this)">🦒 Cantinho da Girafa</div>
+      <div class="tab tab-mdl" onclick="switchTab('mdl',this)">🟠 MDL Móveis</div>
+    </div>
+
+    <!-- PAINEL: VISÃO GERAL -->
+    <div id="panel-both" class="tab-panel active">
+      <div class="section-label">📊 KPIs Consolidados</div>
+      <div class="kpi-grid" id="kpi-both"></div>
+      <div class="section-label">🔔 Alertas Ativos</div>
+      <div class="alerts-section" id="alerts-section"></div>
+      <div class="section-label">📅 Calendário de Revisões</div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <!-- PAINEL: CANTINHO -->
+    <div id="panel-girafa" class="tab-panel">
+      <div class="section-label">🦒 Campanhas — Cantinho da Girafa</div>
+      <div class="kpi-grid" id="kpi-girafa"></div>
+      <div class="table-section">
+        <div class="table-header">
+          <div class="table-title">Campanhas com Investimento</div>
+          <span class="account-tag tag-girafa">Conta #811077953131064</span>
+        </div>
+        <div id="table-girafa"></div>
       </div>
     </div>
 
-    <div class="company-banner" id="companyBanner"></div>
-
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('overview',this)">📈 Visão Geral</button>
-      <button class="tab-btn" onclick="switchTab('graficos',this)">📊 Gráficos</button>
-      <button class="tab-btn" onclick="switchTab('campanhas',this)">🎯 Campanhas</button>
-      <button class="tab-btn" onclick="switchTab('analise',this)">🤖 Análise IA</button>
-      <button class="tab-btn" onclick="switchTab('recomendacoes',this)">💡 Recomendações</button>
-      <button class="tab-btn" onclick="switchTab('investimentos',this)">💰 Investimentos</button>
-      <button class="tab-btn" onclick="switchTab('admin',this)">⚙️ Admin</button>
+    <!-- PAINEL: MDL -->
+    <div id="panel-mdl" class="tab-panel">
+      <div class="section-label">🟠 Campanhas — MDL Móveis do Lar</div>
+      <div class="kpi-grid" id="kpi-mdl"></div>
+      <div class="table-section">
+        <div class="table-header">
+          <div class="table-title">Campanhas com Investimento</div>
+          <span class="account-tag tag-mdl">Conta #1124246161345381</span>
+        </div>
+        <div id="table-mdl"></div>
+      </div>
     </div>
 
-    <div id="overview"      class="tab-content active"></div>
-    <div id="graficos"      class="tab-content"></div>
-    <div id="campanhas"     class="tab-content"></div>
-    <div id="analise"       class="tab-content"></div>
-    <div id="recomendacoes" class="tab-content"></div>
-    <div id="investimentos" class="tab-content"></div>
-    <div id="admin"         class="tab-content"></div>
-
-    <div class="footer">Powered by Firebase + Meta Ads · © 2026 Diego Cordeiro</div>
   </div>
 </div>
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh}
-.login-card{background:white;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.login-card h1{font-size:24px;color:#333;margin-bottom:6px;text-align:center}
-.login-card .sub{color:#888;font-size:13px;text-align:center;margin-bottom:28px}
-.login-card label{display:block;font-size:12px;color:#666;font-weight:600;margin:14px 0 6px}
-.login-card input{width:100%;padding:12px 14px;border:2px solid #e9ecef;border-radius:8px;font-size:14px}
-.login-card input:focus{outline:none;border-color:#667eea}
-.login-card button{width:100%;margin-top:24px;padding:13px;background:#667eea;color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
-.login-card button:hover{background:#5568d3}
-.login-card button:disabled{background:#aaa;cursor:not-allowed}
-.login-msg{margin-top:14px;padding:10px;border-radius:6px;font-size:13px;text-align:center;display:none}
-.login-msg.error{background:#fee2e2;color:#991b1b;display:block}
-.login-hint{margin-top:20px;font-size:11px;color:#aaa;text-align:center;line-height:1.6}
-.container{max-width:1800px;margin:0 auto}
-.topbar{background:white;border-radius:12px;padding:18px 25px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px}
-.topbar h1{font-size:20px;color:#333}
-.topbar .right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.company-select{padding:10px 16px;border:2px solid #667eea;border-radius:8px;font-size:14px;font-weight:600;color:#333;cursor:pointer;background:white;min-width:220px}
-.logout-btn{padding:9px 16px;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;font-size:13px;color:#666;font-weight:600}
-.logout-btn:hover{background:#e5e7eb}
-.user-chip{font-size:12px;color:#888}
-.company-banner{border-radius:12px;padding:20px 25px;margin-bottom:20px;color:white;display:flex;align-items:center;gap:16px}
-.company-banner .emoji{font-size:38px}
-.company-banner .info h2{font-size:22px;margin-bottom:3px}
-.company-banner .info p{font-size:13px;opacity:.9}
-.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.tab-btn{padding:11px 20px;background:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;color:#666;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:.2s}
-.tab-btn.active{background:#667eea;color:white;box-shadow:0 5px 15px rgba(102,126,234,.4)}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px;margin-bottom:22px}
-.stat-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.08);border-left:4px solid #667eea}
-.stat-label{color:#999;font-size:11px;font-weight:600;text-transform:uppercase;margin-bottom:8px}
-.stat-value{color:#333;font-size:22px;font-weight:700;margin-bottom:4px}
-.stat-change{font-size:11px;color:#22c55e}
-.score-banner{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:26px;border-radius:12px;text-align:center;margin-bottom:22px}
-.score-banner .v{font-size:44px;font-weight:700;margin:8px 0}
-.score-banner .l{font-size:13px;opacity:.9}
-.charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:22px;margin-bottom:22px}
-.chart-container{background:white;padding:22px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
-.chart-title{font-size:15px;font-weight:700;color:#333;margin-bottom:18px}
-.chart-wrapper{position:relative;height:280px}
-.box{background:white;padding:22px;border-radius:12px;margin-bottom:18px;box-shadow:0 4px 15px rgba(0,0,0,.08);border-top:4px solid #22c55e}
-.box-title{font-size:15px;font-weight:700;color:#333;margin-bottom:14px}
-.item{margin-bottom:11px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;border-radius:6px;font-size:13px;color:#555;line-height:1.5}
-.rec{background:#f3f4f6;padding:14px;border-radius:8px;margin:9px 0;border-left:3px solid #3b82f6;font-size:13px;color:#555;line-height:1.5}
-.inv{background:white;padding:18px;border-radius:12px;margin:13px 0;border:2px solid #e5e7eb;font-size:13px;color:#555;line-height:1.6}
-.inv .t{font-weight:700;color:#333;margin-bottom:8px;font-size:14px}
-.table-container{background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.08);margin-bottom:18px}
-table{width:100%;border-collapse:collapse}
-th{background:#f8f9fa;padding:13px;text-align:left;font-weight:600;color:#333;border-bottom:2px solid #e9ecef;font-size:12px}
-td{padding:11px 13px;border-bottom:1px solid #e9ecef;color:#666;font-size:13px}
-tr:hover{background:#f8f9fa}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-.badge-active{background:#dcfce7;color:#166534}
-.badge-paused{background:#fee2e2;color:#991b1b}
-.admin-form{background:#f8f9fa;padding:20px;border-radius:10px;margin-bottom:18px}
-.admin-form label{display:block;font-size:12px;color:#666;font-weight:600;margin:10px 0 5px}
-.admin-form input{width:100%;padding:10px;border:2px solid #e9ecef;border-radius:6px;font-size:13px}
-.admin-form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.admin-form button{margin-top:16px;padding:11px 20px;background:#22c55e;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer}
-.empty{color:#aaa;font-size:13px;text-align:center;padding:20px}
-.footer{text-align:center;color:white;margin-top:25px;font-size:12px;opacity:.8}
-@media(max-width:768px){.stats-grid,.charts-grid{grid-template-columns:1fr}.admin-form .row{grid-template-columns:1fr}}
-</style>
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────
+const USERS = {
+  diego:    { pass: 'girafa2025', label: '🧑 Diego', role: 'admin' },
+  gabriela: { pass: 'cantinho25', label: '👩 Gabriela', role: 'viewer' }
+}
+const ACCOUNTS = {
+  girafa: { id: '811077953131064',   name: 'Cantinho da Girafa', color: '#1565C0' },
+  mdl:    { id: '1124246161345381',  name: 'MDL Móveis do Lar',  color: '#FF8C00' }
+}
+const UPDATE_HOUR = 8 // 8h da manhã
+const META_TOKEN_KEY = 'meta_token'
+
+// ─── AUTH ──────────────────────────────────────────────────────
+let currentUser = null
+let selectedUser = 'diego'
+
+function selectUser(u) {
+  selectedUser = u
+  document.querySelectorAll('.user-chip').forEach(c => c.style.borderColor = '')
+  event.target.style.borderColor = 'var(--accent)'
+  event.target.style.color = 'var(--text)'
+}
+
+function doLogin() {
+  const pwd = document.getElementById('pwd-input').value
+  const err = document.getElementById('login-error')
+  const user = USERS[selectedUser]
+  if (!user) { err.textContent = 'Selecione um usuário.'; return }
+  if (pwd !== user.pass) { err.textContent = 'Senha incorreta.'; return }
+  currentUser = { key: selectedUser, ...user }
+  sessionStorage.setItem('dash_user', JSON.stringify(currentUser))
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('main').style.display = 'block'
+  document.getElementById('user-display').textContent = user.label
+  initDashboard()
+}
+
+function doLogout() {
+  sessionStorage.removeItem('dash_user')
+  location.reload()
+}
+
+// Auto-login se sessão ativa
+const saved = sessionStorage.getItem('dash_user')
+if (saved) {
+  currentUser = JSON.parse(saved)
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('main').style.display = 'block'
+  document.getElementById('user-display').textContent = currentUser.label
+}
+
+// ─── TABS ──────────────────────────────────────────────────────
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+  document.getElementById('panel-'+id).classList.add('active')
+  el.classList.add('active')
+}
+
+// ─── DATA CACHE ────────────────────────────────────────────────
+let cache = {}
+
+function loadCache() {
+  const raw = localStorage.getItem('dash_cache')
+  if (raw) cache = JSON.parse(raw)
+}
+
+function saveCache() {
+  localStorage.setItem('dash_cache', JSON.stringify(cache))
+}
+
+function shouldUpdate() {
+  if (!cache.lastUpdate) return true
+  const last = new Date(cache.lastUpdate)
+  const now = new Date()
+  const todayUpdate = new Date()
+  todayUpdate.setHours(UPDATE_HOUR, 0, 0, 0)
+  // Atualiza se: nunca atualizou, ou já passou das 8h de hoje e última atualização foi antes
+  if (now >= todayUpdate && last < todayUpdate) return true
+  return false
+}
+
+function getNextUpdateTime() {
+  const next = new Date()
+  next.setDate(next.getDate() + (new Date().getHours() >= UPDATE_HOUR ? 1 : 0))
+  next.setHours(UPDATE_HOUR, 0, 0, 0)
+  return next
+}
+
+// ─── META API (Anthropic Proxy) ────────────────────────────────
+async function callMetaAPI(accountId, fields, level, datePreset='last_7d', filter=null) {
+  const body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    messages: [{
+      role: 'user',
+      content: `Use the Meta MCP tool ads_get_ad_entities to fetch campaigns from ad account ${accountId}.
+Fields: ${fields.join(',')}
+Level: ${level}
+Date preset: ${datePreset}
+${filter ? 'Filter: delivery_info = active' : ''}
+Return ONLY a JSON array of campaigns. No explanation. No markdown. Raw JSON only.`
+    }],
+    mcp_servers: [{ type: 'url', url: 'https://mcp.facebook.com/ads', name: 'meta-mcp' }]
+  }
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+
+  const data = await resp.json()
+  // Extrair resultado do MCP
+  const toolResult = data.content?.find(b => b.type === 'mcp_tool_result')
+  if (toolResult?.content?.[0]?.text) {
+    try {
+      const raw = toolResult.content[0].text
+      const parsed = JSON.parse(raw)
+      return parsed.ad_entities ? JSON.parse(parsed.ad_entities) : parsed
+    } catch { return [] }
+  }
+  // Fallback: tentar extrair do texto
+  const textBlock = data.content?.find(b => b.type === 'text')
+  if (textBlock?.text) {
+    try {
+      const match = textBlock.text.match(/\[[\s\S]*\]/)
+      if (match) return JSON.parse(match[0])
+    } catch {}
+  }
+  return []
+}
+
+// ─── FETCH ALL DATA ────────────────────────────────────────────
+async function fetchAllData(force=false) {
+  loadCache()
+  if (!force && !shouldUpdate() && cache.girafa && cache.mdl) {
+    renderAll()
+    return
+  }
+
+  showLoading(true)
+  setStatus('loading', 'Buscando dados...')
+  const btn = document.getElementById('update-btn')
+  btn.classList.add('loading')
+  btn.innerHTML = '<span class="spin">⟳</span> Atualizando...'
+
+  const fields = ['id','name','objective','delivery','amount_spent','reach','impressions','clicks','ctr','cpc','cpm','frequency','results','cost_per_result','actions:link_click','actions:page_engagement']
+
+  try {
+    setLoadingStatus('Buscando Cantinho da Girafa...')
+    const girafa7d = await callMetaAPI(ACCOUNTS.girafa.id, fields, 'campaign', 'last_7d', true)
+    const girafaAll = await callMetaAPI(ACCOUNTS.girafa.id, fields, 'campaign', 'maximum', false)
+
+    setLoadingStatus('Buscando MDL Móveis do Lar...')
+    const mdl7d = await callMetaAPI(ACCOUNTS.mdl.id, fields, 'campaign', 'last_7d', true)
+    const mdlAll = await callMetaAPI(ACCOUNTS.mdl.id, fields, 'campaign', 'maximum', false)
+
+    cache = {
+      lastUpdate: new Date().toISOString(),
+      girafa: { active: girafa7d, all: girafaAll },
+      mdl: { active: mdl7d, all: mdlAll }
+    }
+    saveCache()
+    setStatus('ok', 'Dados atualizados com sucesso')
+  } catch(e) {
+    setStatus('error', 'Erro ao buscar dados — usando cache')
+    console.error(e)
+  }
+
+  showLoading(false)
+  btn.classList.remove('loading')
+  btn.innerHTML = '<span>⟳</span> Atualizar agora'
+  renderAll()
+}
+
+function showLoading(v) {
+  document.getElementById('loading-overlay').classList.toggle('show', v)
+}
+function setLoadingStatus(t) {
+  document.getElementById('loading-status').textContent = t
+}
+function setStatus(type, msg) {
+  const icon = document.getElementById('update-status-icon')
+  const text = document.getElementById('update-status-text')
+  if (type === 'ok') { icon.textContent = '✅'; text.className = 'status-ok' }
+  else if (type === 'loading') { icon.textContent = '⟳'; text.className = 'status-loading' }
+  else { icon.textContent = '⚠️'; text.className = 'status-error' }
+  text.textContent = msg + (cache.lastUpdate ? ' · ' + new Date(cache.lastUpdate).toLocaleString('pt-BR') : '')
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────
+function n(v, prefix='', suffix='') {
+  if (!v || v === 'Not available') return '<span style="color:var(--muted)">—</span>'
+  return prefix + v + suffix
+}
+function numClass(val, goodBelow, warnBelow) {
+  const num = parseFloat(String(val).replace(/[^0-9.,]/g,'').replace(',','.'))
+  if (isNaN(num)) return ''
+  if (num <= goodBelow) return 'num-good'
+  if (num <= warnBelow) return 'num-warn'
+  return 'num-bad'
+}
+function freqClass(f) {
+  const num = parseFloat(String(f).replace(',','.'))
+  if (num <= 2.5) return 'num-good'
+  if (num <= 5) return 'num-warn'
+  return 'num-bad'
+}
+function statusBadge(d) {
+  if (!d) return ''
+  const s = d.status || ''
+  if (s === 'active') return '<span class="st st-active">🟢 Ativa</span>'
+  if (s === 'off') return '<span class="st st-off">⏸ Pausada</span>'
+  return '<span class="st st-arch">◼ Arquivada</span>'
+}
+function sum(arr, field) {
+  return arr.reduce((a,c) => {
+    const v = parseFloat(String(c[field]||'0').replace(/[^0-9.,]/g,'').replace(',','.')) || 0
+    return a + v
+  }, 0)
+}
+function fmt(n, prefix='R$') { return prefix + n.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0}) }
+function fmtK(n) { return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(0)+'k' : n }
+
+// ─── RENDER ────────────────────────────────────────────────────
+function renderAll() {
+  // Header date
+  document.getElementById('header-date').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long', year:'numeric'})
+  document.getElementById('next-auto').textContent = getNextUpdateTime().toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) + 'h'
+
+  if (!cache.girafa || !cache.mdl) {
+    setStatus('error', 'Sem dados — clique em Atualizar')
+    return
+  }
+
+  renderKPIs()
+  renderAlerts()
+  renderCalendar()
+  renderTable('girafa')
+  renderTable('mdl')
+  renderAccountKPIs('girafa')
+  renderAccountKPIs('mdl')
+}
+
+function renderKPIs() {
+  const gAll = cache.girafa?.all || []
+  const mAll = cache.mdl?.all || []
+  const all = [...gAll, ...mAll]
+  const active = [...(cache.girafa?.active||[]), ...(cache.mdl?.active||[])]
+
+  const totalSpend = sum(all, 'amount_spent')
+  const totalReach = sum(all, 'reach')
+  const totalConv = all.reduce((a,c) => {
+    const r = c.results?.value?.[0]?.values?.[0]?.value || 0
+    return a + (typeof r === 'number' ? r : 0)
+  }, 0)
+  const activeCount = active.length
+
+  const kpis = [
+    { label: 'Total Investido', val: fmt(totalSpend), sub: 'Histórico completo', ico: '"💸"', color: 'var(--accent)' },
+    { label: 'Alcance Total', val: fmtK(Math.round(totalReach)), sub: 'Contas únicas', ico: '"👥"', color: 'var(--accent2)' },
+    { label: 'Campanhas Ativas', val: activeCount, sub: 'Rodando agora', ico: '"🚀"', color: 'var(--green)' },
+    { label: 'Conversas Geradas', val: fmtK(Math.round(totalConv)), sub: 'WhatsApp + Web', ico: '"💬"', color: 'var(--blue)' },
+    { label: 'Última Atualização', val: cache.lastUpdate ? new Date(cache.lastUpdate).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '—', sub: cache.lastUpdate ? new Date(cache.lastUpdate).toLocaleDateString('pt-BR') : 'Nunca', ico: '"⏱"', color: 'var(--yellow)' }
+  ]
+
+  document.getElementById('kpi-both').innerHTML = kpis.map(k => `
+    <div class="kpi" style="--ico:${k.ico};border-top:2px solid ${k.color}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val" style="color:${k.color}">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('')
+}
+
+function renderAccountKPIs(acct) {
+  const data = cache[acct]?.all || []
+  const active = cache[acct]?.active || []
+  const color = acct === 'girafa' ? 'var(--girafa)' : 'var(--mdl)'
+
+  const totalSpend = sum(data, 'amount_spent')
+  const totalReach = sum(data, 'reach')
+  const activeCount = active.length
+  const avgCPM = data.filter(c=>c.cpm&&c.cpm!=='Not available').reduce((a,c,_,arr) => a + parseFloat(String(c.cpm).replace(/[^0-9.,]/g,'').replace(',','.'))/arr.length, 0)
+
+  const kpis = [
+    { label: 'Total Investido', val: fmt(totalSpend), sub: 'Histórico', color },
+    { label: 'Alcance Total', val: fmtK(Math.round(totalReach)), sub: 'Histórico', color },
+    { label: 'Ativas Agora', val: activeCount, sub: 'Campanhas rodando', color: 'var(--green)' },
+    { label: 'CPM Médio', val: 'R$'+avgCPM.toFixed(2), sub: 'Últimas campanhas', color: avgCPM < 5 ? 'var(--green)' : avgCPM < 10 ? 'var(--yellow)' : 'var(--red)' },
+    { label: 'Total Campanhas', val: data.length, sub: 'No histórico', color: 'var(--muted)' }
+  ]
+
+  document.getElementById('kpi-'+acct).innerHTML = kpis.map(k => `
+    <div class="kpi" style="border-top:2px solid ${k.color}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val" style="color:${k.color}">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('')
+}
+
+function renderAlerts() {
+  const active = [...(cache.girafa?.active||[]), ...(cache.mdl?.active||[])]
+  const alerts = []
+
+  active.forEach(c => {
+    const freq = parseFloat(String(c.frequency||'0').replace(',','.'))
+    const cpr = c.cost_per_result?.value?.[0]?.values?.[0]?.value || 0
+    const ctr = parseFloat(String(c.ctr||'0').replace(',','.').replace('%',''))
+    const spend = parseFloat(String(c.amount_spent||'0').replace(/[^0-9.,]/g,'').replace(',','.'))
+    const acct = c.id?.startsWith('238') || c.id?.startsWith('120') && parseInt(c.id) < 120233000000000000 ? 'girafa' : 
+                 (cache.girafa?.active||[]).find(x=>x.id===c.id) ? 'girafa' : 'mdl'
+    const acctLabel = acct === 'girafa' ? '🦒 Cantinho' : '🟠 MDL'
+
+    // Sem dados ainda
+    if (spend === 0) {
+      alerts.push({ sev: 'watch', icon: '👀', name: c.name, desc: acctLabel+' · Fase de aprendizado · Sem dados ainda',
+        badge: 'badge-watch', badgeText: '🔵 Aprendizado',
+        metrics: [{val:'—',label:'Gasto'},{val:'—',label:'CTR'},{val:'—',label:'Freq.'}] })
+      return
+    }
+    // Frequência crítica
+    if (freq >= 8) {
+      alerts.push({ sev: 'critical', icon: '🚨', name: c.name, desc: acctLabel+' · Público saturado · Ação imediata necessária',
+        badge: 'badge-critical', badgeText: '🔴 Crítico',
+        metrics: [{val:freq.toFixed(1)+'x',label:'Freq.',cls:'bad'},{val:c.ctr||'—',label:'CTR'},{val:c.cpm||'—',label:'CPM'}] })
+    } else if (freq >= 5) {
+      alerts.push({ sev: 'warning', icon: '⚠️', name: c.name, desc: acctLabel+' · Frequência elevada · Planejar novos criativos',
+        badge: 'badge-warning', badgeText: '🟡 Atenção',
+        metrics: [{val:freq.toFixed(1)+'x',label:'Freq.',cls:'warn'},{val:c.ctr||'—',label:'CTR'},{val:c.cpm||'—',label:'CPM'}] })
+    } else {
+      alerts.push({ sev: 'ok', icon: '✅', name: c.name, desc: acctLabel+' · Performance dentro do esperado',
+        badge: 'badge-ok', badgeText: '🟢 Saudável',
+        metrics: [{val:freq.toFixed(1)+'x',label:'Freq.',cls:'good'},{val:c.ctr||'—',label:'CTR'},{val:c.cpm||'—',label:'CPM'}] })
+    }
+  })
+
+  if (!alerts.length) {
+    document.getElementById('alerts-section').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:16px">Nenhuma campanha ativa encontrada.</div>'
+    return
+  }
+
+  // Ordena: critical > warning > watch > ok
+  const order = {critical:0, warning:1, watch:2, ok:3}
+  alerts.sort((a,b) => order[a.sev] - order[b.sev])
+
+  document.getElementById('alerts-section').innerHTML = alerts.map(a => `
+    <div class="alert-row ${a.sev}">
+      <div class="alert-icon-big">${a.icon}</div>
+      <div class="alert-info">
+        <div class="alert-name">${a.name}</div>
+        <div class="alert-desc">${a.desc}</div>
+      </div>
+      <div class="alert-metrics">
+        ${a.metrics.map(m=>`<div class="am"><div class="am-val ${m.cls||''}">${m.val}</div><div class="am-label">${m.label}</div></div>`).join('')}
+      </div>
+      <span class="alert-badge ${a.badge}">${a.badgeText}</span>
+    </div>`).join('')
+}
+
+function renderCalendar() {
+  const today = new Date()
+  const reviews = [
+    { days: 2, task: 'Criativos novos', who: 'Leads + Vendas/Aluguel', color: 'var(--red)' },
+    { days: 3, task: 'Análise 3 dias', who: 'Show de Prêmios MDL', color: 'var(--blue)' },
+    { days: 5, task: 'Revisão geral', who: 'Ajuste orçamentos', color: 'var(--yellow)' },
+    { days: 12, task: 'Análise 7-14 dias', who: 'Decisão de escala', color: 'var(--green)' }
+  ]
+  document.getElementById('cal-grid').innerHTML = reviews.map(r => {
+    const d = new Date(today)
+    d.setDate(d.getDate() + r.days)
+    return `<div class="cal-card">
+      <div class="cal-date" style="color:${r.color}">${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}</div>
+      <div class="cal-day">${d.toLocaleDateString('pt-BR',{weekday:'long'})}</div>
+      <div class="cal-task">${r.task}</div>
+      <div class="cal-who">${r.who}</div>
+    </div>`
+  }).join('')
+}
+
+function renderTable(acct) {
+  const data = (cache[acct]?.all || []).filter(c => {
+    const v = parseFloat(String(c.amount_spent||'0').replace(/[^0-9.,]/g,'').replace(',','.'))
+    return v > 0
+  }).sort((a,b) => {
+    const va = parseFloat(String(a.amount_spent||'0').replace(/[^0-9.,]/g,'').replace(',','.'))
+    const vb = parseFloat(String(b.amount_spent||'0').replace(/[^0-9.,]/g,'').replace(',','.'))
+    return vb - va
+  })
+
+  const freq = f => {
+    const num = parseFloat(String(f||'0').replace(',','.'))
+    const cls = freqClass(f)
+    return `<span class="${cls}">${isNaN(num)?'—':num.toFixed(1)+'x'}</span>`
+  }
+
+  const rows = data.map(c => `
+    <tr>
+      <td style="font-family:'Syne',sans-serif;font-weight:600;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</td>
+      <td>${statusBadge(c.delivery)}</td>
+      <td style="color:var(--muted)">${c.objective?.replace('OUTCOME_','').replace('_',' ')||'—'}</td>
+      <td class="num-good">${c.amount_spent||'—'}</td>
+      <td>${c.reach ? fmtK(parseInt(c.reach)) : '—'}</td>
+      <td class="${numClass(c.ctr?.replace('%','').replace(',','.'), 1.5, 0.8)}">${c.ctr||'—'}</td>
+      <td class="${numClass(c.cpm?.replace(/[^0-9.,]/g,'').replace(',','.'), 5, 10)}">${c.cpm||'—'}</td>
+      <td class="${numClass(c.cpc?.replace(/[^0-9.,]/g,'').replace(',','.'), 0.8, 1.5)}">${c.cpc||'—'}</td>
+      <td>${freq(c.frequency)}</td>
+    </tr>`).join('')
+
+  document.getElementById('table-'+acct).innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Campanha</th><th>Status</th><th>Objetivo</th>
+        <th>Gasto</th><th>Alcance</th><th>CTR</th>
+        <th>CPM</th><th>CPC</th><th>Freq.</th>
+      </tr></thead>
+      <tbody>${rows || '<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px">Nenhuma campanha com investimento</td></tr>'}</tbody>
+    </table>`
+}
+
+// ─── AUTO UPDATE SCHEDULER ─────────────────────────────────────
+function scheduleAutoUpdate() {
+  const now = new Date()
+  const next = getNextUpdateTime()
+  const ms = next - now
+  console.log(`Próxima atualização automática em ${Math.round(ms/1000/60)} minutos`)
+  setTimeout(() => {
+    fetchAllData(true)
+    scheduleAutoUpdate()
+  }, ms)
+}
+
+// ─── INIT ──────────────────────────────────────────────────────
+function initDashboard() {
+  loadCache()
+  if (cache.girafa && cache.mdl) {
+    renderAll()
+    setStatus('ok', 'Dados do cache')
+    if (shouldUpdate()) fetchAllData(true)
+  } else {
+    fetchAllData(true)
+  }
+  scheduleAutoUpdate()
+}
+
+// Auto-init se já logado
+if (saved) initDashboard()
+</script>
+
 </body>
 </html>
