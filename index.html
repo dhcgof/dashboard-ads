@@ -187,6 +187,7 @@ tbody tr:hover{background:var(--surface2)}
       <div class="tab active" onclick="tab('all',this)">📊 Visão Geral</div>
       <div class="tab" onclick="tab('girafa',this)">🦒 Cantinho</div>
       <div class="tab" onclick="tab('mdl',this)">🟠 MDL</div>
+      <div class="tab" onclick="tab('hist',this)">📋 Levantamento</div>
     </div>
 
     <div id="p-all" class="tab-panel active">
@@ -213,6 +214,26 @@ tbody tr:hover{background:var(--surface2)}
       <div class="tbl-wrap">
         <div class="tbl-head"><div class="tbl-title">Campanhas</div><span class="acct-tag tag-m">Conta #1124246161345381</span></div>
         <div id="tbl-m"></div>
+      </div>
+    </div>
+
+    <div id="p-hist" class="tab-panel">
+      <div class="sec">📋 Levantamento Completo — Histórico Vitalício (todas as campanhas)</div>
+      <div class="kpi-grid" id="kpi-hist"></div>
+      <div class="alert-row" style="--lc:var(--red);margin-bottom:16px">
+        <div class="alert-icon">🚨</div>
+        <div class="alert-info">
+          <div class="alert-name">Diretriz de Saturação — Frequência Vitalícia</div>
+          <div class="alert-desc">A frequência dos últimos 7 dias está saudável, mas no acumulado da vida das campanhas o mesmo público vem sendo impactado muitas vezes. Campanhas contínuas de mensagem/engajamento ultrapassaram o limite crítico (&gt;8x): trocar criativos e/ou renovar público antes de reativar.</div>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-head"><div class="tbl-title">🦒 Cantinho da Girafa — Todas as campanhas</div><span class="acct-tag tag-g">Conta #811077953131064</span></div>
+        <div id="tbl-histG"></div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-head"><div class="tbl-title">🟠 MDL Móveis do Lar — Todas as campanhas</div><span class="acct-tag tag-m">Conta #1124246161345381</span></div>
+        <div id="tbl-histM"></div>
       </div>
     </div>
   </div>
@@ -243,20 +264,53 @@ function tab(id,el){
   document.getElementById('p-'+id).classList.add('active');el.classList.add('active')
 }
 
-// ── DATA: embutido com dados reais de 05/06/2026 ──
+// ── DATA: levantamento Meta API — 08/06/2026 (7 dias: 01–07/06) ──
 const DATA={
-  lastUpdate:'2026-06-05T09:30:00',
+  lastUpdate:'2026-06-08T09:45:00',
+  // ── ÚLTIMOS 7 DIAS (painéis de operação) ──
   girafa:[
-    {id:'120243734680610591',name:'Reconhecimento aluguel',obj:'Reconhecimento',status:'active',spend:44.46,reach:35919,imp:37570,clicks:56,ctr:0.15,cpc:0.79,cpm:1.18,freq:1.05,conv:35919,cpr:1.24,engaj:40,linkClicks:32},
-    {id:'120233851398970591',name:'Vendas/Aluguel',obj:'Vendas',status:'active',spend:217.71,reach:9782,imp:23494,clicks:261,ctr:1.11,cpc:0.83,cpm:9.27,freq:2.40,conv:25,cpr:8.71,engaj:1206,linkClicks:112},
-    {id:'120233386743180591',name:'Leads',obj:'Leads',status:'active',spend:214.42,reach:9389,imp:19486,clicks:303,ctr:1.55,cpc:0.71,cpm:11.00,freq:2.08,conv:46,cpr:4.66,engaj:808,linkClicks:155},
+    {id:'120233851398970591',name:'Vendas/Aluguel',obj:'Vendas',status:'active',spend:223.19,reach:9182,imp:24594,clicks:307,ctr:1.25,cpc:0.73,cpm:9.07,freq:2.68,conv:36,cpr:6.20,engaj:308,linkClicks:147},
+    {id:'120233386743180591',name:'Leads',obj:'Leads',status:'active',spend:220.51,reach:9365,imp:19170,clicks:284,ctr:1.48,cpc:0.78,cpm:11.50,freq:2.05,conv:44,cpr:5.01,engaj:643,linkClicks:140},
+    {id:'120243734680610591',name:'Reconhecimento aluguel',obj:'Reconhecimento',status:'active',spend:87.30,reach:65399,imp:71993,clicks:124,ctr:0.17,cpc:0.70,cpm:1.21,freq:1.10,conv:65399,cpr:1.33,engaj:98,linkClicks:79},
     {id:'120231241929040591',name:'Reconhecimento Festas',obj:'Reconhecimento',status:'inactive',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
   ],
   mdl:[
-    {id:'120247162628770563',name:'Show de Prêmios — Final da Copa | TV 85" | MDL',obj:'Engajamento',status:'active',spend:112.84,reach:5662,imp:15075,clicks:192,ctr:1.27,cpc:0.59,cpm:7.49,freq:2.66,conv:5,cpr:22.57,engaj:151,linkClicks:121},
-    {id:'120246690792920563',name:'3 Dias de Loucura — Fechamento de Maio',obj:'Reconhecimento',status:'off',spend:769.95,reach:435928,imp:543939,clicks:878,ctr:0.16,cpc:0.88,cpm:1.42,freq:1.25,conv:435928,cpr:1.77,engaj:16220,linkClicks:628},
+    {id:'120247162628770563',name:'Show de Prêmios — Final da Copa | TV 85" | MDL',obj:'Engajamento',status:'active',spend:235.11,reach:9447,imp:27133,clicks:384,ctr:1.42,cpc:0.61,cpm:8.67,freq:2.87,conv:5,cpr:47.02,engaj:307,linkClicks:241},
+    {id:'120246690792920563',name:'3 Dias de Loucura — Fechamento de Maio',obj:'Reconhecimento',status:'off',spend:50.83,reach:35560,imp:40060,clicks:62,ctr:0.15,cpc:0.82,cpm:1.27,freq:1.13,conv:35560,cpr:1.43,engaj:1233,linkClicks:47},
     {id:'120244932521770563',name:'Reconhecimentos — Cópia',obj:'Reconhecimento',status:'completed',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
     {id:'120244755654170563',name:'Reconhecimentos',obj:'Reconhecimento',status:'completed',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
+  ],
+  // ── LEVANTAMENTO VITALÍCIO (todas as campanhas, histórico máximo) ──
+  // freq aqui é a frequência ACUMULADA na vida da campanha → revela saturação do público
+  histG:[
+    {name:'Engajamento/Contínua | Mensagem no Whats',obj:'Engajamento',status:'off',spend:31598.77,reach:175325,freq:22.23,conv:4894,cpr:6.46,start:'27/09/2023'},
+    {name:'Leads',obj:'Leads',status:'active',spend:5882.04,reach:46366,freq:13.55,conv:1511,cpr:3.89,start:'02/11/2025'},
+    {name:'Vendas/Aluguel',obj:'Vendas',status:'active',spend:5698.39,reach:64381,freq:9.72,conv:702,cpr:8.12,start:'12/11/2025'},
+    {name:'Reconhecimento Festas',obj:'Reconhecimento',status:'inactive',spend:3517.27,reach:484384,freq:4.59,conv:0,cpr:7.26,start:'06/01/2026'},
+    {name:'LF | Engajamento | Contínua | ABO',obj:'Engajamento',status:'off',spend:3460.06,reach:51539,freq:9.09,conv:643,cpr:5.38,start:'30/11/2022'},
+    {name:'Engajamento/Contínua — Cópia',obj:'Engajamento',status:'off',spend:2404.85,reach:33954,freq:6.27,conv:250,cpr:9.62,start:'13/08/2025'},
+    {name:'Engajamento inflável',obj:'Engajamento',status:'off',spend:2336.99,reach:44078,freq:4.76,conv:159,cpr:14.70,start:'06/05/2024'},
+    {name:'Leads locação',obj:'Leads',status:'off',spend:1882.15,reach:105449,freq:2.64,conv:198,cpr:9.51,start:'28/01/2026'},
+    {name:'Engajamento-Aluguel-Castro',obj:'Engajamento',status:'off',spend:1870.47,reach:31574,freq:12.21,conv:291,cpr:6.43,start:'26/03/2024'},
+    {name:'Reconhecimento Aluguel de brinquedos',obj:'Reconhecimento',status:'off',spend:1671.35,reach:475904,freq:2.67,conv:0,cpr:3.51,start:'21/07/2025'},
+    {name:'Nova campanha de Reconhecimento geral',obj:'Reconhecimento',status:'archived',spend:1635.08,reach:340579,freq:3.43,conv:0,cpr:4.80,start:'—'},
+    {name:'CT brinquedoteca',obj:'Reconhecimento',status:'archived',spend:752.36,reach:276130,freq:2.55,conv:0,cpr:2.72,start:'—'},
+    {name:'Engajamento Castro e Carambeí',obj:'Engajamento',status:'archived',spend:745.57,reach:15798,freq:5.09,conv:0,cpr:0,start:'—'},
+    {name:'Colônia de Férias P1/P2',obj:'Reconhecimento',status:'off',spend:630.38,reach:161535,freq:2.14,conv:0,cpr:3.90,start:'28/12/2023'},
+    {name:'LF | Engajamento | Contínua | IG',obj:'Engajamento',status:'off',spend:624.86,reach:16066,freq:4.57,conv:63,cpr:9.92,start:'01/09/2023'},
+    {name:'LF | Conversão | ABO | Whats na LP',obj:'Leads',status:'off',spend:612.40,reach:33719,freq:4.34,conv:135,cpr:4.54,start:'15/06/2023'},
+    {name:'LF | Reconhecimento | ABO | Alcance',obj:'Reconhecimento',status:'archived',spend:593.27,reach:107904,freq:3.51,conv:0,cpr:5.50,start:'—'},
+    {name:'Nova campanha de Reconhecimento',obj:'Reconhecimento',status:'archived',spend:235.94,reach:121634,freq:1.49,conv:0,cpr:1.94,start:'—'},
+    {name:'Copa',obj:'Reconhecimento',status:'off',spend:233.94,reach:92116,freq:1.78,conv:0,cpr:2.54,start:'18/05/2026'},
+    {name:'reconhecimento vale night',obj:'Reconhecimento',status:'archived',spend:168.11,reach:59570,freq:1.71,conv:0,cpr:2.82,start:'—'},
+    {name:'Remarketing',obj:'Engajamento',status:'archived',spend:145.64,reach:6115,freq:2.16,conv:0,cpr:0,start:'—'},
+    {name:'Reconhecimento aluguel',obj:'Reconhecimento',status:'active',spend:90.10,reach:67026,freq:1.11,conv:0,cpr:1.34,start:'01/06/2026'},
+  ],
+  histM:[
+    {name:'3 Dias de Loucura — Fechamento de Maio',obj:'Reconhecimento',status:'off',spend:1280.69,reach:568536,freq:1.22,conv:0,cpr:2.25,start:'25/05/2026'},
+    {name:'Reconhecimentos',obj:'Reconhecimento',status:'completed',spend:519.70,reach:197721,freq:1.54,conv:0,cpr:2.63,start:'26/04/2026'},
+    {name:'Reconhecimentos — Cópia',obj:'Reconhecimento',status:'completed',spend:515.33,reach:166744,freq:2.10,conv:0,cpr:3.09,start:'29/04/2026'},
+    {name:'Show de Prêmios — Final da Copa | TV 85" | MDL',obj:'Engajamento',status:'active',spend:257.53,reach:9227,freq:3.12,conv:5,cpr:51.51,start:'01/06/2026'},
   ]
 }
 
@@ -264,8 +318,9 @@ const DATA={
 const fmtR=v=>'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})
 const fmtK=v=>v>=1e6?(v/1e6).toFixed(1)+'M':v>=1000?(v/1000).toFixed(0)+'k':v
 const freqCls=f=>f<=2.5?'c-good':f<=5?'c-warn':'c-bad'
+const freqLifeCls=f=>f>8?'c-bad':f>5?'c-warn':'c-good'
 const cprCls=(v,g,w)=>v<=g?'c-good':v<=w?'c-warn':'c-bad'
-const stBadge=s=>({active:'<span class="st st-a">🟢 Ativa</span>',off:'<span class="st st-o">⏸ Pausada</span>',inactive:'<span class="st st-o">⏸ Inativa</span>',completed:'<span class="st st-c">✓ Concluída</span>'})[s]||'<span class="st st-d">◼</span>'
+const stBadge=s=>({active:'<span class="st st-a">🟢 Ativa</span>',off:'<span class="st st-o">⏸ Pausada</span>',inactive:'<span class="st st-o">⏸ Inativa</span>',completed:'<span class="st st-c">✓ Concluída</span>',archived:'<span class="st st-d">🗄 Arquivada</span>'})[s]||'<span class="st st-d">◼</span>'
 
 // ── RENDER GERAL ──
 function renderAll(){
@@ -298,6 +353,7 @@ function renderAll(){
   renderAccountKPIs('m', activeM)
   renderTable('g', allG)
   renderTable('m', allM)
+  renderHist()
 }
 
 function renderAlerts(activeG, activeM){
@@ -393,6 +449,44 @@ function renderTable(id, data){
   </table>`
 }
 
+// ── RENDER LEVANTAMENTO (histórico vitalício) ──
+function renderHist(){
+  const all=[...DATA.histG,...DATA.histM]
+  const tSpend=all.reduce((a,c)=>a+c.spend,0)
+  const tReach=DATA.histG.reduce((a,c)=>a+c.reach,0)+DATA.histM.reduce((a,c)=>a+c.reach,0)
+  const tConv=all.filter(c=>c.obj!=='Reconhecimento').reduce((a,c)=>a+c.conv,0)
+  const totalCamp=all.length
+  const saturadas=all.filter(c=>c.freq>8).length
+  document.getElementById('kpi-hist').innerHTML=[
+    {l:'Investimento Vitalício',v:'R$'+tSpend.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}),s:'Ambas as contas',c:'var(--accent)'},
+    {l:'Alcance Acumulado',v:fmtK(tReach),s:'Soma das campanhas',c:'var(--accent2)'},
+    {l:'Conversas Totais',v:tConv.toLocaleString('pt-BR'),s:'WhatsApp (Leads+Vendas)',c:'var(--girafa)'},
+    {l:'Campanhas no Histórico',v:totalCamp,s:'Com investimento',c:'var(--green)'},
+    {l:'Saturadas (Freq > 8x)',v:saturadas,s:'⚠️ Renovar público/criativo',c:'var(--red)'},
+  ].map(k=>`<div class="kpi" style="--c:${k.c}"><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('')
+  renderHistTable('histG',DATA.histG)
+  renderHistTable('histM',DATA.histM)
+}
+
+function renderHistTable(id,data){
+  const rows=data.map(c=>`
+    <tr>
+      <td style="font-family:'Syne',sans-serif;font-weight:600;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</td>
+      <td>${stBadge(c.status)}</td>
+      <td style="color:var(--muted)">${c.obj}</td>
+      <td class="c-good">${fmtR(c.spend)}</td>
+      <td>${fmtK(c.reach)}</td>
+      <td class="${freqLifeCls(c.freq)}">${c.freq.toFixed(2)}x</td>
+      <td>${c.conv>0&&c.obj!=='Reconhecimento'?c.conv.toLocaleString('pt-BR'):'—'}</td>
+      <td>${c.cpr>0&&c.obj!=='Reconhecimento'?fmtR(c.cpr):'—'}</td>
+      <td style="color:var(--muted)">${c.start}</td>
+    </tr>`).join('')
+  document.getElementById('tbl-'+id).innerHTML=`<table>
+    <thead><tr><th>Campanha</th><th>Status</th><th>Objetivo</th><th>Gasto Vitalício</th><th>Alcance</th><th>Freq. Vida</th><th>Conversas</th><th>Custo/Conv.</th><th>Início</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:20px">Sem campanhas</td></tr>'}</tbody>
+  </table>`
+}
+
 // ── REFRESH (manual) ──
 async function refresh(){
   document.getElementById('loading').classList.add('show')
@@ -468,7 +562,7 @@ function renderLegend(){
   </div>`
 
   // Injeta em todos os painéis
-  ;['p-all','p-girafa','p-mdl'].forEach(id=>{
+  ;['p-all','p-girafa','p-mdl','p-hist'].forEach(id=>{
     const panel=document.getElementById(id)
     if(panel&&!panel.querySelector('.legend-wrap')){
       panel.insertAdjacentHTML('beforeend',html)
