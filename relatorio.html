@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Levantamento de Campanhas — MDL + Cantinho</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8f9fa;color:#1a1a1a;line-height:1.6}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+h1{color:#1a1a1a;margin-bottom:8px;font-size:32px}
+.subtitle{color:#666;margin-bottom:24px;font-size:14px}
+.section{background:white;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.section-title{font-size:20px;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #f0f0f0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px}
+.card{background:#f8f9fa;border-radius:8px;padding:16px;border-left:3px solid var(--c,#007bff)}
+.card-title{font-weight:700;margin-bottom:8px;color:#1a1a1a}
+.card-stat{font-size:24px;font-weight:800;color:var(--c,#007bff);margin:8px 0}
+.card-label{font-size:12px;color:#666;text-transform:uppercase;letter-spacing:.5px}
+.card-sub{font-size:13px;color:#888;margin-top:6px}
+table{width:100%;border-collapse:collapse;margin-bottom:16px}
+thead{background:#f8f9fa}
+th{text-align:left;padding:12px;font-weight:700;font-size:13px;color:#666;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #e0e0e0}
+td{padding:12px;border-bottom:1px solid #e0e0e0;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover{background:#fafbfc}
+.status{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.st-active{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
+.st-off{background:#fff3cd;color:#856404;border:1px solid #ffeaa7}
+.st-done{background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb}
+.alert{padding:16px;border-radius:8px;margin-bottom:16px;border-left:4px solid var(--bc,#ffc107)}
+.alert-crit{background:#fff5f5;--bc:#dc3545}
+.alert-warn{background:#fffbf0;--bc:#ffc107}
+.alert-ok{background:#f0fdf4;--bc:#28a745}
+.alert-title{font-weight:700;margin-bottom:4px;color:var(--bc)}
+.alert-desc{font-size:13px;color:#666;line-height:1.5}
+.directive{background:white;border-radius:8px;padding:16px;margin-bottom:12px;border:1px solid #e0e0e0}
+.directive-title{font-weight:700;margin-bottom:8px;color:#1a1a1a;display:flex;gap:8px;align-items:center}
+.directive-icon{font-size:20px}
+.directive-content{font-size:13px;color:#666;margin-bottom:8px;line-height:1.6}
+.deadline{background:#f8f9fa;border-radius:4px;padding:8px 12px;font-family:'Courier New',monospace;font-size:12px;color:#d32f2f;font-weight:700;margin-top:8px}
+.badge{display:inline-block;background:#e3f2fd;color:#1976d2;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-right:6px}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.comparison-item{background:#f8f9fa;border-radius:8px;padding:14px;text-align:center}
+.comparison-label{font-size:12px;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.comparison-val{font-size:22px;font-weight:800;color:#1a1a1a}
+.comparison-delta{font-size:13px;color:#28a745;margin-top:6px}
+.timeline{position:relative;padding:20px 0;margin-bottom:24px}
+.timeline-item{position:relative;padding-left:30px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #e0e0e0}
+.timeline-item:last-child{border-bottom:none}
+.timeline-date{position:absolute;left:0;top:0;background:#007bff;color:white;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.timeline-title{font-weight:700;margin-bottom:4px}
+.timeline-desc{font-size:13px;color:#666}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi-box{background:#f8f9fa;border-radius:8px;padding:14px;text-align:center;border-top:3px solid var(--c)}
+.kpi-val{font-size:20px;font-weight:800;color:var(--c);margin:6px 0}
+.kpi-label{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.5px}
+footer{background:#f8f9fa;border-top:1px solid #e0e0e0;padding:20px;margin-top:40px;text-align:center;color:#666;font-size:12px}
+@media print{body{background:white}.section{box-shadow:none;page-break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>📊 Levantamento de Campanhas Meta Ads</h1>
+<div class="subtitle">MDL Móveis do Lar + Cantinho da Girafa · Relatório executivo com diretrizes operacionais · 05/06/2026</div>
+
+<!-- ===== CANTINHO DA GIRAFA ===== -->
+<div class="section">
+  <div class="section-title">🦒 Cantinho da Girafa — Histórico Completo</div>
+  
+  <div class="kpi-row">
+    <div class="kpi-box" style="--c:#1565C0"><div class="kpi-label">Total Investido</div><div class="kpi-val">R$67.6k</div><div class="kpi-label">Histórico completo</div></div>
+    <div class="kpi-box" style="--c:#7C4DFF"><div class="kpi-label">Conversas Geradas</div><div class="kpi-val">8.249</div><div class="kpi-label">WhatsApp</div></div>
+    <div class="kpi-box" style="--c:#FF8C00"><div class="kpi-label">CPM Médio</div><div class="kpi-val">R$5,80</div><div class="kpi-label">Todas campanhas</div></div>
+    <div class="kpi-box" style="--c:#4CAF50"><div class="kpi-label">Campanhas Ativas</div><div class="kpi-val">3</div><div class="kpi-label">Leads, Vendas, Reconh.</div></div>
+  </div>
+
+  <h3 style="margin-top:20px;margin-bottom:12px;font-size:16px">Campanhas Ativas (7 dias)</h3>
+  <table>
+    <thead><tr>
+      <th>Campanha</th><th>Gasto</th><th>Alcance</th><th>Conversas</th><th>CPM</th><th>Freq.</th><th>Status</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Leads</strong></td>
+        <td>R$214</td>
+        <td>45.9k</td>
+        <td>46</td>
+        <td>R$11,00</td>
+        <td>2,08x ✅</td>
+        <td><span class="status st-active">🟢 Ativa</span></td>
+      </tr>
+      <tr>
+        <td><strong>Vendas/Aluguel</strong></td>
+        <td>R$218</td>
+        <td>64k</td>
+        <td>25</td>
+        <td>R$9,27</td>
+        <td>2,40x ✅</td>
+        <td><span class="status st-active">🟢 Ativa</span></td>
+      </tr>
+      <tr>
+        <td><strong>Reconhecimento aluguel</strong></td>
+        <td>R$45</td>
+        <td>35.9k</td>
+        <td>—</td>
+        <td>R$1,18 ✅</td>
+        <td>1,05x ✅</td>
+        <td><span class="status st-active">🟢 Ativa</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:20px;margin-bottom:12px;font-size:16px">Top 5 Campanhas Históricas (por gasto)</h3>
+  <table>
+    <thead><tr>
+      <th>Campanha</th><th>Período</th><th>Investido</th><th>Alcance</th><th>CPM</th><th>CPC</th><th>Status</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Engaj. Contínua WhatsApp</strong></td>
+        <td>Dez 25 — Mai 26</td>
+        <td>R$31.6k</td>
+        <td>175k</td>
+        <td>R$8,11</td>
+        <td>R$0,64</td>
+        <td><span class="status st-off">⏸ Pausada</span></td>
+      </tr>
+      <tr>
+        <td><strong>Leads (ativa)</strong></td>
+        <td>Jun 26 — atual</td>
+        <td>R$5.7k</td>
+        <td>45.9k</td>
+        <td>R$11,00</td>
+        <td>R$0,57</td>
+        <td><span class="status st-active">🟢 Ativa</span></td>
+      </tr>
+      <tr>
+        <td><strong>Vendas/Aluguel (ativa)</strong></td>
+        <td>Jun 26 — atual</td>
+        <td>R$5.5k</td>
+        <td>64k</td>
+        <td>R$9,27</td>
+        <td>R$0,88</td>
+        <td><span class="status st-active">🟢 Ativa</span></td>
+      </tr>
+      <tr>
+        <td><strong>LF Engaj. ABO WhatsApp</strong></td>
+        <td>Abr 26 — Mai 26</td>
+        <td>R$3.6k</td>
+        <td>52.5k</td>
+        <td>R$7,44 ✅</td>
+        <td>R$0,48 ✅</td>
+        <td><span class="status st-off">⏸ Pausada</span></td>
+      </tr>
+      <tr>
+        <td><strong>Reconhecimento Festas</strong></td>
+        <td>Mai 26</td>
+        <td>R$3.5k</td>
+        <td>484k</td>
+        <td>R$1,58 ✅</td>
+        <td>R$0,76</td>
+        <td><span class="status st-done">⚠️ Inativa</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== MDL ===== -->
+<div class="section">
+  <div class="section-title">🟠 MDL Móveis do Lar — Histórico Completo</div>
+  
+  <div class="kpi-row">
+    <div class="kpi-box" style="--c:#FF8C00"><div class="kpi-label">Total Investido</div><div class="kpi-val">R$2.3k</div><div class="kpi-label">Últimos 30 dias</div></div>
+    <div class="kpi-box" style="--c:#1565C0"><div class="kpi-label">Alcance Total</div><div class="kpi-val">951k</div><div class="kpi-label">Contas únicas</div></div>
+    <div class="kpi-box" style="--c:#4CAF50"><div class="kpi-label">CPM Médio</div><div class="kpi-val">R$1,89</div><div class="kpi-label">Excelente para região</div></div>
+    <div class="kpi-box" style="--c:#28a745"><div class="kpi-label">Campanhas Ativas</div><div class="kpi-val">2</div><div class="kpi-label">Show Prêmios, 3DL</div></div>
+  </div>
+
+  <h3 style="margin-top:20px;margin-bottom:12px;font-size:16px">Campanhas Ativas (7 dias)</h3>
+  <table>
+    <thead><tr>
+      <th>Campanha</th><th>Gasto</th><th>Alcance</th><th>Impressões</th><th>CPM</th><th>CTR</th><th>Freq.</th><th>Status</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Show de Prêmios — Final Copa TV 85"</strong></td>
+        <td>R$113</td>
+        <td>5.7k</td>
+        <td>15.1k</td>
+        <td>R$7,49</td>
+        <td>1,27%</td>
+        <td>2,66x</td>
+        <td><span class="status st-active">🟢 Ativa</span></td>
+      </tr>
+      <tr>
+        <td><strong>3 Dias de Loucura — Fech. Maio</strong></td>
+        <td>R$1.3k</td>
+        <td>500k+</td>
+        <td>691k</td>
+        <td>R$1,85 ✅</td>
+        <td>0,17%</td>
+        <td>1,31x</td>
+        <td><span class="status st-off">⏸ Pausada</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:20px;margin-bottom:12px;font-size:16px">Análise Comparativa — Show de Prêmios vs 3 Dias de Loucura</h3>
+  
+  <div class="comparison">
+    <div class="comparison-item">
+      <div class="comparison-label">CPM</div>
+      <div class="comparison-val">Show: R$7,49<br><span style="font-size:14px;color:#666">3DL: R$1,85</span></div>
+      <div class="comparison-delta" style="color:#d32f2f">↑ 305% mais caro</div>
+    </div>
+    <div class="comparison-item">
+      <div class="comparison-label">CTR</div>
+      <div class="comparison-val">Show: 1,27%<br><span style="font-size:14px;color:#666">3DL: 0,17%</span></div>
+      <div class="comparison-delta" style="color:#28a745">↑ 647% melhor clique</div>
+    </div>
+    <div class="comparison-item">
+      <div class="comparison-label">Alcance</div>
+      <div class="comparison-val">Show: 5.7k<br><span style="font-size:14px;color:#666">3DL: 500k+</span></div>
+      <div class="comparison-delta" style="color:#d32f2f">↓ 87x menor</div>
+    </div>
+    <div class="comparison-item">
+      <div class="comparison-label">Freqüência</div>
+      <div class="comparison-val">Show: 2,66x<br><span style="font-size:14px;color:#666">3DL: 1,31x</span></div>
+      <div class="comparison-delta" style="color:#d32f2f">↑ 103% saturação</div>
+    </div>
+  </div>
+
+  <div class="alert alert-warn">
+    <div class="alert-title">⚠️ Show de Prêmios — Ajuste Aplicado (05/06)</div>
+    <div class="alert-desc">
+      Público-alvo expandido de 50km para 60km + Advantage+ Audience ativado (modelo da 3DL que gerou CPM R$1,85). 
+      Expectativa: CPM cair para R$3–5 em 5 dias. Monitorar até 10/06.
+    </div>
+  </div>
+</div>
+
+<!-- ===== DIRETRIZES OPERACIONAIS ===== -->
+<div class="section">
+  <div class="section-title">📋 Diretrizes Operacionais Completas</div>
+
+  <h3 style="margin-top:16px;margin-bottom:12px;font-size:15px">🦒 CANTINHO DA GIRAFA</h3>
+
+  <div class="directive">
+    <div class="directive-title"><span class="directive-icon">✅</span> Campanha: Leads</div>
+    <div class="directive-content">
+      <strong>Status:</strong> Ativa, performance excelente<br>
+      <strong>Custo/conversa:</strong> R$4,66 (meta: < R$6)<br>
+      <strong>Frequência:</strong> 2,08x (ideal 1–3x)<br>
+      <strong>Ação:</strong> Manter ativa. Monitorar CTR diariamente — se cair abaixo de 1%, ativar novos criativos.<br>
+      <strong>Próxima revisão:</strong> 10/06 (7 dias)
+    </div>
+  </div>
+
+  <div class="directive">
+    <div class="directive-title"><span class="directive-icon">⚠️</span> Campanha: Vendas/Aluguel</div>
+    <div class="directive-content">
+      <strong>Status:</strong> Ativa, custo/conversa elevado<br>
+      <strong>Custo/conversa:</strong> R$8,71 (meta: R$6)<br>
+      <strong>Frequência:</strong> 2,40x (aceitável)<br>
+      <strong>Problema:</strong> Objetivo "Vendas" pode ser dispersivo para WhatsApp. Considere renomear para "Leads" internamente.<br>
+      <strong>Ação:</strong> Subir 2 criativos novos com abordagem diferente (1 foco aluguel, 1 festa infantil).<br>
+      <strong>Prazo:</strong> Novos criativos até 04/06. Revisão até 07/06.
+    </div>
+  </div>
+
+  <div class="directive">
+    <div class="directive-title"><span class="directive-icon">🟢</span> Campanha: Reconhecimento Aluguel</div>
+    <div class="directive-content">
+      <strong>Status:</strong> Ativa, saudável<br>
+      <strong>CPM:</strong> R$1,18 (excelente)<br>
+      <strong>Frequência:</strong> 1,05x (perfeito)<br>
+      <strong>Ação:</strong> Deixar rodar. Essa é a campanha de aprendizado ideal para acumular dados de visitantes para pixel.<br>
+      <strong>Próxima revisão:</strong> 10/06
+    </div>
+  </div>
+
+  <div class="directive">
+    <div class="directive-title"><span class="directive-icon">🔄</span> Campanha Pausada: Engaj. Contínua WhatsApp (R$31.6k investido)</div>
+    <div class="directive-content">
+      <strong>Status:</strong> Pausada · Melhor campanha histórica<br>
+      <strong>CPM:</strong> R$8,11 · <strong>CPC:</strong> R$0,64 · <strong>Conversas:</strong> 4.894<br>
+      <strong>Frequência histórica:</strong> 22,2x (saturação crítica — por isso pausou)<br>
+      <strong>Ação:</strong> Pode ser reativada apenas com criativos 100% novos (não reusar da versão anterior).<br>
+      <strong>Quando reativar:</strong> Após esgotar capacidade das campanhas Leads + Vendas/Aluguel.
+    </div>
+  </div>
+
+  <div class="directive">
+    <div class="directive-title"><span class="directive-icon">🎪</span> Oportunidade: Reconhecimento Festas (inativa desde mai/26)</div>
+    <div class="directive-content">
+      <strong>Status:</strong> Inativa<br>
+      <strong>CPM histórico:</strong> R$1,58 (excelente) · <strong>Alcance:</strong> 484k<br>
+      <strong>Contexto:</strong> Junho/Julho é alta temporada de festas infantis. Campanha essencial.<br>
+      <strong>Ação:</strong> Reativar com criativo novo focado em "Festa completa — a gente leva os brinquedos!"<br>
+      <strong>Prazo:</strong> Reativar até 07/06.
+    </div>
+  </div>
+
+  <h3 style="margin-top:24px;margin-bottom:12px;font-size:15px">🟠 MDL MÓVEIS DO LAR</h3>
+
+  <div class="directive">
+    <div class="directive-title"><span class="directive-icon">🚀</span> Campanha: Show de Prêmios — Final Copa TV 85"</div>
+    <div class="directive-content">
+      <strong>Status:</strong> Ativa, fase de ajuste<br>
+      <strong>CPM atual:</strong> R$7,49 (alto) → esperado R$3–5 em 5 dias<br>
+      <strong>Frequência:</strong> 2,66x (saudável)<br>
+      <strong>Ajuste aplicado:</strong> Público expandido 50→60km, Advantage+ Audience ativado<br>
+      <strong>Ação:</strong> NÃO MEXA até 10/06. Fase de aprendizado crítica do Advantage+.<br>
+      <strong>KPIs esperados (10/06):</strong> CPM < R$5, CTR > 1%, Freq. < 3x<br>
+      <strong>Se não atingir:</strong> Voltar para segmentação manual com interesses de TV, futebol, eletrodomésticos.
+    </div>
+  </div>
+
+  <div class="directive">
+    <div class="directive-title"><span class="directive-icon">📊</span> Campanha: 3 Dias de Loucura — Fechamento Maio (pausada)</div>
+    <div class="directive-content">
+      <strong>Status:</strong> Pausada · Modelo de referência<br>
+      <strong>CPM:</strong> R$1,85 (excelente) · <strong>Alcance:</strong> 500k+ · <strong>CPC:</strong> R$0,88<br>
+      <strong>Objetivo:</strong> Alcance puro — estratégia pronta para escalar quando o Show de Prêmios estabilizar.<br>
+      <strong>Ação:</strong> Reusar exatamente esse targeting para próximas campanhas de reconhecimento.<br>
+      <strong>Quando reativar:</strong> Julho, se orçamento permitir.
+    </div>
+  </div>
+
+  <div class="directive">
+    <div class="directive-title"><span class="directive-icon">🎯</span> Pixel MDL — Evento Lead</div>
+    <div class="directive-content">
+      <strong>Status:</strong> PageView funcionando · Lead aguardando instalação<br>
+      <strong>Ação:</strong> Instalar script Lead em WPCode até 06/06 (máx 2 minutos).<br>
+      <strong>Após instalar:</strong> Verificar em Events Manager em 24h. Meta: 50+ Leads em 7 dias para Advantage+ otimizar.<br>
+      <strong>Link script:</strong> Disponível em /outputs/mdl-pixel-lead-event.js
+    </div>
+  </div>
+</div>
+
+<!-- ===== CALENDÁRIO ===== -->
+<div class="section">
+  <div class="section-title">📅 Calendário de Ações — Próximas 2 Semanas</div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-date">04</div>
+      <div class="timeline-title">Quarta-feira · Criativos Novos</div>
+      <div class="timeline-desc">
+        <strong>Cantinho:</strong> Subir 2 novos vídeos/imagens para Vendas/Aluguel (prazo: máximo sexta)<br>
+        <strong>MDL:</strong> Nada fazer — deixar Advantage+ em aprendizado
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">05</div>
+      <div class="timeline-title">Quinta-feira · Análise 3 Dias</div>
+      <div class="timeline-desc">
+        <strong>Show de Prêmios (MDL):</strong> Já deve ter dados de entrega. Verificar: CTR > 0,8%? CPM < R$8?<br>
+        <strong>Reconhecimento Aluguel (Cantinho):</strong> Confirmar CPM mantido abaixo de R$2
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">06</div>
+      <div class="timeline-title">Sexta-feira · Evento Lead</div>
+      <div class="timeline-desc">
+        <strong>MDL:</strong> Instalar evento Lead em WPCode (2 minutos via WP Admin)
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">07</div>
+      <div class="timeline-title">Sábado · Revisão Geral 1 Semana</div>
+      <div class="timeline-desc">
+        <strong>Cantinho:</strong> Comparar Leads vs Vendas/Aluguel — qual CTR melhorou?<br>
+        <strong>Considerar:</strong> Reativar Reconhecimento Festas com criativo de festa infantil<br>
+        <strong>MDL:</strong> Monitorar Show de Prêmios — CPM caindo?
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">10</div>
+      <div class="timeline-title">Terça-feira · Decisão Show Prêmios</div>
+      <div class="timeline-desc">
+        <strong>MDL:</strong> CPM já deve estar em R$3–5. Se não:<br>
+        - Pausar Advantage+ e voltar para segmentação manual + TV/Futebol/Eletro<br>
+        - Ou: aumentar orçamento diário e deixar rodar mais 3 dias
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">14</div>
+      <div class="timeline-title">Sábado · Análise 7-14 Dias</div>
+      <div class="timeline-desc">
+        <strong>Todas campanhas:</strong> Compilar relatório de performance<br>
+        <strong>Cantinho:</strong> Quais campanhas escalaram? Quais pausar?<br>
+        <strong>MDL:</strong> Confirmar pixel Lead disparando (meta: 50+ conversas)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BENCHMARKS ===== -->
+<div class="section">
+  <div class="section-title">📏 Benchmarks de Qualidade</div>
+
+  <div class="grid">
+    <div class="card" style="--c:#28a745">
+      <div class="card-title">CTR Ideal</div>
+      <div class="card-stat">> 1,5%</div>
+      <div class="card-label">Tráfego / Leads</div>
+      <div class="card-sub">Cantinho Leads: 1,64% ✅</div>
+    </div>
+
+    <div class="card" style="--c:#28a745">
+      <div class="card-title">CPM Ideal</div>
+      <div class="card-stat">< R$5</div>
+      <div class="card-label">Região PR Interior</div>
+      <div class="card-sub">3DL: R$1,85 ✅ · Reconh. Aluguel: R$1,18 ✅</div>
+    </div>
+
+    <div class="card" style="--c:#28a745">
+      <div class="card-title">Frequência Ideal</div>
+      <div class="card-stat">1–3x</div>
+      <div class="card-label">Sem Saturação</div>
+      <div class="card-sub">Todos os ativos estão OK ✅</div>
+    </div>
+
+    <div class="card" style="--c:#28a745">
+      <div class="card-title">Custo/Conversa</div>
+      <div class="card-stat">< R$6</div>
+      <div class="card-label">WhatsApp Leads</div>
+      <div class="card-sub">Cantinho Leads: R$4,66 ✅</div>
+    </div>
+
+    <div class="card" style="--c:#ffc107">
+      <div class="card-title">CPC Aceitável</div>
+      <div class="card-stat">R$0,80–1,50</div>
+      <div class="card-label">Clique Médio</div>
+      <div class="card-sub">Cantinho: R$0,57–0,88 ✅</div>
+    </div>
+
+    <div class="card" style="--c:#d32f2f">
+      <div class="card-title">Frequência CRÍTICA</div>
+      <div class="card-stat">> 8x</div>
+      <div class="card-label">Ação Imediata</div>
+      <div class="card-sub">Nenhuma ativa atualmente ✅</div>
+    </div>
+  </div>
+
+  <div class="alert alert-ok">
+    <div class="alert-title">✅ Status Geral — Ambas as Contas</div>
+    <div class="alert-desc">
+      <strong>Cantinho da Girafa:</strong> 3 campanhas ativas, frequências saudáveis (1–2x), custo/conversa controlado. Recomendação: manter como está e reativar Festas em paralelo.<br>
+      <strong>MDL Móveis:</strong> Show de Prêmios em ajuste (Advantage+ aprendizado 5 dias). Pixel Lead pronto para instalar. Recomendação: paciência até 10/06 antes de mexer.
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+Relatório gerado em 05/06/2026 · Dados: Meta API + Cache histórico · Próxima atualização automática: 06/06 às 08:00
+</footer>
+
+</body>
+</html>
