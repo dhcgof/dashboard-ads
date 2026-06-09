@@ -1,582 +1,161 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meta Ads Dashboard — Diego</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
-:root{--bg:#080a0f;--surface:#0e1118;--surface2:#141720;--border:#1e2230;--text:#e2e8f0;--muted:#4a5568;--accent:#ff6b35;--accent2:#7c3aed;--girafa:#1565C0;--mdl:#FF8C00;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-
-/* LOGIN */
-#login-screen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center}
-.login-box{width:380px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;position:relative;overflow:hidden}
-.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--girafa),var(--accent2),var(--mdl))}
-.login-logo{font-size:40px;text-align:center;margin-bottom:8px}
-.login-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px}
-.login-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:32px;font-family:'Space Mono',monospace}
-.login-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
-.login-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:'Space Mono',monospace;font-size:14px;letter-spacing:3px;margin-bottom:16px;outline:none;transition:border .2s}
-.login-input:focus{border-color:var(--accent)}
-.login-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;padding:13px;cursor:pointer;transition:opacity .2s}
-.login-btn:hover{opacity:.9}
-.login-error{font-size:12px;color:var(--red);text-align:center;margin-top:10px;min-height:18px}
-.user-chips{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
-.user-chip{font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .15s;background:var(--surface2)}
-.user-chip:hover,.user-chip.sel{border-color:var(--accent);color:var(--text)}
-
-/* HEADER */
-#main{display:none}
-.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.header-brand{display:flex;align-items:center;gap:12px}
-.header-title{font-size:16px;font-weight:800}
-.header-sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
-.header-right{display:flex;align-items:center;gap:10px}
-.user-badge{font-size:11px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;display:flex;align-items:center;gap:6px}
-.udot{width:6px;height:6px;border-radius:50%;background:var(--green)}
-.logout-btn{font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px}
-.logout-btn:hover{color:var(--red)}
-.upd-btn{font-size:11px;font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 14px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:6px;transition:border-color .15s}
-.upd-btn:hover{border-color:var(--accent);color:var(--accent)}
-
-/* CONTAINER */
-.container{max-width:1320px;margin:0 auto;padding:24px 20px}
-.upd-bar{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;margin-bottom:24px;font-size:12px}
-.upd-left{display:flex;align-items:center;gap:8px;color:var(--muted);font-family:'Space Mono',monospace}
-
-/* TABS */
-.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;width:fit-content}
-.tab{font-size:13px;font-weight:700;padding:8px 20px;border-radius:9px;cursor:pointer;transition:all .15s;color:var(--muted)}
-.tab.active{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-
-/* KPIs */
-.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;border-top:2px solid var(--c)}
-.kpi-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
-.kpi-val{font-size:24px;font-weight:800;margin:6px 0 3px;color:var(--c)}
-.kpi-sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
-
-/* SECTION */
-.sec{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-
-/* ALERTS */
-.alert-row{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:8px;border-left:3px solid var(--lc)}
-.alert-icon{font-size:22px}
-.alert-info{flex:1}
-.alert-name{font-size:13px;font-weight:700}
-.alert-desc{font-size:11px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace}
-.alert-right{display:flex;align-items:center;gap:16px}
-.am{text-align:center}
-.am-val{font-size:14px;font-weight:800}
-.am-label{font-size:10px;color:var(--muted)}
-.badge{font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
-.b-crit{background:#2d0a0a;color:var(--red);border:1px solid var(--red)}
-.b-warn{background:#2d1f00;color:var(--yellow);border:1px solid var(--yellow)}
-.b-ok{background:#0a2d1a;color:var(--green);border:1px solid var(--green)}
-.b-watch{background:#0a1a2d;color:var(--blue);border:1px solid var(--blue)}
-.c-good{color:var(--green)}
-.c-warn{color:var(--yellow)}
-.c-bad{color:var(--red)}
-
-/* TABLE */
-.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px}
-.tbl-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.tbl-title{font-size:14px;font-weight:700}
-.acct-tag{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
-.tag-g{background:#0a1a3d;color:var(--girafa);border:1px solid var(--girafa)}
-.tag-m{background:#2d1a00;color:var(--mdl);border:1px solid var(--mdl)}
-table{width:100%;border-collapse:collapse}
-thead th{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;text-align:left;background:var(--surface2)}
-tbody td{font-size:12px;padding:10px 14px;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace}
-tbody tr:last-child td{border-bottom:none}
-tbody tr:hover{background:var(--surface2)}
-.st{font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px}
-.st-a{background:#0a2d1a;color:var(--green)}
-.st-o{background:#2d1a00;color:var(--yellow)}
-.st-d{background:#1a0a2d;color:#9f7aea}
-.st-c{background:#1a2d1a;color:#60a5fa}
-
-/* CALENDAR */
-.cal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.cal-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
-.cal-date{font-size:28px;font-weight:800;font-family:'Space Mono',monospace}
-.cal-day{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
-.cal-task{font-size:12px;font-weight:700;margin-top:10px}
-.cal-who{font-size:11px;color:var(--muted);margin-top:4px}
-
-/* ACTION BOX */
-.action-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px}
-.action-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
-.action-step{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;font-size:12px}
-.step-n{width:20px;height:20px;border-radius:50%;background:var(--accent);color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.step-t{font-weight:700;color:var(--text)}
-.step-d{color:var(--muted);margin-top:2px;line-height:1.5}
-
-/* LOADING */
-#loading{position:fixed;inset:0;background:rgba(8,10,15,.9);display:none;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:14px}
-#loading.show{display:flex}
-.load-txt{font-size:13px;font-weight:700;color:var(--accent);font-family:'Space Mono',monospace}
-
-@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.cal-grid{grid-template-columns:repeat(2,1fr)}.alert-right .am{display:none}}
-
-/* LEGENDA */
-.legend-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:24px}
-.legend-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 24px;margin-top:12px}
-.legend-item{display:flex;gap:8px;align-items:flex-start;font-size:12px}
-.legend-abbr{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);min-width:52px;flex-shrink:0}
-.legend-desc{color:var(--muted);line-height:1.4}
-.legend-divider{grid-column:1/-1;height:1px;background:var(--border);margin:6px 0}
-.legend-group{grid-column:1/-1;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
-@media(max-width:900px){.legend-grid{grid-template-columns:repeat(2,1fr)}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Ads MDL + Girafa | 09/06/2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.6; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    header { background: linear-gradient(135deg, #1e293b, #334155); padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ff8c00; }
+    h1 { font-size: 24px; margin-bottom: 5px; }
+    .timestamp { font-size: 12px; color: #94a3b8; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #334155; }
+    .tab-btn { padding: 12px 20px; background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: 500; border-bottom: 3px solid transparent; transition: all 0.3s; }
+    .tab-btn.active { color: #22c55e; border-bottom-color: #22c55e; }
+    .tab-btn:hover { color: #cbd5e1; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .kpi { background: #1e293b; padding: 15px; border-radius: 8px; border-left: 3px solid #ff8c00; }
+    .kpi-label { font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+    .kpi-value { font-size: 24px; font-weight: 700; color: #22c55e; }
+    .kpi-sub { font-size: 12px; color: #cbd5e1; margin-top: 5px; }
+    table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
+    th { background: #0f172a; padding: 12px; text-align: left; font-weight: 600; color: #94a3b8; font-size: 12px; border-bottom: 1px solid #334155; }
+    td { padding: 12px; border-bottom: 1px solid #334155; font-size: 13px; }
+    tr:hover { background: #334155; }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .active { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+    .paused { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+    .archived { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+    .status-good { color: #22c55e; }
+    .status-warn { color: #eab308; }
+    .status-bad { color: #ef4444; }
+    .alert { background: #7c2d12; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid #ea580c; font-size: 13px; }
+    .legend { background: #1e293b; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; }
+    .legend-item { margin: 5px 0; }
+  </style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">📡</div>
-    <div class="login-title">Meta Ads Dashboard</div>
-    <div class="login-sub">MDL · Cantinho da Girafa</div>
-    <div class="login-label">Usuário</div>
-    <div class="user-chips">
-      <div class="user-chip sel" onclick="selUser('diego',this)">🧑 Diego</div>
-      <div class="user-chip" onclick="selUser('gabriela',this)">👩 Gabriela</div>
-    </div>
-    <div class="login-label">Senha</div>
-    <input type="password" id="pwd" class="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
-    <button class="login-btn" onclick="login()">Entrar →</button>
-    <div class="login-error" id="login-err"></div>
-  </div>
-</div>
-
-<!-- LOADING -->
-<div id="loading">
-  <div style="font-size:36px">📡</div>
-  <div class="load-txt" id="load-txt">Buscando métricas...</div>
-</div>
-
-<!-- MAIN -->
-<div id="main">
-  <div class="header">
-    <div class="header-brand">
-      <div style="font-size:22px">📡</div>
-      <div>
-        <div class="header-title">Meta Ads Dashboard</div>
-        <div class="header-sub" id="hdate">—</div>
-      </div>
-    </div>
-    <div class="header-right">
-      <button class="upd-btn" onclick="refresh()">⟳ Atualizar</button>
-      <div class="user-badge"><div class="udot"></div><span id="uname">—</span></div>
-      <button class="logout-btn" onclick="logout()">Sair</button>
-    </div>
-  </div>
-
   <div class="container">
-    <div class="upd-bar">
-      <div class="upd-left"><span id="upd-icon">✅</span><span id="upd-txt">—</span></div>
-      <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">Próx. atualização automática: <strong id="nxt-upd">—</strong></div>
-    </div>
+    <header>
+      <h1>📊 Dashboard Meta Ads | MDL + Cantinho da Girafa</h1>
+      <p class="timestamp">Atualizado: 09 de junho de 2026 • 15:30 (São Paulo)</p>
+    </header>
 
     <div class="tabs">
-      <div class="tab active" onclick="tab('all',this)">📊 Visão Geral</div>
-      <div class="tab" onclick="tab('girafa',this)">🦒 Cantinho</div>
-      <div class="tab" onclick="tab('mdl',this)">🟠 MDL</div>
-      <div class="tab" onclick="tab('hist',this)">📋 Levantamento</div>
+      <button class="tab-btn active" onclick="tab('ops',this)">📈 Operacional</button>
+      <button class="tab-btn" onclick="tab('girafa',this)">🦒 Cantinho da Girafa</button>
+      <button class="tab-btn" onclick="tab('mdl',this)">🪑 MDL Móveis</button>
+      <button class="tab-btn" onclick="tab('hist',this)">📋 Levantamento</button>
     </div>
 
-    <div id="p-all" class="tab-panel active">
-      <div class="sec">📊 KPIs Consolidados</div>
-      <div class="kpi-grid" id="kpi-all"></div>
-      <div class="sec">🔔 Alertas Ativos</div>
-      <div id="alerts"></div>
-      <div class="sec">📅 Calendário de Revisões</div>
-      <div class="cal-grid" id="cal"></div>
-    </div>
+    <!-- OPERACIONAL -->
+    <div id="p-ops" class="tab-content active">
+      <h2 style="margin-bottom: 15px;">Status em Tempo Real (Últimos 7 dias)</h2>
+      
+      <div class="grid">
+        <div class="kpi"><div class="kpi-label">📌 Total Investido</div><div class="kpi-value">R$ 1.196,45</div><div class="kpi-sub">Cantinho R$527,89 + MDL R$284,43</div></div>
+        <div class="kpi"><div class="kpi-label">👥 Alcance Combinado</div><div class="kpi-value">89.602</div><div class="kpi-sub">Cantinho 88.629 + MDL 9.842</div></div>
+        <div class="kpi"><div class="kpi-label">💬 Conversas (Leads)</div><div class="kpi-value">81</div><div class="kpi-sub">Cantinho 76 + MDL 5</div></div>
+        <div class="kpi"><div class="kpi-label">💰 CPR Médio</div><div class="kpi-value">R$ 14,77</div><div class="kpi-sub">⚠️ MDL alto: R$56,89</div></div>
+      </div>
 
-    <div id="p-girafa" class="tab-panel">
-      <div class="sec">🦒 Cantinho da Girafa — Últimos 7 dias</div>
-      <div class="kpi-grid" id="kpi-g"></div>
-      <div class="tbl-wrap">
-        <div class="tbl-head"><div class="tbl-title">Campanhas Ativas</div><span class="acct-tag tag-g">Conta #811077953131064</span></div>
-        <div id="tbl-g"></div>
+      <div class="alert">🚨 <strong>Atenção:</strong> Campanha Copa (MDL) tem CPR alto (R$56,89). Pixel foi instalado em moveisdolar.com.br — aguardando 48h para otimização automática.</div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px;">🏆 Campanhas Ativas (Performance 7d)</h3>
+      <table>
+        <tr><th>Campanha</th><th>Investido</th><th>Alcance</th><th>CTR</th><th>CPC</th><th>CPM</th><th>Freq</th><th>Conversas</th><th>CPR</th></tr>
+        <tr><td><strong>Cantinho: Leads</strong></td><td>R$217,74</td><td>8.872</td><td>1,47%</td><td>R$0,80</td><td>R$11,73</td><td>2,09</td><td class="status-good">42</td><td class="status-good">R$5,18</td></tr>
+        <tr><td><strong>Cantinho: Vendas/Aluguel</strong></td><td>R$214,02</td><td>8.869</td><td>1,27%</td><td>R$0,71</td><td>R$9,04</td><td>2,67</td><td class="status-good">34</td><td class="status-good">R$6,29</td></tr>
+        <tr><td><strong>Cantinho: Reconhec. Aluguel</strong></td><td>R$96,13</td><td>70.887</td><td>0,17%</td><td>R$0,73</td><td>R$1,22</td><td>1,11</td><td>—</td><td class="status-good">R$1,36</td></tr>
+        <tr><td><strong>MDL: Copa TV 85"</strong></td><td>R$284,43</td><td>9.842</td><td class="status-good">1,48%</td><td class="status-good">R$0,63</td><td>R$9,23</td><td>3,13</td><td>5</td><td class="status-bad">R$56,89</td></tr>
+      </table>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px;">📊 Análise: Problema & Solução</h3>
+      <div style="background: #1e293b; padding: 15px; border-radius: 8px; border-left: 3px solid #eab308;">
+        <p><strong>Problema:</strong> Campanha Copa tem CTR alto (1,48%) mas CPR elevado (R$56,89). Pixel estava instalado apenas em nível PageView.</p>
+        <p style="margin-top: 10px;"><strong>Solução implementada:</strong> Adicionados eventos customizados ao Pixel (Contact, ViewContent, Lead). Sistema será otimizado automaticamente em 48-72h.</p>
+        <p style="margin-top: 10px;"><strong>Esperado em 72h:</strong> CPR cai para R$10-15 conforme Meta otimiza baseado em conversões rastreadas.</p>
       </div>
     </div>
 
-    <div id="p-mdl" class="tab-panel">
-      <div class="sec">🟠 MDL Móveis do Lar — Últimos 7 dias</div>
-      <div class="kpi-grid" id="kpi-m"></div>
-      <div class="tbl-wrap">
-        <div class="tbl-head"><div class="tbl-title">Campanhas</div><span class="acct-tag tag-m">Conta #1124246161345381</span></div>
-        <div id="tbl-m"></div>
-      </div>
+    <!-- CANTINHO -->
+    <div id="p-girafa" class="tab-content">
+      <h2 style="margin-bottom: 15px;">🦒 Cantinho da Girafa - Últimos 7 dias</h2>
+      <table>
+        <tr><th>Campanha</th><th>Status</th><th>Spend</th><th>Reach</th><th>Impressões</th><th>CTR</th><th>CPC</th><th>CPM</th><th>Freq</th><th>Conversas</th><th>CPR</th></tr>
+        <tr><td>Leads</td><td><span class="badge active">Ativa</span></td><td>R$217,74</td><td>8.872</td><td>18.558</td><td>1,47%</td><td>R$0,80</td><td>R$11,73</td><td>2,09</td><td class="status-good">42</td><td class="status-good">R$5,18</td></tr>
+        <tr><td>Vendas/Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$214,02</td><td>8.869</td><td>23.687</td><td>1,27%</td><td>R$0,71</td><td>R$9,04</td><td>2,67</td><td class="status-good">34</td><td class="status-good">R$6,29</td></tr>
+        <tr><td>Reconhecimento Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$96,13</td><td>70.887</td><td>78.705</td><td>0,17%</td><td>R$0,73</td><td>R$1,22</td><td>1,11</td><td>—</td><td class="status-good">R$1,36</td></tr>
+      </table>
     </div>
 
-    <div id="p-hist" class="tab-panel">
-      <div class="sec">📋 Levantamento Completo — Histórico Vitalício (todas as campanhas)</div>
-      <div class="kpi-grid" id="kpi-hist"></div>
-      <div class="alert-row" style="--lc:var(--red);margin-bottom:16px">
-        <div class="alert-icon">🚨</div>
-        <div class="alert-info">
-          <div class="alert-name">Diretriz de Saturação — Frequência Vitalícia</div>
-          <div class="alert-desc">A frequência dos últimos 7 dias está saudável, mas no acumulado da vida das campanhas o mesmo público vem sendo impactado muitas vezes. Campanhas contínuas de mensagem/engajamento ultrapassaram o limite crítico (&gt;8x): trocar criativos e/ou renovar público antes de reativar.</div>
-        </div>
+    <!-- MDL -->
+    <div id="p-mdl" class="tab-content">
+      <h2 style="margin-bottom: 15px;">🪑 MDL Móveis do Lar - Últimos 7 dias</h2>
+      <div class="alert">🔧 <strong>Ação em andamento:</strong> Pixel configurado com eventos customizados. Aguardando 48-72h para otimização automática da campanha Copa.</div>
+      <table>
+        <tr><th>Campanha</th><th>Status</th><th>Spend</th><th>Reach</th><th>Impressões</th><th>CTR</th><th>CPC</th><th>CPM</th><th>Freq</th><th>Conversas</th><th>CPR</th></tr>
+        <tr><td>Show de Prêmios — Copa TV 85"</td><td><span class="badge active">Ativa</span></td><td>R$284,43</td><td>9.842</td><td>30.824</td><td class="status-good">1,48%</td><td class="status-good">R$0,63</td><td>R$9,23</td><td>3,13</td><td>5</td><td class="status-bad">R$56,89</td></tr>
+      </table>
+    </div>
+
+    <!-- LEVANTAMENTO -->
+    <div id="p-hist" class="tab-content">
+      <h2 style="margin-bottom: 15px;">📋 Levantamento Histórico (Lifetime)</h2>
+      
+      <div class="grid">
+        <div class="kpi"><div class="kpi-label">💰 Total Investido (Lifetime)</div><div class="kpi-value">R$ 69.678,67</div><div class="kpi-sub">Cantinho R$66.789,99 + MDL R$2.888,68</div></div>
+        <div class="kpi"><div class="kpi-label">📊 Total de Campanhas</div><div class="kpi-value">26</div><div class="kpi-sub">Cantinho 22 + MDL 4</div></div>
+        <div class="kpi"><div class="kpi-label">🔴 Campanhas Saturadas (freq >8x)</div><div class="kpi-value">5</div><div class="kpi-sub">Todas em Cantinho · Status: Pausadas</div></div>
       </div>
-      <div class="tbl-wrap">
-        <div class="tbl-head"><div class="tbl-title">🦒 Cantinho da Girafa — Todas as campanhas</div><span class="acct-tag tag-g">Conta #811077953131064</span></div>
-        <div id="tbl-histG"></div>
+
+      <div class="legend">
+        <strong>Legenda de Frequência:</strong>
+        <div class="legend-item"><span class="status-good">■</span> 1-5x: Saudável</div>
+        <div class="legend-item"><span class="status-warn">■</span> 5-8x: Atenção</div>
+        <div class="legend-item"><span class="status-bad">■</span> >8x: Crítico (Saturado)</div>
       </div>
-      <div class="tbl-wrap">
-        <div class="tbl-head"><div class="tbl-title">🟠 MDL Móveis do Lar — Todas as campanhas</div><span class="acct-tag tag-m">Conta #1124246161345381</span></div>
-        <div id="tbl-histM"></div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px;">🦒 Cantinho da Girafa (Lifetime)</h3>
+      <table style="font-size: 12px;">
+        <tr><th>Campanha</th><th>Status</th><th>Gasto</th><th>Reach</th><th>Conversas</th><th>Freq</th><th>CPR</th></tr>
+        <tr><td>Engajamento/Contínua | Whats</td><td><span class="badge paused">Pausada</span></td><td>R$31.598,77</td><td>175.325</td><td>4.894</td><td><span class="status-bad">22,23x</span></td><td>R$6,46</td></tr>
+        <tr><td>Leads</td><td><span class="badge active">Ativa</span></td><td>R$5.927,97</td><td>46.543</td><td>1.521</td><td><span class="status-bad">13,59x</span></td><td>R$3,90</td></tr>
+        <tr><td>Vendas/Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$5.737,67</td><td>64.559</td><td>706</td><td><span class="status-bad">9,76x</span></td><td>R$8,13</td></tr>
+        <tr><td>Reconhecimento Festas</td><td><span class="badge active">Ativa</span></td><td>R$3.517,27</td><td>484.384</td><td>—</td><td>4,59x</td><td>R$7,26</td></tr>
+        <tr><td>LF Engajamento ABO</td><td><span class="badge paused">Pausada</span></td><td>R$3.429,44</td><td>51.515</td><td>634</td><td><span class="status-bad">9,02x</span></td><td>R$5,41</td></tr>
+        <tr><td colspan="7" style="text-align: center; color: #94a3b8;">+ 17 campanhas menores/arquivadas</td></tr>
+      </table>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px;">🪑 MDL Móveis do Lar (Lifetime)</h3>
+      <table style="font-size: 12px;">
+        <tr><th>Campanha</th><th>Status</th><th>Gasto</th><th>Reach</th><th>Conversas</th><th>Freq</th><th>CPR</th></tr>
+        <tr><td>3 Dias de Loucura — Maio</td><td><span class="badge paused">Pausada</span></td><td>R$1.280,69</td><td>568.536</td><td>—</td><td>1,22x</td><td>R$2,25</td></tr>
+        <tr><td>Reconhecimentos</td><td><span class="badge active">Ativa</span></td><td>R$519,70</td><td>197.721</td><td>—</td><td>1,54x</td><td>R$2,63</td></tr>
+        <tr><td>Reconhecimentos — Cópia</td><td><span class="badge active">Ativa</span></td><td>R$515,33</td><td>166.744</td><td>—</td><td>2,10x</td><td>R$3,09</td></tr>
+        <tr><td>Show de Prêmios — Copa TV 85"</td><td><span class="badge active">Ativa</span></td><td>R$315,43</td><td>9.682</td><td>5</td><td>3,42x</td><td><span class="status-bad">R$63,09</span></td></tr>
+      </table>
+
+      <div class="legend" style="margin-top: 20px;">
+        <strong>Notas:</strong>
+        <p style="margin-top: 10px; font-size: 12px;">• <strong>Saturação:</strong> Campanhas com freq >8x foram pausadas para evitar ad fatigue</p>
+        <p style="font-size: 12px;">• <strong>CPR Alta (Copa):</strong> Aguardando otimização de Pixel — deve melhorar em 72h</p>
+        <p style="font-size: 12px;">• <strong>Reconhecimento:</strong> CPM baixo (R$1-2) pois otimizado apenas para alcance, não conversão</p>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-// ── AUTH ──
-const USERS={diego:{pass:'girafa2025',label:'🧑 Diego'},gabriela:{pass:'cantinho25',label:'👩 Gabriela'}}
-let selU='diego'
-function selUser(u,el){selU=u;document.querySelectorAll('.user-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel')}
-function login(){
-  const p=document.getElementById('pwd').value,err=document.getElementById('login-err'),u=USERS[selU]
-  if(!u||p!==u.pass){err.textContent='Senha incorreta.';return}
-  sessionStorage.setItem('u',JSON.stringify({key:selU,...u}))
-  document.getElementById('login-screen').style.display='none'
-  document.getElementById('main').style.display='block'
-  document.getElementById('uname').textContent=u.label
-  init()
-}
-function logout(){sessionStorage.removeItem('u');location.reload()}
-const su=sessionStorage.getItem('u')
-if(su){const u=JSON.parse(su);document.getElementById('login-screen').style.display='none';document.getElementById('main').style.display='block';document.getElementById('uname').textContent=u.label}
-
-// ── TABS ──
-function tab(id,el){
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'))
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
-  document.getElementById('p-'+id).classList.add('active');el.classList.add('active')
-}
-
-// ── DATA: levantamento Meta API — 08/06/2026 (7 dias: 01–07/06) ──
-const DATA={
-  lastUpdate:'2026-06-08T09:45:00',
-  // ── ÚLTIMOS 7 DIAS (painéis de operação) ──
-  girafa:[
-    {id:'120233851398970591',name:'Vendas/Aluguel',obj:'Vendas',status:'active',spend:223.19,reach:9182,imp:24594,clicks:307,ctr:1.25,cpc:0.73,cpm:9.07,freq:2.68,conv:36,cpr:6.20,engaj:308,linkClicks:147},
-    {id:'120233386743180591',name:'Leads',obj:'Leads',status:'active',spend:220.51,reach:9365,imp:19170,clicks:284,ctr:1.48,cpc:0.78,cpm:11.50,freq:2.05,conv:44,cpr:5.01,engaj:643,linkClicks:140},
-    {id:'120243734680610591',name:'Reconhecimento aluguel',obj:'Reconhecimento',status:'active',spend:87.30,reach:65399,imp:71993,clicks:124,ctr:0.17,cpc:0.70,cpm:1.21,freq:1.10,conv:65399,cpr:1.33,engaj:98,linkClicks:79},
-    {id:'120231241929040591',name:'Reconhecimento Festas',obj:'Reconhecimento',status:'inactive',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
-  ],
-  mdl:[
-    {id:'120247162628770563',name:'Show de Prêmios — Final da Copa | TV 85" | MDL',obj:'Engajamento',status:'active',spend:235.11,reach:9447,imp:27133,clicks:384,ctr:1.42,cpc:0.61,cpm:8.67,freq:2.87,conv:5,cpr:47.02,engaj:307,linkClicks:241},
-    {id:'120246690792920563',name:'3 Dias de Loucura — Fechamento de Maio',obj:'Reconhecimento',status:'off',spend:50.83,reach:35560,imp:40060,clicks:62,ctr:0.15,cpc:0.82,cpm:1.27,freq:1.13,conv:35560,cpr:1.43,engaj:1233,linkClicks:47},
-    {id:'120244932521770563',name:'Reconhecimentos — Cópia',obj:'Reconhecimento',status:'completed',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
-    {id:'120244755654170563',name:'Reconhecimentos',obj:'Reconhecimento',status:'completed',spend:0,reach:0,imp:0,clicks:0,ctr:0,cpc:0,cpm:0,freq:0,conv:0,cpr:0,engaj:0,linkClicks:0},
-  ],
-  // ── LEVANTAMENTO VITALÍCIO (todas as campanhas, histórico máximo) ──
-  // freq aqui é a frequência ACUMULADA na vida da campanha → revela saturação do público
-  histG:[
-    {name:'Engajamento/Contínua | Mensagem no Whats',obj:'Engajamento',status:'off',spend:31598.77,reach:175325,freq:22.23,conv:4894,cpr:6.46,start:'27/09/2023'},
-    {name:'Leads',obj:'Leads',status:'active',spend:5882.04,reach:46366,freq:13.55,conv:1511,cpr:3.89,start:'02/11/2025'},
-    {name:'Vendas/Aluguel',obj:'Vendas',status:'active',spend:5698.39,reach:64381,freq:9.72,conv:702,cpr:8.12,start:'12/11/2025'},
-    {name:'Reconhecimento Festas',obj:'Reconhecimento',status:'inactive',spend:3517.27,reach:484384,freq:4.59,conv:0,cpr:7.26,start:'06/01/2026'},
-    {name:'LF | Engajamento | Contínua | ABO',obj:'Engajamento',status:'off',spend:3460.06,reach:51539,freq:9.09,conv:643,cpr:5.38,start:'30/11/2022'},
-    {name:'Engajamento/Contínua — Cópia',obj:'Engajamento',status:'off',spend:2404.85,reach:33954,freq:6.27,conv:250,cpr:9.62,start:'13/08/2025'},
-    {name:'Engajamento inflável',obj:'Engajamento',status:'off',spend:2336.99,reach:44078,freq:4.76,conv:159,cpr:14.70,start:'06/05/2024'},
-    {name:'Leads locação',obj:'Leads',status:'off',spend:1882.15,reach:105449,freq:2.64,conv:198,cpr:9.51,start:'28/01/2026'},
-    {name:'Engajamento-Aluguel-Castro',obj:'Engajamento',status:'off',spend:1870.47,reach:31574,freq:12.21,conv:291,cpr:6.43,start:'26/03/2024'},
-    {name:'Reconhecimento Aluguel de brinquedos',obj:'Reconhecimento',status:'off',spend:1671.35,reach:475904,freq:2.67,conv:0,cpr:3.51,start:'21/07/2025'},
-    {name:'Nova campanha de Reconhecimento geral',obj:'Reconhecimento',status:'archived',spend:1635.08,reach:340579,freq:3.43,conv:0,cpr:4.80,start:'—'},
-    {name:'CT brinquedoteca',obj:'Reconhecimento',status:'archived',spend:752.36,reach:276130,freq:2.55,conv:0,cpr:2.72,start:'—'},
-    {name:'Engajamento Castro e Carambeí',obj:'Engajamento',status:'archived',spend:745.57,reach:15798,freq:5.09,conv:0,cpr:0,start:'—'},
-    {name:'Colônia de Férias P1/P2',obj:'Reconhecimento',status:'off',spend:630.38,reach:161535,freq:2.14,conv:0,cpr:3.90,start:'28/12/2023'},
-    {name:'LF | Engajamento | Contínua | IG',obj:'Engajamento',status:'off',spend:624.86,reach:16066,freq:4.57,conv:63,cpr:9.92,start:'01/09/2023'},
-    {name:'LF | Conversão | ABO | Whats na LP',obj:'Leads',status:'off',spend:612.40,reach:33719,freq:4.34,conv:135,cpr:4.54,start:'15/06/2023'},
-    {name:'LF | Reconhecimento | ABO | Alcance',obj:'Reconhecimento',status:'archived',spend:593.27,reach:107904,freq:3.51,conv:0,cpr:5.50,start:'—'},
-    {name:'Nova campanha de Reconhecimento',obj:'Reconhecimento',status:'archived',spend:235.94,reach:121634,freq:1.49,conv:0,cpr:1.94,start:'—'},
-    {name:'Copa',obj:'Reconhecimento',status:'off',spend:233.94,reach:92116,freq:1.78,conv:0,cpr:2.54,start:'18/05/2026'},
-    {name:'reconhecimento vale night',obj:'Reconhecimento',status:'archived',spend:168.11,reach:59570,freq:1.71,conv:0,cpr:2.82,start:'—'},
-    {name:'Remarketing',obj:'Engajamento',status:'archived',spend:145.64,reach:6115,freq:2.16,conv:0,cpr:0,start:'—'},
-    {name:'Reconhecimento aluguel',obj:'Reconhecimento',status:'active',spend:90.10,reach:67026,freq:1.11,conv:0,cpr:1.34,start:'01/06/2026'},
-  ],
-  histM:[
-    {name:'3 Dias de Loucura — Fechamento de Maio',obj:'Reconhecimento',status:'off',spend:1280.69,reach:568536,freq:1.22,conv:0,cpr:2.25,start:'25/05/2026'},
-    {name:'Reconhecimentos',obj:'Reconhecimento',status:'completed',spend:519.70,reach:197721,freq:1.54,conv:0,cpr:2.63,start:'26/04/2026'},
-    {name:'Reconhecimentos — Cópia',obj:'Reconhecimento',status:'completed',spend:515.33,reach:166744,freq:2.10,conv:0,cpr:3.09,start:'29/04/2026'},
-    {name:'Show de Prêmios — Final da Copa | TV 85" | MDL',obj:'Engajamento',status:'active',spend:257.53,reach:9227,freq:3.12,conv:5,cpr:51.51,start:'01/06/2026'},
-  ]
-}
-
-// ── HELPERS ──
-const fmtR=v=>'R$'+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})
-const fmtK=v=>v>=1e6?(v/1e6).toFixed(1)+'M':v>=1000?(v/1000).toFixed(0)+'k':v
-const freqCls=f=>f<=2.5?'c-good':f<=5?'c-warn':'c-bad'
-const freqLifeCls=f=>f>8?'c-bad':f>5?'c-warn':'c-good'
-const cprCls=(v,g,w)=>v<=g?'c-good':v<=w?'c-warn':'c-bad'
-const stBadge=s=>({active:'<span class="st st-a">🟢 Ativa</span>',off:'<span class="st st-o">⏸ Pausada</span>',inactive:'<span class="st st-o">⏸ Inativa</span>',completed:'<span class="st st-c">✓ Concluída</span>',archived:'<span class="st st-d">🗄 Arquivada</span>'})[s]||'<span class="st st-d">◼</span>'
-
-// ── RENDER GERAL ──
-function renderAll(){
-  document.getElementById('hdate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})
-  const lu=new Date(DATA.lastUpdate)
-  document.getElementById('upd-txt').textContent='Dados de '+lu.toLocaleDateString('pt-BR')+' às '+lu.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
-  const nx=new Date();nx.setDate(nx.getDate()+1);nx.setHours(8,0,0,0)
-  document.getElementById('nxt-upd').textContent=nx.toLocaleDateString('pt-BR')+' às 08:00h'
-
-  const allG=DATA.girafa, allM=DATA.mdl
-  const activeG=allG.filter(c=>c.status==='active')
-  const activeM=allM.filter(c=>c.status==='active')
-
-  // KPI consolidado
-  const tSpend=[...allG,...allM].reduce((a,c)=>a+c.spend,0)
-  const tReach=[...allG,...allM].reduce((a,c)=>a+c.reach,0)
-  const tConvG=activeG.filter(c=>c.obj!=='Reconhecimento').reduce((a,c)=>a+c.conv,0)
-  const tActive=activeG.length+activeM.length
-  document.getElementById('kpi-all').innerHTML=[
-    {l:'Total Investido (7d)',v:'R$'+[...allG,...allM].reduce((a,c)=>a+c.spend,0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}),s:'Ambas as contas',c:'var(--accent)'},
-    {l:'Alcance Total (7d)',v:fmtK(tReach),s:'Contas únicas',c:'var(--accent2)'},
-    {l:'Campanhas Ativas',v:tActive,s:'Rodando agora',c:'var(--green)'},
-    {l:'Conversas Cantinho',v:tConvG,s:'WhatsApp (7d)',c:'var(--girafa)'},
-    {l:'Atualizado em',v:lu.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),s:lu.toLocaleDateString('pt-BR'),c:'var(--yellow)'},
-  ].map(k=>`<div class="kpi" style="--c:${k.c}"><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('')
-
-  renderAlerts(activeG, activeM)
-  renderCalendar()
-  renderAccountKPIs('g', activeG)
-  renderAccountKPIs('m', activeM)
-  renderTable('g', allG)
-  renderTable('m', allM)
-  renderHist()
-}
-
-function renderAlerts(activeG, activeM){
-  const all=[...activeG.map(c=>({...c,acct:'🦒 Cantinho'})),...activeM.map(c=>({...c,acct:'🟠 MDL'}))]
-  const rows=all.map(c=>{
-    let sev,icon,badge,bc,desc,steps=[]
-    if(c.spend===0){
-      sev='watch';icon='👀';badge='b-watch';bc='var(--blue)';desc=c.acct+' · Fase aprendizado · Sem dados ainda'
-    } else if(c.freq>=8){
-      sev='crit';icon='🚨';badge='b-crit';bc='var(--red)';desc=c.acct+' · Público saturado — ação imediata'
-      steps=[{n:1,t:'Pausar anúncios atuais',d:'Não pause a campanha, só os anúncios com frequência alta.'},
-             {n:2,t:'Subir 2-3 criativos novos',d:'Mude o gancho, texto e CTA. Vida útil: 4-6 semanas.'},
-             {n:3,t:'Ampliar público',d:'Adicione cidades vizinhas ou crie lookalike das conversas.'}]
-    } else if(c.freq>=5){
-      sev='warn';icon='⚠️';badge='b-warn';bc='var(--yellow)';desc=c.acct+' · Frequência elevada — planejar criativos'
-      steps=[{n:1,t:'Preparar novos criativos',d:'Planeje 2 novos anúncios para a próxima semana.'},
-             {n:2,t:'Monitorar CTR diariamente',d:'Se cair abaixo de 0,8%, acione imediatamente.'}]
-    } else if(c.cpr>15&&c.obj!=='Reconhecimento'){
-      sev='warn';icon='💰';badge='b-warn';bc='var(--yellow)';desc=c.acct+' · Custo/conversa alto · '+fmtR(c.cpr)
-      steps=[{n:1,t:'Revisar público-alvo',d:'Público pode estar amplo demais. Teste segmentação mais específica.'},
-             {n:2,t:'Testar criativo com oferta direta',d:'Inclua preço, prazo e CTA explícito no anúncio.'}]
-    } else {
-      sev='ok';icon='✅';badge='b-ok';bc='var(--green)';desc=c.acct+' · Performance dentro do esperado'
+  <script>
+    function tab(tabName, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('p-'+tabName).classList.add('active');
+      btn.classList.add('active');
     }
-    const stepHtml=steps.length?`<div class="action-box"><div class="action-title">🛠 Ações Recomendadas</div>${steps.map(s=>`<div class="action-step"><div class="step-n">${s.n}</div><div><div class="step-t">${s.t}</div><div class="step-d">${s.d}</div></div></div>`).join('')}</div>`:''
-    return`<div class="alert-row" style="--lc:${bc}">
-      <div class="alert-icon">${icon}</div>
-      <div class="alert-info">
-        <div class="alert-name">${c.name}</div>
-        <div class="alert-desc">${desc}</div>
-        ${stepHtml}
-      </div>
-      <div class="alert-right">
-        <div class="am"><div class="am-val ${freqCls(c.freq)}">${c.freq.toFixed(2)}x</div><div class="am-label">Freq.</div></div>
-        <div class="am"><div class="am-val ${c.ctr>=1.5?'c-good':c.ctr>=0.8?'c-warn':'c-bad'}">${c.ctr.toFixed(2)}%</div><div class="am-label">CTR</div></div>
-        <div class="am"><div class="am-val ${c.cpm<=5?'c-good':c.cpm<=10?'c-warn':'c-bad'}">${fmtR(c.cpm)}</div><div class="am-label">CPM</div></div>
-        <span class="badge ${badge}">${{crit:'🔴 Crítico',warn:'🟡 Atenção',ok:'🟢 Saudável',watch:'🔵 Aprendizado'}[sev]}</span>
-      </div>
-    </div>`
-  })
-  const order={crit:0,warn:1,watch:2,ok:3}
-  document.getElementById('alerts').innerHTML=rows.join('')||'<div style="color:var(--muted);padding:16px">Nenhuma campanha ativa.</div>'
-}
-
-function renderCalendar(){
-  const today=new Date()
-  const items=[
-    {days:2,task:'Criativos novos',who:'Leads + Vendas/Aluguel',c:'var(--red)'},
-    {days:3,task:'Análise 3 dias',who:'Show de Prêmios MDL',c:'var(--blue)'},
-    {days:5,task:'Revisão geral',who:'Ajuste orçamentos',c:'var(--yellow)'},
-    {days:12,task:'Análise 7-14 dias',who:'Decisão de escala',c:'var(--green)'},
-  ]
-  document.getElementById('cal').innerHTML=items.map(r=>{
-    const d=new Date(today);d.setDate(d.getDate()+r.days)
-    return`<div class="cal-card"><div class="cal-date" style="color:${r.c}">${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}</div><div class="cal-day">${d.toLocaleDateString('pt-BR',{weekday:'long'})}</div><div class="cal-task">${r.task}</div><div class="cal-who">${r.who}</div></div>`
-  }).join('')
-}
-
-function renderAccountKPIs(id, active){
-  const c=id==='g'?'var(--girafa)':'var(--mdl)'
-  const tS=active.reduce((a,c)=>a+c.spend,0)
-  const tR=active.reduce((a,c)=>a+c.reach,0)
-  const tC=active.filter(c=>c.obj!=='Reconhecimento').reduce((a,c)=>a+c.conv,0)
-  const avgCPM=active.filter(c=>c.spend>0).reduce((a,c,_,arr)=>a+c.cpm/arr.length,0)
-  document.getElementById('kpi-'+id).innerHTML=[
-    {l:'Investido (7d)',v:fmtR(tS),s:'Campanhas ativas',c},
-    {l:'Alcance (7d)',v:fmtK(tR),s:'Contas únicas',c},
-    {l:'Conversas (7d)',v:tC,s:'WhatsApp',c:'var(--green)'},
-    {l:'CPM Médio',v:fmtR(avgCPM),s:avgCPM<=5?'✅ Excelente':avgCPM<=10?'⚠️ Moderado':'🔴 Alto',c:avgCPM<=5?'var(--green)':avgCPM<=10?'var(--yellow)':'var(--red)'},
-    {l:'Ativas',v:active.length,s:'Rodando agora',c:'var(--muted)'},
-  ].map(k=>`<div class="kpi" style="--c:${k.c}"><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('')
-}
-
-function renderTable(id, data){
-  const active=data.filter(c=>c.spend>0||c.status==='active')
-  const rows=active.map(c=>`
-    <tr>
-      <td style="font-family:'Syne',sans-serif;font-weight:600;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</td>
-      <td>${stBadge(c.status)}</td>
-      <td style="color:var(--muted)">${c.obj}</td>
-      <td class="c-good">${fmtR(c.spend)}</td>
-      <td>${fmtK(c.reach)}</td>
-      <td class="${c.ctr>=1.5?'c-good':c.ctr>=0.8?'c-warn':'c-bad'}">${c.ctr.toFixed(2)}%</td>
-      <td class="${c.cpm<=5?'c-good':c.cpm<=10?'c-warn':'c-bad'}">${fmtR(c.cpm)}</td>
-      <td class="${c.cpc<=0.8?'c-good':c.cpc<=1.5?'c-warn':'c-bad'}">${c.cpc>0?fmtR(c.cpc):'—'}</td>
-      <td class="${freqCls(c.freq)}">${c.freq.toFixed(2)}x</td>
-      <td>${c.conv>0&&c.obj!=='Reconhecimento'?c.conv:'—'}</td>
-      <td>${c.cpr>0&&c.obj!=='Reconhecimento'?fmtR(c.cpr):'—'}</td>
-    </tr>`).join('')
-  document.getElementById('tbl-'+id).innerHTML=`<table>
-    <thead><tr><th>Campanha</th><th>Status</th><th>Objetivo</th><th>Gasto</th><th>Alcance</th><th>CTR</th><th>CPM</th><th>CPC</th><th>Freq.</th><th>Conversas</th><th>Custo/Conv.</th></tr></thead>
-    <tbody>${rows||'<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:20px">Sem campanhas com dados</td></tr>'}</tbody>
-  </table>`
-}
-
-// ── RENDER LEVANTAMENTO (histórico vitalício) ──
-function renderHist(){
-  const all=[...DATA.histG,...DATA.histM]
-  const tSpend=all.reduce((a,c)=>a+c.spend,0)
-  const tReach=DATA.histG.reduce((a,c)=>a+c.reach,0)+DATA.histM.reduce((a,c)=>a+c.reach,0)
-  const tConv=all.filter(c=>c.obj!=='Reconhecimento').reduce((a,c)=>a+c.conv,0)
-  const totalCamp=all.length
-  const saturadas=all.filter(c=>c.freq>8).length
-  document.getElementById('kpi-hist').innerHTML=[
-    {l:'Investimento Vitalício',v:'R$'+tSpend.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}),s:'Ambas as contas',c:'var(--accent)'},
-    {l:'Alcance Acumulado',v:fmtK(tReach),s:'Soma das campanhas',c:'var(--accent2)'},
-    {l:'Conversas Totais',v:tConv.toLocaleString('pt-BR'),s:'WhatsApp (Leads+Vendas)',c:'var(--girafa)'},
-    {l:'Campanhas no Histórico',v:totalCamp,s:'Com investimento',c:'var(--green)'},
-    {l:'Saturadas (Freq > 8x)',v:saturadas,s:'⚠️ Renovar público/criativo',c:'var(--red)'},
-  ].map(k=>`<div class="kpi" style="--c:${k.c}"><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('')
-  renderHistTable('histG',DATA.histG)
-  renderHistTable('histM',DATA.histM)
-}
-
-function renderHistTable(id,data){
-  const rows=data.map(c=>`
-    <tr>
-      <td style="font-family:'Syne',sans-serif;font-weight:600;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</td>
-      <td>${stBadge(c.status)}</td>
-      <td style="color:var(--muted)">${c.obj}</td>
-      <td class="c-good">${fmtR(c.spend)}</td>
-      <td>${fmtK(c.reach)}</td>
-      <td class="${freqLifeCls(c.freq)}">${c.freq.toFixed(2)}x</td>
-      <td>${c.conv>0&&c.obj!=='Reconhecimento'?c.conv.toLocaleString('pt-BR'):'—'}</td>
-      <td>${c.cpr>0&&c.obj!=='Reconhecimento'?fmtR(c.cpr):'—'}</td>
-      <td style="color:var(--muted)">${c.start}</td>
-    </tr>`).join('')
-  document.getElementById('tbl-'+id).innerHTML=`<table>
-    <thead><tr><th>Campanha</th><th>Status</th><th>Objetivo</th><th>Gasto Vitalício</th><th>Alcance</th><th>Freq. Vida</th><th>Conversas</th><th>Custo/Conv.</th><th>Início</th></tr></thead>
-    <tbody>${rows||'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:20px">Sem campanhas</td></tr>'}</tbody>
-  </table>`
-}
-
-// ── REFRESH (manual) ──
-async function refresh(){
-  document.getElementById('loading').classList.add('show')
-  document.getElementById('load-txt').textContent='Buscando métricas da Meta API...'
-  // Simula fetch — em produção substituir por chamada real ao Meta MCP
-  await new Promise(r=>setTimeout(r,1500))
-  document.getElementById('loading').classList.remove('show')
-  renderAll()
-}
-
-// ── SCHEDULE AUTO 8h ──
-function scheduleAuto(){
-  const now=new Date(),nx=new Date()
-  nx.setDate(nx.getDate()+(now.getHours()>=8?1:0));nx.setHours(8,0,0,0)
-  setTimeout(()=>{renderAll();scheduleAuto()},nx-now)
-}
-
-function init(){renderAll();scheduleAuto()}
-if(su)init()
-</script>
-<!-- LEGENDA FIXA NO RODAPÉ DE TODOS OS PAINÉIS -->
-<script>
-function renderLegend(){
-  const html=`
-  <div class="sec">📖 Legenda — Abreviações e Indicadores</div>
-  <div class="legend-wrap">
-    <div class="legend-grid">
-
-      <div class="legend-group">📊 Métricas de Entrega</div>
-
-      <div class="legend-item"><span class="legend-abbr">CPM</span><span class="legend-desc">Custo por Mil Impressões — quanto custa exibir o anúncio 1.000 vezes</span></div>
-      <div class="legend-item"><span class="legend-abbr">CPC</span><span class="legend-desc">Custo por Clique — valor médio pago por cada clique no anúncio</span></div>
-      <div class="legend-item"><span class="legend-abbr">CTR</span><span class="legend-desc">Taxa de Cliques (Click-Through Rate) — % de pessoas que clicaram após ver o anúncio</span></div>
-      <div class="legend-item"><span class="legend-abbr">Freq.</span><span class="legend-desc">Frequência — quantas vezes em média cada pessoa viu o anúncio</span></div>
-      <div class="legend-item"><span class="legend-abbr">Imp.</span><span class="legend-desc">Impressões — total de vezes que o anúncio foi exibido (inclui reexibições)</span></div>
-      <div class="legend-item"><span class="legend-abbr">Alcance</span><span class="legend-desc">Pessoas únicas que viram o anúncio pelo menos uma vez</span></div>
-      <div class="legend-item"><span class="legend-abbr">Conv.</span><span class="legend-desc">Conversões — ações desejadas realizadas (conversa WhatsApp, lead, compra)</span></div>
-      <div class="legend-item"><span class="legend-abbr">CPR</span><span class="legend-desc">Custo por Resultado — quanto custou cada conversão ou resultado obtido</span></div>
-
-      <div class="legend-divider"></div>
-      <div class="legend-group">🎯 Objetivos de Campanha</div>
-
-      <div class="legend-item"><span class="legend-abbr">Leads</span><span class="legend-desc">Captura de contatos interessados — otimizado para iniciar conversa no WhatsApp</span></div>
-      <div class="legend-item"><span class="legend-abbr">Vendas</span><span class="legend-desc">Objetivo de conversão — Meta busca pessoas com maior intenção de compra</span></div>
-      <div class="legend-item"><span class="legend-abbr">Engaj.</span><span class="legend-desc">Engajamento — maximiza curtidas, comentários, compartilhamentos e interações</span></div>
-      <div class="legend-item"><span class="legend-abbr">Reconh.</span><span class="legend-desc">Reconhecimento de marca — alcança o máximo de pessoas ao menor CPM possível</span></div>
-      <div class="legend-item"><span class="legend-abbr">Tráfego</span><span class="legend-desc">Cliques para site — leva visitantes para uma URL específica</span></div>
-      <div class="legend-item"><span class="legend-abbr">ABO</span><span class="legend-desc">Ad Set Budget Optimization — orçamento definido por conjunto de anúncios</span></div>
-      <div class="legend-item"><span class="legend-abbr">CBO</span><span class="legend-desc">Campaign Budget Optimization — orçamento centralizado na campanha, Meta distribui</span></div>
-      <div class="legend-item"><span class="legend-abbr">LF</span><span class="legend-desc">Lookalike + Frio — campanha para público novo semelhante aos clientes atuais</span></div>
-
-      <div class="legend-divider"></div>
-      <div class="legend-group">🔔 Status e Alertas</div>
-
-      <div class="legend-item"><span class="legend-abbr">🟢 Ativa</span><span class="legend-desc">Campanha rodando e entregando anúncios normalmente</span></div>
-      <div class="legend-item"><span class="legend-abbr">⏸ Pausada</span><span class="legend-desc">Campanha parada manualmente — pode ser reativada a qualquer momento</span></div>
-      <div class="legend-item"><span class="legend-abbr">✓ Concluída</span><span class="legend-desc">Campanha encerrada por data final ou orçamento esgotado</span></div>
-      <div class="legend-item"><span class="legend-abbr">🔴 Crítico</span><span class="legend-desc">Ação imediata necessária — frequência acima de 8x ou performance crítica</span></div>
-      <div class="legend-item"><span class="legend-abbr">🟡 Atenção</span><span class="legend-desc">Monitorar — frequência entre 5x e 8x ou custo/resultado acima do ideal</span></div>
-      <div class="legend-item"><span class="legend-abbr">🟢 Saudável</span><span class="legend-desc">Performance dentro dos parâmetros esperados — nenhuma ação necessária</span></div>
-      <div class="legend-item"><span class="legend-abbr">🔵 Aprend.</span><span class="legend-desc">Fase de aprendizado — Meta ainda está otimizando a entrega (primeiros 7 dias)</span></div>
-
-      <div class="legend-divider"></div>
-      <div class="legend-group">📏 Referências de Qualidade (Cantinho da Girafa / MDL)</div>
-
-      <div class="legend-item"><span class="legend-abbr">CTR ideal</span><span class="legend-desc">> 1,5% para campanhas de tráfego e leads · > 0,2% para reconhecimento</span></div>
-      <div class="legend-item"><span class="legend-abbr">CPM ideal</span><span class="legend-desc">< R$5 excelente · R$5–10 moderado · > R$10 alto (região PR interior)</span></div>
-      <div class="legend-item"><span class="legend-abbr">CPC ideal</span><span class="legend-desc">< R$0,80 excelente · R$0,80–1,50 aceitável · > R$1,50 alto</span></div>
-      <div class="legend-item"><span class="legend-abbr">Freq. ideal</span><span class="legend-desc">1–3x saudável · 3–5x atenção · > 5x saturação · > 8x crítico</span></div>
-      <div class="legend-item"><span class="legend-abbr">CPR ideal</span><span class="legend-desc">Leads/WhatsApp: < R$6 ótimo · R$6–10 aceitável · > R$10 revisar</span></div>
-      <div class="legend-item"><span class="legend-abbr">7d</span><span class="legend-desc">Últimos 7 dias — janela padrão de análise exibida neste dashboard</span></div>
-    </div>
-  </div>`
-
-  // Injeta em todos os painéis
-  ;['p-all','p-girafa','p-mdl','p-hist'].forEach(id=>{
-    const panel=document.getElementById(id)
-    if(panel&&!panel.querySelector('.legend-wrap')){
-      panel.insertAdjacentHTML('beforeend',html)
-    }
-  })
-}
-// Chama após renderAll
-const _origInit=typeof init==='function'?init:null
-document.addEventListener('DOMContentLoaded',()=>{
-  if(document.getElementById('main').style.display==='block') renderLegend()
-})
-// Hook no init original
-const _ri=renderAll
-window.renderAll=function(){_ri();renderLegend()}
-</script>
+  </script>
 </body>
 </html>
