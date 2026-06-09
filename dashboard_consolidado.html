@@ -6,42 +6,53 @@
     <title>Dashboard Consolidado — MDL + Cantinho da Girafa</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #e0e0e0;
             padding: 20px;
         }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1400px; margin: 0 auto; }
         h1 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             font-size: 2.5em;
             background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .timestamp {
-            text-align: center;
-            color: #888;
-            margin-bottom: 20px;
-            font-size: 0.9em;
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0;
+            flex-wrap: wrap;
         }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
+        .nav-tab {
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            color: #aaa;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
+        .nav-tab:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .nav-tab.active {
+            background: rgba(78, 205, 196, 0.15);
+            border-color: #4ecdc4;
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .timestamp { text-align: center; color: #888; margin-bottom: 20px; font-size: 0.9em; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
         .card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -50,47 +61,20 @@
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
         }
-        .card:hover {
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        .card h2 {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .card h2 .emoji {
-            font-size: 1.3em;
-        }
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
+        .card:hover { border-color: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+        .card h2 { font-size: 1.5em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .card h2 .emoji { font-size: 1.3em; }
+        .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .metric {
             background: rgba(0, 0, 0, 0.3);
             padding: 15px;
             border-radius: 8px;
             border-left: 3px solid #4ecdc4;
         }
-        .metric.warning {
-            border-left-color: #ff6b6b;
-        }
-        .metric.success {
-            border-left-color: #95e1d3;
-        }
-        .metric-label {
-            font-size: 0.85em;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
-        .metric-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #fff;
-        }
+        .metric.warning { border-left-color: #ff6b6b; }
+        .metric.success { border-left-color: #95e1d3; }
+        .metric-label { font-size: 0.85em; color: #aaa; margin-bottom: 5px; }
+        .metric-value { font-size: 1.5em; font-weight: bold; color: #fff; }
         .status {
             display: inline-block;
             padding: 5px 12px;
@@ -108,9 +92,7 @@
             color: #ff6b6b;
             border: 1px solid #ff6b6b;
         }
-        .campaigns-list {
-            margin-top: 20px;
-        }
+        .campaigns-list { margin-top: 20px; }
         .campaign-item {
             background: rgba(0, 0, 0, 0.3);
             padding: 12px;
@@ -119,49 +101,16 @@
             border-left: 3px solid #4ecdc4;
             font-size: 0.95em;
         }
-        .campaign-item.warning {
-            border-left-color: #ff6b6b;
-        }
-        .campaign-item.success {
-            border-left-color: #95e1d3;
-        }
-        .campaign-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .campaign-metrics {
-            display: flex;
-            gap: 15px;
-            font-size: 0.85em;
-            color: #aaa;
-        }
-        .full-width {
-            grid-column: 1 / -1;
-        }
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-top: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 0.9em;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        th {
-            background: rgba(0, 0, 0, 0.3);
-            color: #4ecdc4;
-            font-weight: 600;
-        }
-        tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
+        .campaign-item.warning { border-left-color: #ff6b6b; }
+        .campaign-item.success { border-left-color: #95e1d3; }
+        .campaign-name { font-weight: 600; margin-bottom: 5px; }
+        .campaign-metrics { display: flex; gap: 15px; font-size: 0.85em; color: #aaa; }
+        .full-width { grid-column: 1 / -1; }
+        .chart-container { position: relative; height: 300px; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        th { background: rgba(0, 0, 0, 0.3); color: #4ecdc4; font-weight: 600; }
+        tr:hover { background: rgba(255, 255, 255, 0.05); }
         .alert {
             padding: 15px;
             border-radius: 8px;
@@ -178,197 +127,277 @@
             border-left: 3px solid #ff6b6b;
             color: #ff6b6b;
         }
-        @media (max-width: 1024px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .profile-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 18px;
+            transition: all 0.3s ease;
         }
+        .profile-card:hover { border-color: #4ecdc4; transform: translateY(-2px); }
+        .profile-card.leader { border: 2px solid #ffd700; background: rgba(255, 215, 0, 0.05); }
+        .profile-name { font-weight: 600; font-size: 1.1em; margin-bottom: 8px; color: #fff; }
+        .profile-handle { font-size: 0.85em; color: #888; margin-bottom: 12px; }
+        .profile-big { font-size: 2em; font-weight: 700; color: #4ecdc4; margin-bottom: 10px; }
+        .profile-list { list-style: none; font-size: 0.9em; }
+        .profile-list li { display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px dashed rgba(255, 255, 255, 0.1); color: #aaa; }
+        .profile-list li b { color: #fff; }
+        .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .insight-box { background: rgba(0, 0, 0, 0.4); border-left: 4px solid #4ecdc4; border-radius: 8px; padding: 18px; }
+        .insight-box.warning { border-left-color: #ff6b6b; }
+        .insight-box.success { border-left-color: #95e1d3; }
+        .insight-label { font-size: 0.75em; font-weight: 700; letter-spacing: 1px; color: #888; margin-bottom: 8px; }
+        .insight-box h4 { font-size: 1.1em; margin-bottom: 8px; color: #fff; }
+        .insight-box p { font-size: 0.9em; color: #aaa; line-height: 1.5; }
+        .actions-list { counter-reset: action; list-style: none; }
+        .actions-list li { counter-increment: action; background: rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 18px 18px 18px 60px; margin-bottom: 12px; position: relative; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .actions-list li::before { content: counter(action); position: absolute; left: 14px; top: 16px; width: 28px; height: 28px; background: linear-gradient(135deg, #ff6b6b, #ffa07a); color: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .actions-list h4 { font-size: 1em; margin-bottom: 5px; color: #fff; }
+        .actions-list p { font-size: 0.9em; color: #aaa; }
+        .priority {
+            display: inline-block;
+            font-size: 0.75em;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .priority.alta { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
+        .priority.media { background: rgba(255, 200, 87, 0.2); color: #ffc857; }
+        .analysis-section { margin-bottom: 40px; }
+        .analysis-section h3 { font-size: 1.3em; margin-bottom: 10px; color: #4ecdc4; }
+        .analysis-section p { color: #aaa; margin-bottom: 20px; max-width: 70ch; }
+        @media (max-width: 1024px) { .grid { grid-template-columns: 1fr; } }
+        @media (max-width: 640px) { .nav-tabs { gap: 0; } .nav-tab { flex: 1; padding: 12px 10px; font-size: 0.9em; } }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📊 Dashboard Consolidado — Meta Ads</h1>
-        <div class="timestamp" id="timestamp"></div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">📈 Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('analysis')">🔍 Análise Competitiva</button>
+        </div>
 
-        <div class="grid">
-            <!-- MDL -->
-            <div class="card">
-                <h2><span class="emoji">🛋️</span> Lojas MDL</h2>
-                <div class="status active">MCP ATIVO</div>
-                
-                <div class="metrics" style="margin-top: 20px;">
-                    <div class="metric">
-                        <div class="metric-label">Campanhas Ativas</div>
-                        <div class="metric-value">1</div>
+        <!-- ABA DASHBOARD -->
+        <div id="dashboard" class="tab-content active">
+            <div class="timestamp" id="timestamp"></div>
+            <div class="grid">
+                <div class="card">
+                    <h2><span class="emoji">🛋️</span> Lojas MDL</h2>
+                    <div class="status active">MCP ATIVO</div>
+                    <div class="metrics" style="margin-top: 20px;">
+                        <div class="metric"><div class="metric-label">Campanhas Ativas</div><div class="metric-value">1</div></div>
+                        <div class="metric"><div class="metric-label">Orçamento Diário</div><div class="metric-value">R$ 200</div></div>
+                        <div class="metric"><div class="metric-label">Status</div><div class="metric-value" style="font-size: 1em;">🟢 ATIVO</div></div>
+                        <div class="metric"><div class="metric-label">Objetivo</div><div class="metric-value" style="font-size: 1em;">Alcance</div></div>
                     </div>
-                    <div class="metric">
-                        <div class="metric-label">Orçamento Diário</div>
-                        <div class="metric-value">R$ 200</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Status</div>
-                        <div class="metric-value" style="font-size: 1em;">🟢 ATIVO</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Objetivo</div>
-                        <div class="metric-value" style="font-size: 1em;">Alcance</div>
-                    </div>
-                </div>
-
-                <div class="campaigns-list">
-                    <h3 style="font-size: 1.1em; margin-top: 20px; margin-bottom: 10px;">3 Dias de Loucura</h3>
-                    <div class="campaign-item success">
-                        <div class="campaign-name">Ad Set 1: Teaser</div>
-                        <div class="campaign-metrics">
-                            <span>🟢 ACTIVE</span>
-                            <span>Imagens: 2</span>
+                    <div class="campaigns-list">
+                        <h3 style="font-size: 1.1em; margin-top: 20px; margin-bottom: 10px;">3 Dias de Loucura</h3>
+                        <div class="campaign-item success">
+                            <div class="campaign-name">Ad Set 1: Teaser</div>
+                            <div class="campaign-metrics"><span>🟢 ACTIVE</span><span>Imagens: 2</span></div>
+                        </div>
+                        <div class="campaign-item warning">
+                            <div class="campaign-name">Ad Set 2: Produtos</div>
+                            <div class="campaign-metrics"><span>⏸️ PAUSED</span><span>Ativa em: 28/05 04:00 AM</span></div>
                         </div>
                     </div>
-                    <div class="campaign-item warning">
-                        <div class="campaign-name">Ad Set 2: Produtos</div>
-                        <div class="campaign-metrics">
-                            <span>⏸️ PAUSED</span>
-                            <span>Ativa em: 28/05 04:00 AM</span>
-                        </div>
-                    </div>
+                    <div class="alert info">ℹ️ Teaser rodando desde 26 de maio. Produtos vão ao ar dia 28 às 04:00 AM.</div>
                 </div>
-
-                <div class="alert info">
-                    ℹ️ Teaser rodando desde 26 de maio. Produtos vão ao ar dia 28 às 04:00 AM.
+                <div class="card">
+                    <h2><span class="emoji">🎉</span> Cantinho da Girafa</h2>
+                    <div class="status active">Windsor CONECTADO</div>
+                    <div class="metrics" style="margin-top: 20px;">
+                        <div class="metric"><div class="metric-label">Campanhas Ativas</div><div class="metric-value">5</div></div>
+                        <div class="metric"><div class="metric-label">Gasto (7d)</div><div class="metric-value">R$ 754,91</div></div>
+                        <div class="metric"><div class="metric-label">CPM Médio</div><div class="metric-value">R$ 6,08</div></div>
+                        <div class="metric"><div class="metric-label">CTR Médio</div><div class="metric-value">0,69%</div></div>
+                    </div>
+                    <div class="metrics" style="margin-top: 15px;">
+                        <div class="metric"><div class="metric-label">Impressões</div><div class="metric-value">255k</div></div>
+                        <div class="metric"><div class="metric-label">Alcance</div><div class="metric-value">164k</div></div>
+                        <div class="metric"><div class="metric-label">Cliques</div><div class="metric-value">851</div></div>
+                        <div class="metric"><div class="metric-label">Freq. Média</div><div class="metric-value">1,73x</div></div>
+                    </div>
                 </div>
             </div>
-
-            <!-- CANTINHO DA GIRAFA -->
-            <div class="card">
-                <h2><span class="emoji">🎉</span> Cantinho da Girafa</h2>
-                <div class="status active">Windsor CONECTADO</div>
-                
-                <div class="metrics" style="margin-top: 20px;">
-                    <div class="metric">
-                        <div class="metric-label">Campanhas Ativas</div>
-                        <div class="metric-value">5</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Gasto (7d)</div>
-                        <div class="metric-value">R$ 754,91</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">CPM Médio</div>
-                        <div class="metric-value">R$ 6,08</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">CTR Médio</div>
-                        <div class="metric-value">0,69%</div>
-                    </div>
+            <div class="card full-width">
+                <h2><span class="emoji">📈</span> Desempenho por Campanha — Cantinho da Girafa (7 dias)</h2>
+                <table>
+                    <thead>
+                        <tr><th>Campanha</th><th>Gasto</th><th>Impressões</th><th>Alcance</th><th>Freq.</th><th>CPM</th><th>Cliques</th><th>CTR</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="girafa-campaigns"></tbody>
+                </table>
+                <div class="alert warning" style="margin-top: 20px;">
+                    ⚠️ <strong>Recomendações:</strong><br>
+                    • Aumentar orçamento em "Leads" (CTR 1,50% - melhor performer)<br>
+                    • Revisar criativos de "Reconhecimento Festas" (CTR baixo: 0,18%)<br>
+                    • Considerar pausar "Leads Locação" (frequência alta = risco de fadiga)
                 </div>
-
-                <div class="metrics" style="margin-top: 15px;">
-                    <div class="metric">
-                        <div class="metric-label">Impressões</div>
-                        <div class="metric-value">255k</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Alcance</div>
-                        <div class="metric-value">164k</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Cliques</div>
-                        <div class="metric-value">851</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Freq. Média</div>
-                        <div class="metric-value">1,73x</div>
-                    </div>
+            </div>
+            <div class="card full-width">
+                <h2><span class="emoji">🎯</span> Resumo Consolidado</h2>
+                <div class="metrics">
+                    <div class="metric"><div class="metric-label">Investimento Total (últimos 7d)</div><div class="metric-value">R$ 754,91</div></div>
+                    <div class="metric"><div class="metric-label">Alcance Total</div><div class="metric-value">164.514</div></div>
+                    <div class="metric"><div class="metric-label">Impressões Totais</div><div class="metric-value">255.171</div></div>
+                    <div class="metric"><div class="metric-label">Cliques Totais</div><div class="metric-value">851</div></div>
+                </div>
+                <div class="alert info" style="margin-top: 20px;">
+                    ✅ <strong>Status da Automação:</strong> Dashboard atualizado automaticamente a cada 6 horas via GitHub Actions + Meta MCP + Windsor.ai
                 </div>
             </div>
         </div>
 
-        <!-- CAMPANHAS GIRAFA DETALHADO -->
-        <div class="card full-width">
-            <h2><span class="emoji">📈</span> Desempenho por Campanha — Cantinho da Girafa (7 dias)</h2>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>Campanha</th>
-                        <th>Gasto</th>
-                        <th>Impressões</th>
-                        <th>Alcance</th>
-                        <th>Freq.</th>
-                        <th>CPM</th>
-                        <th>Cliques</th>
-                        <th>CTR</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="girafa-campaigns">
-                    <!-- Preenchido por JavaScript -->
-                </tbody>
-            </table>
-
-            <div class="alert warning" style="margin-top: 20px;">
-                ⚠️ <strong>Recomendações:</strong><br>
-                • Aumentar orçamento em "Leads" (CTR 1,50% - melhor performer)<br>
-                • Revisar criativos de "Reconhecimento Festas" (CTR baixo: 0,18%)<br>
-                • Considerar pausar "Leads Locação" (frequência alta = risco de fadiga)
-            </div>
-        </div>
-
-        <!-- RESUMO CONSOLIDADO -->
-        <div class="card full-width">
-            <h2><span class="emoji">🎯</span> Resumo Consolidado</h2>
-            
-            <div class="metrics">
-                <div class="metric">
-                    <div class="metric-label">Investimento Total (últimos 7d)</div>
-                    <div class="metric-value">R$ 754,91</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-label">Alcance Total</div>
-                    <div class="metric-value">164.514</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-label">Impressões Totais</div>
-                    <div class="metric-value">255.171</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-label">Cliques Totais</div>
-                    <div class="metric-value">851</div>
+        <!-- ABA ANÁLISE COMPETITIVA -->
+        <div id="analysis" class="tab-content">
+            <div class="card full-width" style="margin-bottom: 30px;">
+                <h2><span class="emoji">🎯</span> O que a concorrência faz — e onde crescer</h2>
+                <p style="color: #aaa; margin-top: 10px; max-width: 80ch;">Análise dos 4 principais concorrentes locais de aluguel infantil e festas em Ponta Grossa. <strong>Dados: junho 2026</strong></p>
+                <div class="alert info" style="margin-top: 20px;">
+                    <strong>Principal achado:</strong> Você tem 12 mil seguidores (2x o maior concorrente) com campanhas alcançando 90+ mil pessoas. Mas o engajamento orgânico é baixo (3–4 curtidas/post) e o CPR está subindo. A oportunidade é converter atenção existente em ação.
                 </div>
             </div>
-
-            <div class="alert info" style="margin-top: 20px;">
-                ✅ <strong>Status da Automação:</strong> Dashboard atualizado automaticamente a cada 6 horas via GitHub Actions + Meta MCP + Windsor.ai
+            <div class="analysis-section">
+                <h3>📊 Panorama dos Perfis</h3>
+                <p>Seguidores, publicações e engajamento observado.</p>
+                <div class="profile-grid">
+                    <div class="profile-card leader">
+                        <div class="profile-name">🦒 Cantinho da Girafa</div>
+                        <div class="profile-handle">@cantinhodagirafa</div>
+                        <div class="profile-big">12 mil</div>
+                        <ul class="profile-list">
+                            <li><span>Publicações</span><b>1.094</b></li>
+                            <li><span>Curtidas/post</span><b>3–4</b></li>
+                            <li><span>Anúncios</span><b>~7</b></li>
+                            <li><span>Diferencial</span><b>Salão + tirolesa</b></li>
+                        </ul>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-name">GigiToys</div>
+                        <div class="profile-handle">@gigitoys_pg</div>
+                        <div class="profile-big">5.637</div>
+                        <ul class="profile-list">
+                            <li><span>Publicações</span><b>606</b></li>
+                            <li><span>Curtidas/post</span><b>2–77</b></li>
+                            <li><span>Anúncios</span><b>0</b></li>
+                            <li><span>Diferencial</span><b>Premium / SPA</b></li>
+                        </ul>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-name">Facilitoy PG</div>
+                        <div class="profile-handle">@facilitoypontagrossa</div>
+                        <div class="profile-big">1.530</div>
+                        <ul class="profile-list">
+                            <li><span>Publicações</span><b>303</b></li>
+                            <li><span>Curtidas/post</span><b>2–5</b></li>
+                            <li><span>Anúncios</span><b>5+ (10 meses!)</b></li>
+                            <li><span>Diferencial</span><b>Shark Tank</b></li>
+                        </ul>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-name">Club Kids</div>
+                        <div class="profile-handle">@clubkidspontagrossa</div>
+                        <div class="profile-big">664</div>
+                        <ul class="profile-list">
+                            <li><span>Publicações</span><b>39</b></li>
+                            <li><span>Curtidas/post</span><b>3–12</b></li>
+                            <li><span>Anúncios</span><b>0</b></li>
+                            <li><span>Diferencial</span><b>"Rede de apoio"</b></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="analysis-section">
+                <h3>✨ Padrões que Funcionam</h3>
+                <div class="insights-grid">
+                    <div class="insight-box success">
+                        <div class="insight-label">PADRÃO 01</div>
+                        <h4>Reels com gente real</h4>
+                        <p>GigiToys Reel SPA: 77 curtidas vs 2–32 estáticos. Experiência real bate arte de anúncio.</p>
+                    </div>
+                    <div class="insight-box">
+                        <div class="insight-label">PADRÃO 02</div>
+                        <h4>Higiene como âncora</h4>
+                        <p>Facilitoy e Club Kids têm destaque dedicado. Para aluguel infantil, segurança é objeção #1.</p>
+                    </div>
+                    <div class="insight-box">
+                        <div class="insight-label">PADRÃO 03</div>
+                        <h4>Segmentação por idade</h4>
+                        <p>Concorrentes menores organizam por fase (0–6m, 1–3a, +4a). Qualifica público automaticamente.</p>
+                    </div>
+                    <div class="insight-box">
+                        <div class="insight-label">PADRÃO 04</div>
+                        <h4>Copy emocional</h4>
+                        <p>"Alugar mudou minha maternidade" engaja mais que "Promoção em todos os playgrounds".</p>
+                    </div>
+                    <div class="insight-box">
+                        <div class="insight-label">PADRÃO 05</div>
+                        <h4>Prova social explícita</h4>
+                        <p>Facilitoy mostra ⭐⭐⭐⭐⭐ (265). Você tem mais tradição — não explora.</p>
+                    </div>
+                    <div class="insight-box success">
+                        <div class="insight-label">SÓ VOCÊ TEM</div>
+                        <h4>Destino completo</h4>
+                        <p>Salão + buffet + brinquedoteca + tirolesa + recreação. Concorrentes = só aluguel.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="analysis-section">
+                <h3>🎯 Plano de Ação</h3>
+                <ol class="actions-list">
+                    <li>
+                        <h4>Reativar base com Reels de gente real <span class="priority alta">Alta</span></h4>
+                        <p>Saia do post estático. Mostre crianças, festas, reações reais. É o formato mais eficaz.</p>
+                    </li>
+                    <li>
+                        <h4>Conteúdo de higienização <span class="priority alta">Alta</span></h4>
+                        <p>Reel de bastidor da limpeza. Vire destaque fixo como Facilitoy e Club Kids.</p>
+                    </li>
+                    <li>
+                        <h4>Reescrever copy de aluguel <span class="priority alta">Alta</span></h4>
+                        <p>Hook dor → bullets → prova social ("Há 10 anos") → higienização → WhatsApp. Base: campanha Leads (R$ 4,79/conversa).</p>
+                    </li>
+                    <li>
+                        <h4>Consolidar anúncios duplicados <span class="priority media">Média</span></h4>
+                        <p>Dois "Não compre produtos infantis" idênticos dividem orçamento. Pause um.</p>
+                    </li>
+                    <li>
+                        <h4>Investir em "salão + tirolesa" <span class="priority media">Média</span></h4>
+                        <p>Nenhum concorrente tem espaço físico. É diferencial exclusivo.</p>
+                    </li>
+                    <li>
+                        <h4>Segmentar por faixa etária <span class="priority media">Média</span></h4>
+                        <p>Destaques por fase (0–6m, 1–3a, 4–6a). Qualifica público.</p>
+                    </li>
+                </ol>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== VERIFICAÇÃO DE AUTENTICAÇÃO ====================
         window.addEventListener('load', () => {
             const currentUser = sessionStorage.getItem('currentUser');
             if (!currentUser) {
                 window.location.href = 'dashboard_login.html';
                 return;
             }
-
             const user = JSON.parse(currentUser);
-            document.body.innerHTML = `
-                <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 10px 15px; border-radius: 6px; font-size: 0.85em; color: #4ecdc4; z-index: 9999;">
-                    👤 ${user.name} | <a href="#" onclick="logout()" style="color: #ff6b6b; text-decoration: none;">Sair</a>
-                </div>
-            ` + document.body.innerHTML;
+            document.body.innerHTML = `<div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 10px 15px; border-radius: 6px; font-size: 0.85em; color: #4ecdc4; z-index: 9999;">👤 ${user.name} | <a href="#" onclick="logout()" style="color: #ff6b6b; text-decoration: none;">Sair</a></div>` + document.body.innerHTML;
         });
-
-        function logout() {
-            sessionStorage.removeItem('currentUser');
-            window.location.href = 'dashboard_login.html';
+        function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'dashboard_login.html'; }
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
         }
-
-        // Atualizar timestamp
         document.getElementById('timestamp').textContent = 'Atualizado: ' + new Date().toLocaleString('pt-BR');
-
-        // Dados das campanhas Girafa
         const campaigns = [
             {name: "Copa", spend: 168.24, impressions: 116267, reach: 83044, frequency: 1.4001, cpm: 1.447, clicks: 164, ctr: 0.0014},
             {name: "Reconhecimento Festas", spend: 174.84, impressions: 93641, reach: 58294, frequency: 1.6064, cpm: 1.8671, clicks: 171, ctr: 0.0018},
@@ -376,25 +405,12 @@
             {name: "Vendas/Aluguel", spend: 102.18, impressions: 12528, reach: 6786, frequency: 1.8462, cpm: 8.1561, clicks: 119, ctr: 0.0095},
             {name: "Leads Locação", spend: 105.05, impressions: 11067, reach: 6743, frequency: 1.6413, cpm: 9.4922, clicks: 73, ctr: 0.0066}
         ];
-
-        // Preencher tabela
         const tbody = document.getElementById('girafa-campaigns');
         campaigns.forEach(c => {
             const row = tbody.insertRow();
             const isGood = c.ctr >= 0.01;
             const isBad = c.ctr < 0.008;
-            
-            row.innerHTML = `
-                <td><strong>${c.name}</strong></td>
-                <td>R$ ${c.spend.toFixed(2)}</td>
-                <td>${c.impressions.toLocaleString()}</td>
-                <td>${c.reach.toLocaleString()}</td>
-                <td>${c.frequency.toFixed(2)}x</td>
-                <td>R$ ${c.cpm.toFixed(2)}</td>
-                <td>${c.clicks}</td>
-                <td style="${isGood ? 'color: #95e1d3; font-weight: bold;' : isBad ? 'color: #ff6b6b;' : ''}">${(c.ctr * 100).toFixed(2)}%</td>
-                <td>${isGood ? '✅ Bom' : isBad ? '⚠️ Baixo' : '→ Médio'}</td>
-            `;
+            row.innerHTML = `<td><strong>${c.name}</strong></td><td>R$ ${c.spend.toFixed(2)}</td><td>${c.impressions.toLocaleString()}</td><td>${c.reach.toLocaleString()}</td><td>${c.frequency.toFixed(2)}x</td><td>R$ ${c.cpm.toFixed(2)}</td><td>${c.clicks}</td><td style="${isGood ? 'color: #95e1d3; font-weight: bold;' : isBad ? 'color: #ff6b6b;' : ''}">${(c.ctr * 100).toFixed(2)}%</td><td>${isGood ? '✅ Bom' : isBad ? '⚠️ Baixo' : '→ Médio'}</td>`;
         });
     </script>
 </body>
