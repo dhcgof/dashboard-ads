@@ -27,6 +27,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
     
+    - name: Verificar META_ACCESS_TOKEN
+      run: |
+        if [ -z "${{ secrets.META_ACCESS_TOKEN }}" ]; then
+          echo "❌ META_ACCESS_TOKEN não está configurado no GitHub Secrets!"
+          echo "   Configure em: Settings > Secrets and variables > Actions > New repository secret"
+          echo "   Nome: META_ACCESS_TOKEN"
+          echo "   Valor: Seu token de acesso do Meta (System User Token)"
+          exit 1
+        fi
+        echo "✅ META_ACCESS_TOKEN está configurado"
+    
     - name: Buscar dados das campanhas
       env:
         META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
@@ -38,6 +49,6 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add data/campaigndata.json
-        git commit -m "Update dashboard data — $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "Sem mudanças para confirmar"
+        git commit -m "🤖 Meta Ads Collector — Update $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "Sem mudanças para confirmar"
         git push
       continue-on-error: true

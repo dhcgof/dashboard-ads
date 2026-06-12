@@ -1,0 +1,103 @@
+{
+  "projeto": "Dashboard Ads - Meta Marketing",
+  "versao": "2.0.0",
+  "descricao": "Sistema de monitoramento de campanhas Meta Ads com coleta automática via GitHub Actions",
+  
+  "agentes": {
+    "META_ADS_COLLECTOR": {
+      "nome": "Meta Ads Collector",
+      "emoji": "📊",
+      "versao": "2.0.0",
+      "responsabilidade": "Coletar dados das campanhas Meta Ads via API Graph",
+      "frequencia": "A cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)",
+      "arquivo": "fetch_data.py",
+      "trigger": "GitHub Actions (cron) ou manual",
+      "status": "ativo"
+    },
+    
+    "DASHBOARD_ANALYZER": {
+      "nome": "Dashboard Analyzer",
+      "emoji": "🔍",
+      "versao": "1.0.0",
+      "responsabilidade": "Analisar métricas e gerar alertas de performance",
+      "frequencia": "Em tempo real (quando dados são atualizados)",
+      "arquivo": "app_backend.py (rotas /api/data/*)",
+      "trigger": "Requisição HTTP ao backend",
+      "status": "ativo"
+    },
+    
+    "DASHBOARD_RENDERER": {
+      "nome": "Dashboard Renderer",
+      "emoji": "🎨",
+      "versao": "1.0.0",
+      "responsabilidade": "Renderizar dashboard HTML com dados coletados",
+      "frequencia": "On-demand (quando o usuário acessa)",
+      "arquivo": "dashboard.html, index.html",
+      "trigger": "Acesso do usuário via GitHub Pages",
+      "status": "ativo"
+    },
+    
+    "GITHUB_DEPLOYER": {
+      "nome": "GitHub Deployer",
+      "emoji": "🚀",
+      "versao": "1.0.0",
+      "responsabilidade": "Fazer deploy dos dados atualizados para GitHub Pages",
+      "frequencia": "A cada 6 horas (após coleta de dados)",
+      "arquivo": ".github/workflows/update-dashboard.yml",
+      "trigger": "GitHub Actions (automático)",
+      "status": "ativo"
+    },
+    
+    "AUTH_GUARDIAN": {
+      "nome": "Auth Guardian",
+      "emoji": "🔐",
+      "versao": "1.0.0",
+      "responsabilidade": "Gerenciar autenticação e autorização de usuários",
+      "frequencia": "Em tempo real",
+      "arquivo": "app_backend.py (rotas /api/login, /api/register)",
+      "trigger": "Requisição HTTP",
+      "status": "ativo"
+    },
+    
+    "TOKEN_MANAGER": {
+      "nome": "Token Manager",
+      "emoji": "🔑",
+      "versao": "1.0.0",
+      "responsabilidade": "Gerenciar tokens de acesso Meta API",
+      "frequencia": "On-demand",
+      "arquivo": "fetch_data.py (carregamento de token)",
+      "trigger": "Execução do fetch_data.py",
+      "status": "ativo",
+      "config": {
+        "token_source": "GitHub Secrets (META_ACCESS_TOKEN) ou .env.env",
+        "prioridade": ["Environment Variable", ".env.env file"],
+        "validacao": "Automática via API Graph (debug/token)",
+        "rotacao": "Manual (via GitHub Secrets ou .env.env)"
+      }
+    }
+  },
+  
+  "contas_meta": {
+    "Lojas MDL": {
+      "account_id": "1124246161345381",
+      "nome_agente": "MDL Monitor",
+      "emoji": "🪑",
+      "status": "ativo"
+    },
+    "Cantinho da Girafa": {
+      "account_id": "811077953131064",
+      "nome_agente": "Girafa Monitor",
+      "emoji": "🦒",
+      "status": "ativo"
+    }
+  },
+  
+  "como_chamar": {
+    "META_ADS_COLLECTOR": "Chame 'Meta Ads Collector' ou 'Coletor' para atualizar dados",
+    "DASHBOARD_ANALYZER": "Chame 'Dashboard Analyzer' ou 'Analisador' para ver métricas",
+    "DASHBOARD_RENDERER": "Chame 'Dashboard Renderer' ou 'Renderizador' para ver o dashboard",
+    "GITHUB_DEPLOYER": "Chame 'GitHub Deployer' ou 'Deployer' para publicar no GitHub Pages",
+    "AUTH_GUARDIAN": "Chame 'Auth Guardian' ou 'Guardião' para gerenciar login",
+    "TOKEN_MANAGER": "Chame 'Token Manager' ou 'Gerenciador de Token' para atualizar META_ACCESS_TOKEN"
+  }
+}

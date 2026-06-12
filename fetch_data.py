@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 """
-Script que roda no GitHub Actions a cada 6 horas.
-Busca dados ao vivo da Meta Marketing API e gera um arquivo JSON
-que o dashboard HTML lê e renderiza.
+Agente: META_ADS_COLLECTOR (Meta Ads Collector)
+===========================================
+Responsável: Coletar dados das campanhas Meta Ads
+Frequência: A cada 6 horas (via GitHub Actions)
+Fonte: Meta Marketing API v21.0
 
-Uso local (teste):
+Como usar:
     python fetch_data.py
-    # Cria: data/campaigndata.json
-
-No GitHub Actions:
-    - Token é passado como secret META_ACCESS_TOKEN
-    - Script roda em schedule (cron)
-    - JSON é commitado automaticamente
+    # ou via GitHub Actions (META_ACCESS_TOKEN secret)
 """
 
 import os
@@ -20,16 +17,49 @@ import sys
 from datetime import datetime, timezone
 import requests
 
-# Token vem do GitHub Secret
+# ============================================================
+# CONFIGURAÇÃO DE AGENTES
+# ============================================================
+AGENT_NAME = "META_ADS_COLLECTOR"
+AGENT_VERSION = "2.0.0"
+AGENT_EMOJI = "📊"
+
+# ============================================================
+# TOKEN DE ACESSO
+# ============================================================
+# Prioridade: 1) Environment (GitHub Actions) 2) .env file 3) Hardcoded (fallback)
 ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN")
+
+if not ACCESS_TOKEN:
+    # Tenta carregar do .env.env
+    env_path = os.path.join(os.path.dirname(__file__), ".env.env")
+    if os.path.exists(env_path):
+        with open(env_path, "r") as f:
+            for line in f:
+                if line.startswith("META_ACCESS_TOKEN="):
+                    ACCESS_TOKEN = line.strip().split("=", 1)[1].strip()
+                    break
+
+if not ACCESS_TOKEN:
+    print(f"❌ {AGENT_NAME}: META_ACCESS_TOKEN não está definido")
+    print("   No GitHub: adicione como Secret nas configurações do repositório")
+    print("   Localmente: crie um arquivo .env.env com META_ACCESS_TOKEN=seu_token")
+    sys.exit(1)
+
 API_VERSION = "v21.0"
 BASE_URL = f"https://graph.facebook.com/{API_VERSION}"
 
-# As duas contas
+# ============================================================
+# CONTAS GERENCIADAS
+# ============================================================
 CONTAS = {
     "Lojas MDL": "1124246161345381",
     "Cantinho da Girafa": "811077953131064",
 }
+
+# ============================================================
+# FUNÇÕES AUXILIARES
+# ============================================================
 
 def _get(path, params=None):
     """Chamada GET à Graph API."""
@@ -43,6 +73,58 @@ def _get(path, params=None):
         return data
     except Exception as e:
         return {"_erro": str(e)}
+
+def _traduzir_objetivo(obj):
+    mapa = {
+        "OUTCOME_AWARENESS": "Alcance/Reconhecimento",
+        "OUTCOME_TRAFFIC": "Tráfego",
+        "OUTCOME_ENGAGEMENT": "Engajamento",
+        "OUTCOME_LEADS": "Leads",
+        "OUTCOME_SALES": "Vendas",
+        "OUTCOME_APP_PROMOTION": "Promoção de App",
+    }
+    return mapa.get(obj, obj or "—")
+
+def _moeda(v):
+    try:
+        return f"R$ {float(v):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    except (ValueError, TypeError):
+        return "—"
+
+def _num(v):
+    try:
+        return f"{int(float(v)):,}".replace(",", ".")
+    except (ValueError, TypeError):
+        return "—"
+
+def _freq(v):
+    try:
+        return f"{float(v):.2f}x"
+    except (ValueError, TypeError):
+        return "—"
+
+def _gerar_alerta(insights):
+    """Gera alertas baseados em métricas."""
+    alertas = []
+    try:
+        freq = float(insights.get("frequency", 0))
+        if freq >= 5:
+            alertas.append(("🔴", "Frequência alta — risco de saturação"))
+        elif freq >= 4:
+            alertas.append(("🟡", "Frequência subindo — fique de olho"))
+    except (ValueError, TypeError):
+        pass
+    try:
+        cpm = float(insights.get("cpm", 0))
+        if cpm > 0 and cpm > 5:
+            alertas.append(("🟡", f"CPM acima do histórico (R$ {cpm:.2f})"))
+    except (ValueError, TypeError):
+        pass
+    return alertas
+
+# ============================================================
+# FUNÇÃO PRINCIPAL: BUSCAR CAMPANHAS
+# ============================================================
 
 def buscar_campanhas(account_id, empresa):
     """Busca campanhas de uma conta."""
@@ -100,61 +182,14 @@ def buscar_campanhas(account_id, empresa):
         })
     return saida
 
-def _traduzir_objetivo(obj):
-    mapa = {
-        "OUTCOME_AWARENESS": "Alcance/Reconhecimento",
-        "OUTCOME_TRAFFIC": "Tráfego",
-        "OUTCOME_ENGAGEMENT": "Engajamento",
-        "OUTCOME_LEADS": "Leads",
-        "OUTCOME_SALES": "Vendas",
-        "OUTCOME_APP_PROMOTION": "Promoção de App",
-    }
-    return mapa.get(obj, obj or "—")
-
-def _moeda(v):
-    try:
-        return f"R$ {float(v):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    except (ValueError, TypeError):
-        return "—"
-
-def _num(v):
-    try:
-        return f"{int(float(v)):,}".replace(",", ".")
-    except (ValueError, TypeError):
-        return "—"
-
-def _freq(v):
-    try:
-        return f"{float(v):.2f}x"
-    except (ValueError, TypeError):
-        return "—"
-
-def _gerar_alerta(insights):
-    """Gera alertas baseados em métricas."""
-    alertas = []
-    try:
-        freq = float(insights.get("frequency", 0))
-        if freq >= 5:
-            alertas.append(("🔴", "Frequência alta — risco de saturação"))
-        elif freq >= 4:
-            alertas.append(("🟡", "Frequência subindo — fique de olho"))
-    except (ValueError, TypeError):
-        pass
-    try:
-        cpm = float(insights.get("cpm", 0))
-        if cpm > 0 and cpm > 5:
-            alertas.append(("🟡", f"CPM acima do histórico (R$ {cpm:.2f})"))
-    except (ValueError, TypeError):
-        pass
-    return alertas
+# ============================================================
+# AGENTE: MAIN EXECUTION
+# ============================================================
 
 def main():
-    if not ACCESS_TOKEN:
-        print("❌ META_ACCESS_TOKEN não está definido")
-        print("   No GitHub: adicione como Secret nas configurações do repositório")
-        print("   Localmente: crie um arquivo .env com META_ACCESS_TOKEN=seu_token")
-        sys.exit(1)
-
+    print(f"{AGENT_EMOJI} {AGENT_NAME} v{AGENT_VERSION}")
+    print(f"📅 {datetime.now(timezone.utc).astimezone().strftime('%d/%m/%Y %H:%M:%S')}")
+    print("")
     print("🔄 Buscando dados das campanhas...")
 
     todas = []
@@ -178,6 +213,8 @@ def main():
 
     dados = {
         "atualizado_em": datetime.now(timezone.utc).astimezone().strftime("%d/%m/%Y %H:%M:%S"),
+        "agente": AGENT_NAME,
+        "versao": AGENT_VERSION,
         "campanhas": todas,
         "resumo": {
             "total_campanhas": total_campanhas_ativas,
@@ -196,6 +233,7 @@ def main():
     print(f"   Campanhas: {total_campanhas_ativas}")
     print(f"   Gasto hoje: {dados['resumo']['gasto_hoje']}")
     print(f"   Última atualização: {dados['atualizado_em']}")
+    print(f"   Agente: {AGENT_NAME} v{AGENT_VERSION}")
 
 if __name__ == "__main__":
     main()
