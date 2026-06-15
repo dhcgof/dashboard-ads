@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Ads MDL + Girafa | 09/06/2026 [Atualizado]</title>
+  <title>Dashboard Ads MDL + Girafa | 14/06/2026 [Atualizado]</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.6; }
@@ -38,13 +38,44 @@
     .legend-item { margin: 5px 0; }
     h2 { margin-bottom: 15px; font-size: 18px; }
     h3 { margin-top: 20px; margin-bottom: 10px; font-size: 16px; }
+    /* LOGIN */
+    #login-screen { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .login-box { background: #1e293b; padding: 32px; border-radius: 12px; width: 90%; max-width: 360px; border-top: 4px solid #ff8c00; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    .login-box h2 { text-align: center; margin-bottom: 6px; }
+    .login-box .sub { text-align: center; font-size: 12px; color: #94a3b8; margin-bottom: 22px; }
+    .login-box label { display: block; font-size: 12px; color: #94a3b8; margin: 12px 0 5px; }
+    .login-box input { width: 100%; padding: 11px 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #e2e8f0; font-size: 14px; }
+    .login-box input:focus { outline: none; border-color: #ff8c00; }
+    .login-box button { width: 100%; margin-top: 20px; padding: 12px; background: #ff8c00; color: #0f172a; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .login-box button:hover { background: #ffa333; }
+    .login-error { color: #ef4444; font-size: 12px; text-align: center; margin-top: 12px; min-height: 16px; }
+    #app { display: none; }
+    .logout-btn { float: right; background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); padding: 6px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+    .logout-btn:hover { background: rgba(239,68,68,0.25); }
   </style>
 </head>
 <body>
+  <!-- TELA DE LOGIN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <h2>🔒 Dashboard Ads</h2>
+      <p class="sub">MDL + Cantinho da Girafa · Acesso restrito</p>
+      <label for="u">Usuário</label>
+      <input type="text" id="u" autocomplete="username" placeholder="usuário">
+      <label for="p">Senha</label>
+      <input type="password" id="p" autocomplete="current-password" placeholder="senha">
+      <button onclick="doLogin()">Entrar</button>
+      <div class="login-error" id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app">
   <div class="container">
     <header>
+      <button class="logout-btn" onclick="doLogout()">Sair</button>
       <h1>📊 Dashboard Meta Ads | MDL + Cantinho da Girafa</h1>
-      <p class="timestamp">✅ Atualizado: 09 de junho de 2026 • 16:15 (São Paulo) | Próxima verificação: 48h</p>
+      <p class="timestamp">✅ Atualizado: 14 de junho de 2026 • Período operacional: 07–13/jun (últimos 7 dias) | Lifetime até 14/jun</p>
     </header>
 
     <div class="tabs">
@@ -56,103 +87,167 @@
 
     <!-- OPERACIONAL -->
     <div id="p-ops" class="tab-content active">
-      <h2>Status em Tempo Real (Últimos 7 dias)</h2>
-      
+      <h2>Status em Tempo Real (Últimos 7 dias · 07–13/jun)</h2>
+
       <div class="grid">
-        <div class="kpi"><div class="kpi-label">💰 Total Investido</div><div class="kpi-value">R$ 1.196,47</div><div class="kpi-sub">Cantinho R$528,00 + MDL R$284,47</div></div>
-        <div class="kpi"><div class="kpi-label">👥 Alcance Combinado</div><div class="kpi-value">89.652</div><div class="kpi-sub">Cantinho 88.652 + MDL 9.842</div></div>
-        <div class="kpi"><div class="kpi-label">💬 Conversas Totais</div><div class="kpi-value">81</div><div class="kpi-sub">Cantinho 76 + MDL 5</div></div>
-        <div class="kpi"><div class="kpi-label">💰 CPR Médio</div><div class="kpi-value">R$ 14,77</div><div class="kpi-sub">⚠️ MDL: R$56,89 | Girafa: R$5,37</div></div>
+        <div class="kpi"><div class="kpi-label">💰 Total Investido</div><div class="kpi-value">R$ 1.199,40</div><div class="kpi-sub">Cantinho R$553,61 + MDL R$645,79</div></div>
+        <div class="kpi"><div class="kpi-label">👥 Alcance Combinado</div><div class="kpi-value">187.701</div><div class="kpi-sub">Cantinho 89.506 + MDL 98.195</div></div>
+        <div class="kpi"><div class="kpi-label">💬 Conversas (mensagem)</div><div class="kpi-value">56</div><div class="kpi-sub">Cantinho 56 + MDL 0 (TV 85" sem conversa em 7d)</div></div>
+        <div class="kpi"><div class="kpi-label">💰 CPR Conversa (Girafa)</div><div class="kpi-value">R$ 8,17</div><div class="kpi-sub">Leads R$8,84 · Vendas R$7,50</div></div>
       </div>
 
-      <div class="alert">🔧 <strong>Status Pixel:</strong> Instalado em moveisdolar.com.br com eventos customizados (Contact, ViewContent, Lead). Aguardando 48h para otimização automática da campanha Copa.</div>
+      <div class="alert">🔧 <strong>Atenção MDL:</strong> "Show de Prêmios — TV 85"" com frequência 4,23 (saudável, abaixo de 5x), mas 0 conversas de mensagem em 7d e CPM subindo (R$12,57). Copa termina 15/jun. Nova campanha "Ação 3 Dias WhatsApp" performando muito bem (CTR 2,37%, CPC R$0,25).</div>
 
       <h3>🏆 Campanhas Ativas (Performance 7d)</h3>
       <table>
         <tr><th>Campanha</th><th>Investido</th><th>Alcance</th><th>CTR</th><th>CPC</th><th>CPM</th><th>Freq</th><th>Conversas</th><th>CPR</th></tr>
-        <tr><td><strong>Cantinho: Leads</strong></td><td>R$217,80</td><td>8.872</td><td>1,48%</td><td>R$0,79</td><td>R$11,73</td><td>2,09</td><td class="status-good">42</td><td class="status-good">R$5,19</td></tr>
-        <tr><td><strong>Cantinho: Vendas/Aluguel</strong></td><td>R$214,04</td><td>8.870</td><td>1,27%</td><td>R$0,71</td><td>R$9,03</td><td>2,67</td><td class="status-good">34</td><td class="status-good">R$6,30</td></tr>
-        <tr><td><strong>Cantinho: Reconhec. Aluguel</strong></td><td>R$96,16</td><td>70.910</td><td>0,17%</td><td>R$0,73</td><td>R$1,22</td><td>1,11</td><td>—</td><td class="status-good">R$1,36</td></tr>
-        <tr><td><strong>MDL: Copa TV 85"</strong></td><td>R$284,47</td><td>9.842</td><td class="status-good">1,48%</td><td class="status-good">R$0,63</td><td>R$9,23</td><td>3,13</td><td>5</td><td class="status-bad">R$56,89</td></tr>
+        <tr><td><strong>Cantinho: Leads</strong></td><td>R$247,54</td><td>11.340</td><td>1,24%</td><td>R$0,83</td><td>R$10,28</td><td>2,12</td><td class="status-good">28</td><td class="status-good">R$8,84</td></tr>
+        <tr><td><strong>Cantinho: Vendas/Aluguel</strong></td><td>R$210,00</td><td>10.817</td><td>1,04%</td><td>R$0,78</td><td>R$8,12</td><td>2,39</td><td class="status-good">28</td><td class="status-good">R$7,50</td></tr>
+        <tr><td><strong>Cantinho: Reconhec. Aluguel</strong></td><td>R$96,07</td><td>67.349</td><td>0,15%</td><td>R$0,90</td><td>R$1,30</td><td>1,10</td><td>—</td><td class="status-good">R$1,43</td></tr>
+        <tr><td><strong>MDL: Ação 3 Dias WhatsApp</strong></td><td>R$99,99</td><td>13.263</td><td class="status-good">2,37%</td><td class="status-good">R$0,25</td><td>R$5,98</td><td>1,26</td><td>—</td><td class="status-good">R$0,39/clique</td></tr>
+        <tr><td><strong>MDL: Copa — REACH TEST</strong></td><td>R$164,15</td><td>77.753</td><td>0,15%</td><td>R$0,95</td><td>R$1,42</td><td>1,49</td><td>—</td><td class="status-good">R$2,11</td></tr>
+        <tr><td><strong>MDL: Show de Prêmios TV 85"</strong></td><td>R$381,65</td><td>7.179</td><td class="status-good">1,82%</td><td class="status-good">R$0,69</td><td class="status-warn">R$12,57</td><td>4,23</td><td class="status-bad">0</td><td class="status-bad">—</td></tr>
       </table>
 
       <h3>📊 Análise & Ação</h3>
       <div style="background: #1e293b; padding: 15px; border-radius: 8px; border-left: 3px solid #eab308;">
-        <p><strong>Achado:</strong> Campanha Copa (MDL) tem CTR excelente (1,48%) mas CPR crítico (R$56,89).</p>
-        <p style="margin-top: 10px;"><strong>Implementado:</strong> Pixel com 5 eventos customizados adicionados ao site (Contact, ViewContent, Lead, Conversation, Formulário).</p>
-        <p style="margin-top: 10px;"><strong>Esperado (48-72h):</strong> Meta otimizará automaticamente. CPR deve cair para R$10-15 conforme sistema aprende quem converte.</p>
-        <p style="margin-top: 10px;"><strong>Próxima ação:</strong> Verificação em 48h. Se CPR não melhorar, testar A/B com novo criativo ou pivotar objetivo.</p>
+        <p><strong>Achado 1:</strong> "Ação 3 Dias WhatsApp" (MDL) é a melhor campanha de tráfego do período — CTR 2,37% e CPC R$0,25. Forte candidata a escalar.</p>
+        <p style="margin-top: 10px;"><strong>Achado 2:</strong> "TV 85"" (MDL) tem CTR bom (1,82%) mas 0 conversas de mensagem e CPM em alta. Objetivo de engajamento não está gerando contato direto.</p>
+        <p style="margin-top: 10px;"><strong>Achado 3:</strong> Cantinho estável — Leads e Vendas com CPR de conversa entre R$7,50 e R$8,84, frequências saudáveis (2,1–2,4).</p>
+        <p style="margin-top: 10px;"><strong>Próxima ação:</strong> Copa termina 15/jun. Avaliar encerramento da TV 85" e realocação de verba para "Ação 3 Dias". Verificação seguinte em 48h.</p>
       </div>
     </div>
 
     <!-- CANTINHO -->
     <div id="p-girafa" class="tab-content">
-      <h2>🦒 Cantinho da Girafa — Últimos 7 dias</h2>
+      <h2>🦒 Cantinho da Girafa — Últimos 7 dias (07–13/jun)</h2>
       <table>
         <tr><th>Campanha</th><th>Status</th><th>Spend</th><th>Reach</th><th>Impr.</th><th>CTR</th><th>CPC</th><th>CPM</th><th>Freq</th><th>Conversas</th><th>CPR</th></tr>
-        <tr><td>Leads</td><td><span class="badge active">Ativa</span></td><td>R$217,80</td><td>8.872</td><td>18.561</td><td>1,48%</td><td>R$0,79</td><td>R$11,73</td><td>2,09</td><td class="status-good">42</td><td class="status-good">R$5,19</td></tr>
-        <tr><td>Vendas/Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$214,04</td><td>8.870</td><td>23.693</td><td>1,27%</td><td>R$0,71</td><td>R$9,03</td><td>2,67</td><td class="status-good">34</td><td class="status-good">R$6,30</td></tr>
-        <tr><td>Reconhec. Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$96,16</td><td>70.910</td><td>78.713</td><td>0,17%</td><td>R$0,73</td><td>R$1,22</td><td>1,11</td><td>—</td><td class="status-good">R$1,36</td></tr>
+        <tr><td>Leads</td><td><span class="badge active">Ativa</span></td><td>R$247,54</td><td>11.340</td><td>24.069</td><td>1,24%</td><td>R$0,83</td><td>R$10,28</td><td>2,12</td><td class="status-good">28</td><td class="status-good">R$8,84</td></tr>
+        <tr><td>Vendas/Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$210,00</td><td>10.817</td><td>25.871</td><td>1,04%</td><td>R$0,78</td><td>R$8,12</td><td>2,39</td><td class="status-good">28</td><td class="status-good">R$7,50</td></tr>
+        <tr><td>Reconhec. Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$96,07</td><td>67.349</td><td>73.753</td><td>0,15%</td><td>R$0,90</td><td>R$1,30</td><td>1,10</td><td>—</td><td class="status-good">R$1,43</td></tr>
       </table>
-      <p style="font-size: 12px; color: #94a3b8; margin-top: 10px;"><strong>Status:</strong> 3 campanhas ativas · CPR otimizado · Frequência saudável · Pronto para escalar</p>
+      <p style="font-size: 12px; color: #94a3b8; margin-top: 10px;"><strong>Status:</strong> 3 campanhas ativas · CPR de conversa saudável · Frequência saudável (1,1–2,4) · Pronto para escalar</p>
     </div>
 
     <!-- MDL -->
     <div id="p-mdl" class="tab-content">
-      <h2>🪑 MDL Móveis do Lar — Últimos 7 dias</h2>
-      <div class="alert">🔧 <strong>Pixel Configurado:</strong> 5 eventos customizados rastreando Contact, ViewContent, Lead, Conversation, Form. Otimização automática em andamento — CPR deve melhorar em 48-72h.</div>
+      <h2>🪑 MDL Móveis do Lar — Últimos 7 dias (07–13/jun)</h2>
+      <div class="alert">⏰ <strong>Promo Copa termina 15/jun.</strong> "TV 85"" sem conversas de mensagem em 7d apesar do CTR alto. "Ação 3 Dias WhatsApp" com performance de tráfego excelente.</div>
       <table>
         <tr><th>Campanha</th><th>Status</th><th>Spend</th><th>Reach</th><th>Impr.</th><th>CTR</th><th>CPC</th><th>CPM</th><th>Freq</th><th>Conversas</th><th>CPR</th></tr>
-        <tr><td>Show de Prêmios — Copa TV 85"</td><td><span class="badge active">Ativa</span></td><td>R$284,47</td><td>9.842</td><td>30.826</td><td class="status-good">1,48%</td><td class="status-good">R$0,63</td><td>R$9,23</td><td>3,13</td><td>5</td><td class="status-bad">R$56,89</td></tr>
+        <tr><td>Show de Prêmios — Copa TV 85"</td><td><span class="badge active">Ativa</span></td><td>R$381,65</td><td>7.179</td><td>30.364</td><td class="status-good">1,82%</td><td class="status-good">R$0,69</td><td class="status-warn">R$12,57</td><td>4,23</td><td class="status-bad">0</td><td class="status-bad">—</td></tr>
+        <tr><td>Copa — REACH TEST</td><td><span class="badge active">Ativa</span></td><td>R$164,15</td><td>77.753</td><td>115.685</td><td>0,15%</td><td>R$0,95</td><td>R$1,42</td><td>1,49</td><td>—</td><td class="status-good">R$2,11</td></tr>
+        <tr><td>Ação 3 Dias — WhatsApp</td><td><span class="badge active">Ativa</span></td><td>R$99,99</td><td>13.263</td><td>16.733</td><td class="status-good">2,37%</td><td class="status-good">R$0,25</td><td>R$5,98</td><td>1,26</td><td>—</td><td class="status-good">R$0,39/clique</td></tr>
       </table>
-      <p style="font-size: 12px; color: #eab308; margin-top: 10px;">⏰ <strong>Timeline:</strong> Copa termina 15/07 (5 dias). Decisão rápida recomendada se CPR não melhorar em 48h.</p>
+      <p style="font-size: 12px; color: #eab308; margin-top: 10px;">⏰ <strong>Timeline:</strong> Copa termina 15/jun (amanhã). Decisão recomendada: encerrar/realocar TV 85" e considerar escalar "Ação 3 Dias".</p>
     </div>
 
     <!-- HISTÓRICO -->
     <div id="p-hist" class="tab-content">
-      <h2>📋 Levantamento Histórico (Lifetime)</h2>
-      
+      <h2>📋 Levantamento Histórico (Lifetime · até 14/jun)</h2>
+
       <div class="grid">
-        <div class="kpi"><div class="kpi-label">💰 Total Investido</div><div class="kpi-value">R$ 69.994,10</div><div class="kpi-sub">Cantinho R$66.789,99 + MDL R$3.204,11</div></div>
-        <div class="kpi"><div class="kpi-label">📊 Campanhas</div><div class="kpi-value">26</div><div class="kpi-sub">Cantinho 22 + MDL 4</div></div>
-        <div class="kpi"><div class="kpi-label">🔴 Saturadas</div><div class="kpi-value">5</div><div class="kpi-sub">Freq >8x · Status: Pausadas</div></div>
-        <div class="kpi"><div class="kpi-label">🟢 Ativas</div><div class="kpi-value">7</div><div class="kpi-sub">Convertendo bem · CPR ótimo</div></div>
+        <div class="kpi"><div class="kpi-label">💰 Total Investido (Top campanhas)</div><div class="kpi-value">R$ 70.487,42</div><div class="kpi-sub">Cantinho R$66.973,18 + MDL R$3.514,24 *</div></div>
+        <div class="kpi"><div class="kpi-label">📊 Campanhas no período</div><div class="kpi-value">12+</div><div class="kpi-sub">Cantinho 6 top + MDL 6</div></div>
+        <div class="kpi"><div class="kpi-label">🔴 Saturadas (Freq &gt;8x)</div><div class="kpi-value">4</div><div class="kpi-sub">Engaj. 22,2x · Leads 13,6x · Vendas 9,8x · LF ABO 8,9x</div></div>
+        <div class="kpi"><div class="kpi-label">🟢 Ativas</div><div class="kpi-value">6</div><div class="kpi-sub">Cantinho 3 + MDL 3</div></div>
       </div>
 
       <div class="legend">
         <strong>Legenda Frequência:</strong>
         <div class="legend-item"><span class="status-good">●</span> 1-5x: Saudável (continuar)</div>
         <div class="legend-item"><span class="status-warn">●</span> 5-8x: Atenção (monitorar)</div>
-        <div class="legend-item"><span class="status-bad">●</span> >8x: Crítico (pausada)</div>
+        <div class="legend-item"><span class="status-bad">●</span> &gt;8x: Crítico (pausar/renovar criativo)</div>
       </div>
 
-      <h3>🦒 Cantinho da Girafa — Lifetime (Top 10)</h3>
+      <h3>🦒 Cantinho da Girafa — Lifetime (Top 6)</h3>
       <table style="font-size: 12px;">
-        <tr><th>Campanha</th><th>Status</th><th>Spend</th><th>Conversas</th><th>Freq</th><th>CPR</th></tr>
-        <tr><td>Engajamento/Contínua | Whats</td><td><span class="badge paused">Pausada</span></td><td>R$31.598,77</td><td>4.894</td><td><span class="status-bad">22,23x</span></td><td>R$6,46</td></tr>
-        <tr><td>Leads</td><td><span class="badge active">Ativa</span></td><td>R$5.927,97</td><td>1.521</td><td><span class="status-bad">13,59x</span></td><td>R$3,90</td></tr>
-        <tr><td>Vendas/Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$5.737,67</td><td>706</td><td><span class="status-bad">9,76x</span></td><td>R$8,13</td></tr>
-        <tr><td>Reconhecimento Festas</td><td><span class="badge active">Ativa</span></td><td>R$3.517,27</td><td>—</td><td>4,59x</td><td>R$7,26</td></tr>
-        <tr><td>LF Engajamento ABO</td><td><span class="badge paused">Pausada</span></td><td>R$3.429,44</td><td>634</td><td><span class="status-bad">9,02x</span></td><td>R$5,41</td></tr>
-        <tr><td colspan="6" style="text-align: center; color: #94a3b8; font-size: 11px;">+ 17 campanhas menores/arquivadas (R$42–R$1.635)</td></tr>
+        <tr><th>Campanha</th><th>Status</th><th>Spend</th><th>Freq</th><th>CPR</th></tr>
+        <tr><td>Engajamento/Contínua | Whats</td><td><span class="badge paused">Pausada</span></td><td>R$31.598,77</td><td><span class="status-bad">22,23x</span></td><td>R$6,46</td></tr>
+        <tr><td>Leads</td><td><span class="badge active">Ativa</span></td><td>R$6.128,55</td><td><span class="status-bad">13,59x</span></td><td>R$3,99</td></tr>
+        <tr><td>Vendas/Aluguel</td><td><span class="badge active">Ativa</span></td><td>R$5.897,38</td><td><span class="status-bad">9,83x</span></td><td>R$8,11</td></tr>
+        <tr><td>Reconhecimento Festas</td><td><span class="badge active">Ativa</span></td><td>R$3.517,27</td><td>4,59x</td><td>R$7,26</td></tr>
+        <tr><td>LF Engajamento ABO | Whats</td><td><span class="badge paused">Pausada</span></td><td>R$3.280,43</td><td><span class="status-bad">8,89x</span></td><td>R$5,30</td></tr>
+        <tr><td>Engajamento/Contínua — Cópia</td><td><span class="badge paused">Pausada</span></td><td>R$2.404,85</td><td><span class="status-warn">6,27x</span></td><td>R$9,62</td></tr>
       </table>
 
-      <h3>🪑 MDL Móveis do Lar — Lifetime (Todas)</h3>
+      <h3>🪑 MDL Móveis do Lar — Lifetime (Top 6)</h3>
       <table style="font-size: 12px;">
-        <tr><th>Campanha</th><th>Status</th><th>Spend</th><th>Conversas</th><th>Freq</th><th>CPR</th></tr>
-        <tr><td>3 Dias de Loucura — Maio</td><td><span class="badge paused">Pausada</span></td><td>R$1.280,69</td><td>—</td><td>1,22x</td><td>R$2,25</td></tr>
-        <tr><td>Reconhecimentos</td><td><span class="badge active">Ativa</span></td><td>R$519,70</td><td>—</td><td>1,54x</td><td>R$2,63</td></tr>
-        <tr><td>Reconhecimentos — Cópia</td><td><span class="badge active">Ativa</span></td><td>R$515,33</td><td>—</td><td>2,10x</td><td>R$3,09</td></tr>
-        <tr><td>Show de Prêmios — Copa TV 85"</td><td><span class="badge active">Ativa</span></td><td>R$315,43</td><td>5</td><td>3,42x</td><td><span class="status-bad">R$63,09</span></td></tr>
+        <tr><th>Campanha</th><th>Status</th><th>Spend</th><th>Freq</th><th>CPR</th></tr>
+        <tr><td>3 Dias de Loucura — Maio</td><td><span class="badge paused">Pausada</span></td><td>R$1.280,69</td><td>1,22x</td><td>R$2,25</td></tr>
+        <tr><td>Show de Prêmios — Copa TV 85"</td><td><span class="badge active">Ativa</span></td><td>R$603,56</td><td>3,99x</td><td><span class="status-bad">R$120,71</span></td></tr>
+        <tr><td>Reconhecimentos</td><td><span class="badge paused">Pausada</span></td><td>R$519,70</td><td>1,54x</td><td>R$2,63</td></tr>
+        <tr><td>Reconhecimentos — Cópia</td><td><span class="badge paused">Pausada</span></td><td>R$515,33</td><td>2,10x</td><td>R$3,09</td></tr>
+        <tr><td>Copa — REACH TEST</td><td><span class="badge active">Ativa</span></td><td>R$214,18</td><td>1,51x</td><td>R$2,11</td></tr>
+        <tr><td>Ação 3 Dias — WhatsApp</td><td><span class="badge active">Ativa</span></td><td>R$99,99</td><td>1,27x</td><td>R$0,39/clique</td></tr>
       </table>
+      <p style="font-size: 11px; color: #94a3b8; margin-top: 10px;">* Total considera apenas as campanhas listadas (top por gasto). Há campanhas menores/arquivadas não exibidas.</p>
     </div>
   </div>
+  </div><!-- /#app -->
 
   <script>
-    function tab(tabName, btn) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById('p-'+tabName).classList.add('active');
+    // ===== AUTENTICAÇÃO (client-side) =====
+    // ATENÇÃO: login client-side NÃO é segurança real. Esconde de acesso casual.
+    // Para trocar as senhas, gere o hash SHA-256 da nova senha e substitua abaixo.
+    var USERS = {
+      "diego":    "c5215f7882792ce27f9dd58d2a919acb7a2831b9fef60586fe6ef1b2f91e58de",
+      "gabriela": "8bca7b145b299722a9e2302baf53d52ce69aa7c5b547a25d4c13e14e7a7441ce"
+    };
+    var SESSION_KEY = "dash_auth_ok";
+
+    async function sha256(str) {
+      var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("");
+    }
+
+    function showApp() {
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("app").style.display = "block";
+    }
+
+    function sessionOk() {
+      try { return sessionStorage.getItem(SESSION_KEY) === "1"; } catch (e) { return false; }
+    }
+    function setSession() {
+      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (e) {}
+    }
+
+    async function doLogin() {
+      var u = document.getElementById("u").value.trim().toLowerCase();
+      var p = document.getElementById("p").value;
+      var err = document.getElementById("login-error");
+      if (!u || !p) { err.textContent = "Preencha usuário e senha."; return; }
+      var hash = await sha256(p);
+      if (USERS[u] && USERS[u] === hash) {
+        setSession();
+        showApp();
+      } else {
+        err.textContent = "Usuário ou senha incorretos.";
+      }
+    }
+
+    function doLogout() {
+      try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+      location.reload();
+    }
+
+    // Enter envia o login
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && document.getElementById("login-screen").style.display !== "none") {
+        doLogin();
+      }
+    });
+
+    // Auto-login se sessão ativa
+    if (sessionOk()) { showApp(); }
+
+    // ===== ABAS =====
+    function tab(id, btn) {
+      document.querySelectorAll('.tab-content').forEach(function(c){ c.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.getElementById('p-' + id).classList.add('active');
       btn.classList.add('active');
     }
   </script>
